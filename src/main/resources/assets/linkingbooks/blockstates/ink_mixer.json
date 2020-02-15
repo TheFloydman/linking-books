@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": [
+            { "model": "linkingblocks:block/ink_mixer" }
+        ]
+    }
+}
