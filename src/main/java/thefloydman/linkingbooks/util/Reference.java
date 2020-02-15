@@ -18,7 +18,7 @@ public class Reference {
     }
 
     public static class BlockNames {
-        public static final String INK_MIXER = "ink mixer";
+        public static final String INK_MIXER = "ink_mixer";
     }
 
 }
