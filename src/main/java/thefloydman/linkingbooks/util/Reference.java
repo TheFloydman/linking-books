@@ -19,6 +19,21 @@ public class Reference {
 
     public static class BlockNames {
         public static final String INK_MIXER = "ink_mixer";
+        public static final String INK = "ink";
+    }
+
+    public static class ItemNames {
+        public static final String INK_BUCKET = "ink_bucket";
+    }
+
+    public static class FluidNames {
+        public static final String INK = "ink";
+        public static final String FLOWING_INK = "flowing_ink";
+    }
+
+    public static class Resources {
+        public static final ResourceLocation INK_TEXTURE = new ResourceLocation(MOD_ID, "block/ink_still");
+        public static final ResourceLocation FLOWING_INK_TEXTURE = new ResourceLocation(MOD_ID, "block/ink_flow");
     }
 
 }

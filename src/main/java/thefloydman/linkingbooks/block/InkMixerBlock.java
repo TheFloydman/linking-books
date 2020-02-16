@@ -1,4 +1,4 @@
-package thefloydman.linkingbooks.blocks;
+package thefloydman.linkingbooks.block;
 
 import net.minecraft.block.Block;
 

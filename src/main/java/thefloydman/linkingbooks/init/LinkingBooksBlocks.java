@@ -1,6 +1,7 @@
 package thefloydman.linkingbooks.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -10,7 +11,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.registries.ObjectHolder;
-import thefloydman.linkingbooks.blocks.InkMixerBlock;
+import thefloydman.linkingbooks.block.InkMixerBlock;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.util.Reference.BlockNames;
 
@@ -19,22 +20,24 @@ import thefloydman.linkingbooks.util.Reference.BlockNames;
 public class LinkingBooksBlocks {
 
     @ObjectHolder(BlockNames.INK_MIXER)
-    public static final Block INK_MIXER_BLOCK = null;
+    public static final Block INK_MIXER = null;
 
-    @ObjectHolder(BlockNames.INK_MIXER)
-    public static final Item INK_MIXER_ITEM = null;
+    @ObjectHolder(BlockNames.INK)
+    public static final Block INK = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry()
-                .registerAll(new InkMixerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(5)
-                        .harvestLevel(2).harvestTool(ToolType.PICKAXE)).setRegistryName(Reference.MOD_ID,
-                                BlockNames.INK_MIXER));
+        event.getRegistry().registerAll(
+                new InkMixerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(5).harvestLevel(2)
+                        .harvestTool(ToolType.PICKAXE)).setRegistryName(Reference.MOD_ID, BlockNames.INK_MIXER),
+                new FlowingFluidBlock(() -> LinkingBooksFluids.INK, Block.Properties.create(Material.WATER))
+                        .setRegistryName(Reference.MOD_ID, BlockNames.INK));
     }
 
     @SubscribeEvent
     public static void registerBlockItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(new BlockItem(INK_MIXER_BLOCK, new Item.Properties().group(ItemGroup.MISC)));
+        event.getRegistry().registerAll(new BlockItem(INK_MIXER, new Item.Properties().group(ItemGroup.MISC))
+                .setRegistryName(INK_MIXER.getRegistryName()));
     }
 
 }

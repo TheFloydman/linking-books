@@ -1,7 +1,7 @@
 {
     "variants": {
         "": [
-            { "model": "linkingblocks:block/ink_mixer" }
+            { "model": "linkingbooks:block/ink_mixer" }
         ]
     }
 }

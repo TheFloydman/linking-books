@@ -1,3 +1,5 @@
 {
-	"block.linkingbooks.ink_mixer": "Ink Mixer"
+	"block.linkingbooks.ink_mixer": "Ink Mixer",
+	"item.linkingbooks.ink_bucket": "Ink Bucket",
+	"fluid.linkingbooks.ink": "Ink"
 }
