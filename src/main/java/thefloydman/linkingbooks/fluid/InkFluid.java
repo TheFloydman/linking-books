@@ -5,18 +5,20 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 
 public class InkFluid extends ForgeFlowingFluid {
 
-    public InkFluid(Properties properties) {
+    protected InkFluid(Properties properties) {
         super(properties);
     }
 
     @Override
     public boolean isSource(IFluidState state) {
-        return true;
+        // TODO Auto-generated method stub
+        return false;
     }
 
     @Override
-    public int getLevel(IFluidState state) {
-        return 8;
+    public int getLevel(IFluidState p_207192_1_) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }
