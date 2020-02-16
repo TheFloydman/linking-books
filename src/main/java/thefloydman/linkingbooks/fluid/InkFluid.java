@@ -11,12 +11,12 @@ public class InkFluid extends ForgeFlowingFluid {
 
     @Override
     public boolean isSource(IFluidState state) {
-        return false;
+        return true;
     }
 
     @Override
     public int getLevel(IFluidState state) {
-        return 0;
+        return 8;
     }
 
 }

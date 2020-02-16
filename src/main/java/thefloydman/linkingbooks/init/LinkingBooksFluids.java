@@ -1,7 +1,7 @@
 package thefloydman.linkingbooks.init;
 
-import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.Items;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -17,18 +17,16 @@ import thefloydman.linkingbooks.util.Reference.FluidNames;
 public class LinkingBooksFluids {
 
     @ObjectHolder(FluidNames.INK)
-    public static final FlowingFluid INK = null;
-
-    @ObjectHolder(FluidNames.FLOWING_INK)
-    public static final FlowingFluid FLOWING_INK = null;
+    public static final InkFluid INK = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Fluid> event) {
-        event.getRegistry()
-                .registerAll(new InkFluid(new ForgeFlowingFluid.Properties(() -> INK, () -> FLOWING_INK,
+        event.getRegistry().registerAll(
+                new InkFluid(new ForgeFlowingFluid.Properties(() -> new ForgeFlowingFluid.Source(null), () -> new ForgeFlowingFluid.Flowing(null),
                         FluidAttributes.builder(Reference.Resources.INK_TEXTURE,
-                                Reference.Resources.FLOWING_INK_TEXTURE)).bucket(() -> LinkingBooksItems.INK_BUCKET))
-                                        .setRegistryName(Reference.MOD_ID, Reference.FluidNames.INK));
+                                Reference.Resources.FLOWING_INK_TEXTURE)).bucket(() -> Items.BUCKET)
+                                        .block(() -> LinkingBooksBlocks.INK)).setRegistryName(Reference.MOD_ID,
+                                                Reference.FluidNames.INK));
     }
 
 }

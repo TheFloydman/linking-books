@@ -23,7 +23,7 @@ public class LinkingBooksBlocks {
     public static final Block INK_MIXER = null;
 
     @ObjectHolder(BlockNames.INK)
-    public static final Block INK = null;
+    public static final FlowingFluidBlock INK = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
