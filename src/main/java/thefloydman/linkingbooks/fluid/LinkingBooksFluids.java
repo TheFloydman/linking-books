@@ -1,5 +1,7 @@
 package thefloydman.linkingbooks.fluid;
 
+import java.awt.Color;
+
 import net.minecraft.fluid.Fluid;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,18 +26,16 @@ public class LinkingBooksFluids {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Fluid> event) {
-        event.getRegistry()
-                .register(new InkFluid.Source(new InkFluid.Properties(() -> INK, () -> FLOWING_INK,
-                        FluidAttributes.builder(Reference.Resources.INK_TEXTURE,
-                                Reference.Resources.FLOWING_INK_TEXTURE)).bucket(() -> LinkingBooksItems.INK_BUCKET)
-                                        .block(() -> LinkingBooksBlocks.INK)).setRegistryName(Reference.MOD_ID,
-                                                Reference.FluidNames.INK));
-        event.getRegistry()
-                .register(new InkFluid.Flowing(new InkFluid.Properties(() -> INK, () -> FLOWING_INK,
-                        FluidAttributes.builder(Reference.Resources.INK_TEXTURE,
-                                Reference.Resources.FLOWING_INK_TEXTURE)).bucket(() -> LinkingBooksItems.INK_BUCKET)
-                                        .block(() -> LinkingBooksBlocks.INK)).setRegistryName(Reference.MOD_ID,
-                                                Reference.FluidNames.FLOWING_INK));
+        event.getRegistry().register(new InkFluid.Source(new InkFluid.Properties(() -> INK, () -> FLOWING_INK,
+                FluidAttributes.builder(Reference.Resources.INK_TEXTURE, Reference.Resources.FLOWING_INK_TEXTURE)
+                        .color(new Color(0.1F, 0.1F, 0.1F, 1.0F).getRGB())).bucket(() -> LinkingBooksItems.INK_BUCKET)
+                                .block(() -> LinkingBooksBlocks.INK)).setRegistryName(Reference.MOD_ID,
+                                        Reference.FluidNames.INK));
+        event.getRegistry().register(new InkFluid.Flowing(new InkFluid.Properties(() -> INK, () -> FLOWING_INK,
+                FluidAttributes.builder(Reference.Resources.INK_TEXTURE, Reference.Resources.FLOWING_INK_TEXTURE)
+                        .color(new Color(0.1F, 0.1F, 0.1F, 1.0F).getRGB())).bucket(() -> LinkingBooksItems.INK_BUCKET)
+                                .block(() -> LinkingBooksBlocks.INK)).setRegistryName(Reference.MOD_ID,
+                                        Reference.FluidNames.FLOWING_INK));
     }
 
 }

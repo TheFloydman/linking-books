@@ -11,13 +11,11 @@ public class InkFluid extends ForgeFlowingFluid {
 
     @Override
     public boolean isSource(IFluidState state) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public int getLevel(IFluidState p_207192_1_) {
-        // TODO Auto-generated method stub
+    public int getLevel(IFluidState state) {
         return 0;
     }
 
