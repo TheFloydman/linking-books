@@ -16,15 +16,15 @@ import thefloydman.linkingbooks.util.Reference.ItemNames;
 @ObjectHolder(Reference.MOD_ID)
 public class LinkingBooksItems {
 
-    @ObjectHolder(ItemNames.INK_BUCKET)
-    public static final Item INK_BUCKET = null;
+    @ObjectHolder(ItemNames.PLAIN_INK_BUCKET)
+    public static final Item PLAIN_INK_BUCKET = null;
 
     @SubscribeEvent
-    public static void registerBlockItems(RegistryEvent.Register<Item> event) {
+    public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry()
-                .registerAll(new BucketItem(() -> LinkingBooksFluids.INK,
+                .registerAll(new BucketItem(() -> LinkingBooksFluids.PLAIN_INK,
                         new Item.Properties().group(ItemGroup.MISC).maxStackSize(1).containerItem(Items.BUCKET))
-                                .setRegistryName(Reference.MOD_ID, Reference.ItemNames.INK_BUCKET));
+                                .setRegistryName(Reference.MOD_ID, Reference.ItemNames.PLAIN_INK_BUCKET));
     }
 
 }

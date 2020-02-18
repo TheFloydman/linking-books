@@ -19,16 +19,16 @@ public class Reference {
 
     public static class BlockNames {
         public static final String INK_MIXER = "ink_mixer";
-        public static final String INK = "ink";
+        public static final String INK = "ink_fluid_block";
     }
 
     public static class ItemNames {
-        public static final String INK_BUCKET = "ink_bucket";
+        public static final String PLAIN_INK_BUCKET = "plain_ink_bucket";
     }
 
     public static class FluidNames {
-        public static final String INK = "ink";
-        public static final String FLOWING_INK = "flowing_ink";
+        public static final String PLAIN_INK = "plain_ink";
+        public static final String FLOWING_PLAIN_INK = "flowing_plain_ink";
     }
 
     public static class Resources {

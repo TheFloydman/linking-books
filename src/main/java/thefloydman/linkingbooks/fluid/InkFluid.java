@@ -15,7 +15,7 @@ public class InkFluid extends ForgeFlowingFluid {
     }
 
     @Override
-    public int getLevel(IFluidState state) {
+    public int getLevel(IFluidState p_207192_1_) {
         return 0;
     }
 

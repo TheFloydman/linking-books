@@ -31,7 +31,7 @@ public class LinkingBooksBlocks {
         event.getRegistry().registerAll(
                 new InkMixerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(5).harvestLevel(2)
                         .harvestTool(ToolType.PICKAXE)).setRegistryName(Reference.MOD_ID, BlockNames.INK_MIXER),
-                new FlowingFluidBlock(() -> LinkingBooksFluids.INK,
+                new FlowingFluidBlock(() -> LinkingBooksFluids.PLAIN_INK,
                         Block.Properties.create(LinkingBooksMaterials.INK).doesNotBlockMovement()
                                 .hardnessAndResistance(100.0F).noDrops()).setRegistryName(Reference.MOD_ID,
                                         BlockNames.INK));
