@@ -19,16 +19,35 @@ public class Reference {
 
     public static class BlockNames {
         public static final String INK_MIXER = "ink_mixer";
-        public static final String INK = "ink_fluid_block";
+        public static final String INK = "ink";
     }
 
     public static class ItemNames {
-        public static final String PLAIN_INK_BUCKET = "plain_ink_bucket";
+        public static final String INK_BUCKET = "ink_bucket";
+        public static final String BLACK_BLANK_LINKNG_BOOK = "black_blank_linking_book";
+        public static final String BLACK_WRITTEN_LINKNG_BOOK = "black_written_linking_book";
+    }
+
+    public static class EntityNames {
+        public static final String LINKING_BOOK = "linking_book";
+        public static final String DESCRIPTIVE_BOOK = "descriptive_book";
+    }
+
+    public static class TileEntityNames {
+        public static final String INK_MIXER = "ink_mixer";
     }
 
     public static class FluidNames {
-        public static final String PLAIN_INK = "plain_ink";
-        public static final String FLOWING_PLAIN_INK = "flowing_plain_ink";
+        public static final String INK = "ink";
+        public static final String FLOWING_INK = "flowing_ink";
+    }
+
+    public static class CapabilityNames {
+        public static final ResourceLocation LINK_DATA = getAsResourceLocation("link_data");
+    }
+
+    public static class LinkEffectNames {
+        public static final String POISON_EFFECT = "poison_effect";
     }
 
     public static class Resources {

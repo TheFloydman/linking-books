@@ -2,7 +2,11 @@
 modLoader="javafml" #mandatory
 
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[28,)" #mandatory (28 is current forge version)
+loaderVersion="[33,)" #mandatory (33 is current forge version)
+
+# The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
+# Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
+license="All rights reserved"
 
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://gitlab.com/TheFloydman/linking-books/issues" #optional
@@ -14,7 +18,7 @@ issueTrackerURL="https://gitlab.com/TheFloydman/linking-books/issues" #optional
 modId="linkingbooks" #mandatory
 
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="1.14.4-1.0.0.0" #mandatory
+version="1.16.2-1.0.0.0" #mandatory
 
 # A display name for the mod
 displayName="Linking Books" #mandatory
@@ -37,8 +41,6 @@ authors="TheFloydman" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 A mod that adds Linking Books from the Myst and Uru series of video games and novels by Cyan, Inc.
-
-Heavily inspired by the Mystcraft mod by XCompWiz.
 '''
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
@@ -48,7 +50,7 @@ Heavily inspired by the Mystcraft mod by XCompWiz.
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[28,)" #mandatory
+    versionRange="[33,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -58,6 +60,6 @@ Heavily inspired by the Mystcraft mod by XCompWiz.
 [[dependencies.linkingbooks]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4]"
+    versionRange="[1.16.2]"
     ordering="NONE"
     side="BOTH"

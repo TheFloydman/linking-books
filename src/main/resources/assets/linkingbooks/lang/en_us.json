@@ -1,5 +1,8 @@
 {
 	"block.linkingbooks.ink_mixer": "Ink Mixer",
-	"item.linkingbooks.plain_ink_bucket": "Plain Ink Bucket",
-	"fluid.linkingbooks.plain_ink": "Plain Ink"
+	"item.linkingbooks.ink_bucket": "Ink Bucket",
+	"item.linkingbooks.black_blank_linking_book": "Black Blank Linking Book",
+	"item.linkingbooks.black_written_linking_book": "Black Written Linking Book",
+	"fluid.linkingbooks.plain_ink": "Plain Ink",
+	"itemGroup.linkingbooks": "Linking Books"
 }
