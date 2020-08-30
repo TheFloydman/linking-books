@@ -18,9 +18,9 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.linking.LinkEffects;
 
 public class LinkingUtils {
 
@@ -45,7 +45,6 @@ public class LinkingUtils {
         capability.setDimension(player.getEntityWorld().func_234923_W_().func_240901_a_());
         capability.setPosition(player.func_233580_cy_());
         capability.setRotation(player.rotationYaw);
-        capability.addLinkEffect(LinkEffects.POISON_EFFECT.get());
         return stack;
     }
 
@@ -90,9 +89,9 @@ public class LinkingUtils {
             if (entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
-                linkInfo.getLinkEffects().forEach((effect) -> {
+                for (LinkEffect effect : linkInfo.getLinkEffects()) {
                     effect.onLinkEnd(player);
-                });
+                }
             } else {
                 entity.func_241206_a_(serverWorld);
                 entity.teleportKeepLoaded(x, y, z);

@@ -28,7 +28,7 @@ public abstract class LinkEffect extends ForgeRegistryEntry<LinkEffect> {
             LOGGER.info("Cannot find LinkEffect registry. Returning null LinkEffect.");
             return null;
         }
-        return GameRegistry.findRegistry(LinkEffect.class).getValue(resource);
+        return registry.getValue(resource);
     }
 
 }
