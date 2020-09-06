@@ -18,6 +18,8 @@ import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
+import thefloydman.linkingbooks.network.ModNetworkHandler;
+import thefloydman.linkingbooks.network.packets.OpenLinkingBookScreen;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
@@ -48,7 +50,7 @@ public class ForgeEventHandler {
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         Entity target = event.getTarget();
         if (target instanceof LinkingBookEntity && !event.getPlayer().getEntityWorld().isRemote()) {
-            PlayerEntity player = event.getPlayer();
+            ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
             LinkingBookEntity bookEntity = (LinkingBookEntity) target;
             if (event.getHand().equals(Hand.MAIN_HAND)) {
                 ItemStack bookStack = bookEntity.getItem();
@@ -57,15 +59,13 @@ public class ForgeEventHandler {
                         player.addItemStackToInventory(bookStack);
 
                         // Syncs player inventory to client:
-                        ((ServerPlayerEntity) (player)).sendContainerToPlayer(player.container);
+                        player.sendContainerToPlayer(player.container);
 
                         target.remove();
                     } else {
                         ILinkData linkCapability = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
                         if (linkCapability != null) {
-                            /**
-                             * TODO: Open linking book GUI.
-                             */
+                            ModNetworkHandler.sendToPlayer(new OpenLinkingBookScreen(), player);
                         }
                     }
                 }

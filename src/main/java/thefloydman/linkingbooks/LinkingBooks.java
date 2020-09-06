@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -47,30 +46,27 @@ public class LinkingBooks {
         LinkEffects.LINK_EFFECTS.register(eventBus);
 
         // Register the setup method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         // Register the processIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void setup(final FMLCommonSetupEvent event) {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         ModNetworkHandler.registerAllMessages();
         LinkData.register();
     }
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
-        DeferredWorkQueue.runLater(() -> {
-            RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(),
-                    LinkingBookRenderer::new);
-            RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.DESCRIPTIVE_BOOK.get(),
-                    DescriptiveBookRenderer::new);
-        });
+    private void clientSetup(final FMLClientSetupEvent event) {
+        RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.DESCRIPTIVE_BOOK.get(),
+                DescriptiveBookRenderer::new);
 
     }
 

@@ -51,8 +51,10 @@ public class Reference {
     }
 
     public static class Resources {
-        public static final ResourceLocation INK_TEXTURE = new ResourceLocation(MOD_ID, "block/ink_still");
-        public static final ResourceLocation FLOWING_INK_TEXTURE = new ResourceLocation(MOD_ID, "block/ink_flow");
+        public static final ResourceLocation INK_TEXTURE = getAsResourceLocation("block/ink_still");
+        public static final ResourceLocation FLOWING_INK_TEXTURE = getAsResourceLocation("block/ink_flow");
+        public static final ResourceLocation LINKING_BOOK_TEXTURE = getAsResourceLocation(
+                "textures/entity/linking_book.png");
     }
 
 }

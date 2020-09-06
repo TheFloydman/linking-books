@@ -1,8 +1,8 @@
 package thefloydman.linkingbooks.client.renderer.entity.model;
 
+import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -20,7 +20,7 @@ public class LinkingBookCoverModel extends EntityModel<LinkingBookEntity> {
             0.005F);
     private final ModelRenderer bookSpine = new ModelRenderer(64, 32, 12, 0).addBox(-1.0F, -5.0F, 0.0F, 2.0F, 10.0F,
             0.005F);
-    private final List<ModelRenderer> allModels = ImmutableList.of(this.coverRight, this.coverLeft, this.bookSpine);
+    private final List<ModelRenderer> allModels = Arrays.asList(this.coverRight, this.coverLeft, this.bookSpine);
 
     public LinkingBookCoverModel() {
         super(RenderType::getEntitySolid);
@@ -36,10 +36,10 @@ public class LinkingBookCoverModel extends EntityModel<LinkingBookEntity> {
         });
     }
 
-    public void setBookState(float f1, float f2) {
-        float f = (MathHelper.sin(f1 * 0.02F) * 0.1F + 1.25F) * f2;
-        this.coverRight.rotateAngleY = (float) Math.PI + f;
-        this.coverLeft.rotateAngleY = -f;
+    public void setBookState(float openAmount) {
+        float radians = MathHelper.clamp((float) Math.PI / 2.0F * openAmount, 0.0F, (float) Math.PI / 2.0F);
+        this.coverRight.rotateAngleY = (float) Math.PI + radians;
+        this.coverLeft.rotateAngleY = -radians;
     }
 
     @Override

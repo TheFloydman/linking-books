@@ -22,7 +22,7 @@ public final class ModBlocks {
             () -> new InkMixerBlock(AbstractBlock.Properties.create(Material.IRON).hardnessAndResistance(5)
                     .harvestLevel(2).harvestTool(ToolType.PICKAXE)));
 
-    public static final RegistryObject<Block> INK = BLOCKS.register(BlockNames.INK,
+    public static final RegistryObject<FlowingFluidBlock> INK = BLOCKS.register(BlockNames.INK,
             () -> new FlowingFluidBlock(ModFluids.INK, AbstractBlock.Properties.create(ModMaterials.INK)
                     .doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops()));
 

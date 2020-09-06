@@ -1,6 +1,7 @@
 package thefloydman.linkingbooks.client.renderer.entity;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -16,21 +17,15 @@ import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesMod
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.util.Reference.Resources;
 
 public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
 
-    private LinkingBookCoverModel coverModel;
-    private LinkingBookPagesModel pagesModel;
-
-    private static final ResourceLocation COVER_TEXTURE = Reference
-            .getAsResourceLocation("textures/entity/linking_book_cover.png");
-    private static final ResourceLocation PAGES_TEXTURE = Reference
-            .getAsResourceLocation("textures/entity/linking_book_pages.png");
+    private LinkingBookCoverModel coverModel = new LinkingBookCoverModel();
+    private LinkingBookPagesModel pagesModel = new LinkingBookPagesModel();
 
     public LinkingBookRenderer(EntityRendererManager renderManager) {
         super(renderManager);
-        coverModel = new LinkingBookCoverModel();
-        pagesModel = new LinkingBookPagesModel();
     }
 
     @Override
@@ -39,13 +34,13 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
 
         matrixStack.push();
 
-        matrixStack.scale(0.8F, 0.8F, 0.8F);
+        matrixStack.scale(0.5F, 0.5F, 0.5F);
         matrixStack.rotate(Vector3f.XP.rotation((float) Math.PI));
         matrixStack.rotate(Vector3f.YP.rotation((yaw / 360.0F * (float) Math.PI * 2.0F) - ((float) Math.PI / 2.0F)));
         matrixStack.rotate(Vector3f.ZP.rotation((float) Math.PI / 2 * 3));
 
-        coverModel.setBookState(0.0F, 1.1F);
-        pagesModel.setBookState(0.0F, 1.1F);
+        this.coverModel.setBookState(0.9F);
+        this.pagesModel.setBookState(0.9F);
 
         float[] color = { 1.0F, 1.0F, 1.0F };
         ItemStack bookStack = entity.getItem();
@@ -57,16 +52,18 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
             }
         }
 
+        IVertexBuilder vertexBuilder = buffer.getBuffer(this.coverModel.getRenderType(Resources.LINKING_BOOK_TEXTURE));
+
         if (entity.hurtTime > 0) {
-            coverModel.render(matrixStack, buffer.getBuffer(coverModel.getRenderType(COVER_TEXTURE)), 15728880,
-                    OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F, 0.4F);
-            pagesModel.render(matrixStack, buffer.getBuffer(coverModel.getRenderType(PAGES_TEXTURE)), 15728880,
-                    OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F, 0.4F);
+            this.coverModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
+                    0.4F);
+            this.pagesModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
+                    0.4F);
         } else {
-            coverModel.render(matrixStack, buffer.getBuffer(coverModel.getRenderType(COVER_TEXTURE)), 15728880,
-                    OverlayTexture.NO_OVERLAY, color[0], color[1], color[2], 1.0F);
-            pagesModel.render(matrixStack, buffer.getBuffer(coverModel.getRenderType(PAGES_TEXTURE)), 15728880,
-                    OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.coverModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, color[0], color[1],
+                    color[2], 1.0F);
+            this.pagesModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
+                    1.0F);
         }
 
         matrixStack.pop();

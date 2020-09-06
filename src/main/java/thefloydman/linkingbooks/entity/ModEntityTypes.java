@@ -16,7 +16,7 @@ public class ModEntityTypes {
     public static final RegistryObject<EntityType<LinkingBookEntity>> LINKING_BOOK = ENTITIES.register(
             EntityNames.LINKING_BOOK,
             () -> EntityType.Builder.<LinkingBookEntity>create(LinkingBookEntity::new, EntityClassification.MISC)
-                    .size(0.5F, 0.1F).setTrackingRange(16).build(Reference.MOD_ID + ":" + EntityNames.LINKING_BOOK));
+                    .size(0.3F, 0.1F).setTrackingRange(16).build(Reference.MOD_ID + ":" + EntityNames.LINKING_BOOK));
 
     public static final RegistryObject<EntityType<DescriptiveBookEntity>> DESCRIPTIVE_BOOK = ENTITIES.register(
             EntityNames.DESCRIPTIVE_BOOK,

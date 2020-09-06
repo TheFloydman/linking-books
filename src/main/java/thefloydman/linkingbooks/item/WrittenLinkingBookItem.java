@@ -1,6 +1,7 @@
 package thefloydman.linkingbooks.item;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -9,7 +10,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.util.LinkingUtils;
+import thefloydman.linkingbooks.network.ModNetworkHandler;
+import thefloydman.linkingbooks.network.packets.OpenLinkingBookScreen;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
 
@@ -21,7 +23,7 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack heldStack = player.getHeldItem(hand);
         if (!world.isRemote()) {
-            LinkingUtils.linkEntity(player, heldStack.getCapability(LinkData.LINK_DATA).orElse(null));
+            ModNetworkHandler.sendToPlayer(new OpenLinkingBookScreen(), (ServerPlayerEntity) player);
         }
         return ActionResult.resultPass(heldStack);
     }

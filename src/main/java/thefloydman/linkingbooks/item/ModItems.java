@@ -8,7 +8,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import thefloydman.linkingbooks.block.ModBlocks;
-import thefloydman.linkingbooks.fluid.InkFluid;
+import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.util.Reference;
 
 public class ModItems {
@@ -27,6 +27,6 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.INK_MIXER.get(), new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> INK_BUCKET = ITEMS.register(Reference.ItemNames.INK_BUCKET,
-            () -> new BucketItem(InkFluid.Source::new, new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+            () -> new BucketItem(ModFluids.INK, new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
 }

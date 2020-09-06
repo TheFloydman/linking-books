@@ -29,7 +29,7 @@ public class DescriptiveBookRenderer extends EntityRenderer<DescriptiveBookEntit
         matrixStack.rotate(Vector3f.XP.rotation((float) Math.PI));
         matrixStack.rotate(Vector3f.YP.rotation(yaw));
         matrixStack.rotate(Vector3f.ZP.rotation((float) Math.PI / 2 * 3));
-        bookModel.setBookState(0.0F, 1.1F);
+        bookModel.setBookState(1.1F);
         if (entity.hurtTime > 0) {
             bookModel.render(matrixStack, buffer.getBuffer(bookModel.getRenderType(this.getEntityTexture(entity))),
                     15728880, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F, 0.4F);
