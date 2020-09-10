@@ -42,6 +42,10 @@ public class Reference {
         public static final String FLOWING_INK = "flowing_ink";
     }
 
+    public static class ContainerNames {
+        public static final String LINKING_BOOK = "linking_book";
+    }
+
     public static class CapabilityNames {
         public static final ResourceLocation LINK_DATA = getAsResourceLocation("link_data");
     }
