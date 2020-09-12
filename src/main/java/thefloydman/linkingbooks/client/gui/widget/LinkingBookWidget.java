@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -23,14 +24,20 @@ public class LinkingBookWidget extends NestedWidget {
     private static final ResourceLocation PAPER_TEXTURE = Reference
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
 
-    public LinkingBookWidget(int x, int y, int width, int height, ITextComponent narration, NestedWidget parent) {
-        super(x, y, width, height, narration, parent);
-        this.addChild(new LinkingPanelWidget(this.field_230690_l_ + 155, this.field_230691_m_ + 41, 64, 42,
-                new StringTextComponent("Linking Panel"), this));
+    public LinkingBookWidget(int x, int y, int width, int height, ITextComponent narration) {
+        super(x, y, width, height, narration);
+        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget(this.field_230690_l_ + 155,
+                this.field_230691_m_ + 41, 64, 42, new StringTextComponent("Linking Panel")));
+        for (IGuiEventListener listener : this.listeners) {
+            linkingPanel.addListener(listener);
+        }
     }
 
     @Override
-    public void renderThis(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void func_230431_b_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        if (!this.field_230694_p_) {
+            return;
+        }
         matrixStack.push();
         RenderSystem.pushMatrix();
 
@@ -50,6 +57,8 @@ public class LinkingBookWidget extends NestedWidget {
 
         RenderSystem.popMatrix();
         matrixStack.pop();
+
+        this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }
 
 }

@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
+import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 
 public class LinkingBookScreen extends ContainerScreen<LinkingBookContainer> {
@@ -17,8 +18,9 @@ public class LinkingBookScreen extends ContainerScreen<LinkingBookContainer> {
 
     @Override
     protected void func_231160_c_() {
-        this.func_230480_a_(new LinkingBookWidget((this.field_230708_k_ - 256) / 2, (this.field_230709_l_ - 192) / 2,
-                256, 192, new StringTextComponent("Linking Book"), null));
+        NestedWidget linkingBook = this.func_230480_a_(new LinkingBookWidget((this.field_230708_k_ - 256) / 2,
+                (this.field_230709_l_ - 192) / 2, 256, 192, new StringTextComponent("Linking Book")));
+        linkingBook.addListener(this);
     }
 
     @Override
