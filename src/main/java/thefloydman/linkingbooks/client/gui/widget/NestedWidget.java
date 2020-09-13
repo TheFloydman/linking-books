@@ -45,9 +45,12 @@ public abstract class NestedWidget extends Widget {
         this.listeners.add(listener);
     }
 
+    /**
+     * A z-level-dependent version of AbstractGui::func_238467_a_.
+     */
     public void fill(final MatrixStack matrixStack, final int x, final int y, final int width, final int height,
             final int color) {
-        float difference = zDifference(matrixStack);
+        float difference = zDifference(matrixStack, this.zLevel);
         matrixStack.translate(0, 0, difference);
         AbstractGui.func_238467_a_(matrixStack, x, y, width, height, color);
         matrixStack.translate(0, 0, -difference);
@@ -57,12 +60,11 @@ public abstract class NestedWidget extends Widget {
      * Returns a positive difference if the zLevel needs to be raised and a negative
      * difference if it should be lowered.
      */
-    private float zDifference(MatrixStack matrixStack) {
+    public static float zDifference(MatrixStack matrixStack, float zLevel) {
         FloatBuffer floatBuffer = FloatBuffer.allocate(16);
         matrixStack.getLast().getMatrix().write(floatBuffer);
-        int currentZ = (int) floatBuffer.get(10);
-        return this.zLevel - currentZ < 0 ? this.zLevel - MathHelper.abs(currentZ)
-                : this.zLevel + MathHelper.abs(currentZ);
+        float currentZ = floatBuffer.get(10);
+        return zLevel - currentZ < 0 ? zLevel - MathHelper.abs(currentZ) : zLevel + MathHelper.abs(currentZ);
     }
 
 }
