@@ -11,8 +11,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class LinkingPanelWidget extends NestedWidget {
 
-    public LinkingPanelWidget(int x, int y, int width, int height, ITextComponent narration) {
-        super(x, y, width, height, narration);
+    public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration) {
+        super(x, y, zLevel, width, height, narration);
     }
 
     @Override

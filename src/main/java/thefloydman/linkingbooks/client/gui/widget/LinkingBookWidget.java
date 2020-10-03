@@ -24,10 +24,10 @@ public class LinkingBookWidget extends NestedWidget {
     private static final ResourceLocation PAPER_TEXTURE = Reference
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
 
-    public LinkingBookWidget(int x, int y, int width, int height, ITextComponent narration) {
-        super(x, y, width, height, narration);
+    public LinkingBookWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration) {
+        super(x, y, zLevel, width, height, narration);
         NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget(this.field_230690_l_ + 155,
-                this.field_230691_m_ + 41, 64, 42, new StringTextComponent("Linking Panel")));
+                this.field_230691_m_ + 41, 0.0F, 64, 42, new StringTextComponent("Linking Panel")));
         for (IGuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }

@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -17,8 +19,9 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.client.renderer.entity.DescriptiveBookRenderer;
+import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
+import thefloydman.linkingbooks.client.renderer.tileentity.BookDisplayRenderer;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.inventory.container.ModContainerTypes;
@@ -64,9 +67,15 @@ public class LinkingBooks {
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
+        // Register Entity renderers.
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.DESCRIPTIVE_BOOK.get(),
-                DescriptiveBookRenderer::new);
+
+        // Register TileEntity renderers.
+        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.BOOK_DISPLAY.get(), BookDisplayRenderer::new);
+
+        // Register containers.
+        ScreenManager.registerFactory(ModContainerTypes.LINKING_BOOK.get(),
+                (container, inventory, narration) -> new LinkingBookScreen(container, inventory, narration));
 
     }
 

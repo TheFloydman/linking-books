@@ -18,9 +18,9 @@ public final class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
             Reference.MOD_ID);
 
-    public static final RegistryObject<Block> INK_MIXER = BLOCKS.register(BlockNames.INK_MIXER,
-            () -> new InkMixerBlock(AbstractBlock.Properties.create(Material.IRON).hardnessAndResistance(5)
-                    .harvestLevel(2).harvestTool(ToolType.PICKAXE)));
+    public static final RegistryObject<Block> BOOK_DISPLAY = BLOCKS.register(BlockNames.BOOK_DISPLAY,
+            () -> new BookDisplayBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
+                    .harvestLevel(2).harvestTool(ToolType.AXE)));
 
     public static final RegistryObject<FlowingFluidBlock> INK = BLOCKS.register(BlockNames.INK,
             () -> new FlowingFluidBlock(ModFluids.INK, AbstractBlock.Properties.create(ModMaterials.INK)

@@ -23,8 +23,9 @@ public class ModItems {
             Reference.ItemNames.BLACK_WRITTEN_LINKNG_BOOK,
             () -> new WrittenLinkingBookItem(DyeColor.BLACK, new Item.Properties().maxStackSize(1)));
 
-    public static final RegistryObject<Item> INK_MIXER = ITEMS.register(Reference.BlockNames.INK_MIXER,
-            () -> new BlockItem(ModBlocks.INK_MIXER.get(), new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+    public static final RegistryObject<Item> BOOK_DISPLAY = ITEMS.register(Reference.BlockNames.BOOK_DISPLAY,
+            () -> new BlockItem(ModBlocks.BOOK_DISPLAY.get(),
+                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> INK_BUCKET = ITEMS.register(Reference.ItemNames.INK_BUCKET,
             () -> new BucketItem(ModFluids.INK, new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));

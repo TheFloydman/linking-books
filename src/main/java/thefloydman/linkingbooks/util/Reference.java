@@ -18,8 +18,8 @@ public class Reference {
     }
 
     public static class BlockNames {
-        public static final String INK_MIXER = "ink_mixer";
         public static final String INK = "ink";
+        public static final String BOOK_DISPLAY = "book_display";
     }
 
     public static class ItemNames {
@@ -30,11 +30,10 @@ public class Reference {
 
     public static class EntityNames {
         public static final String LINKING_BOOK = "linking_book";
-        public static final String DESCRIPTIVE_BOOK = "descriptive_book";
     }
 
     public static class TileEntityNames {
-        public static final String INK_MIXER = "ink_mixer";
+        public static final String BOOK_DISPLAY = "book_display";
     }
 
     public static class FluidNames {
@@ -48,6 +47,7 @@ public class Reference {
 
     public static class CapabilityNames {
         public static final ResourceLocation LINK_DATA = getAsResourceLocation("link_data");
+        public static final ResourceLocation ITEMSTACK = getAsResourceLocation("itemstack");
     }
 
     public static class LinkEffectNames {

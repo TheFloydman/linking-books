@@ -101,9 +101,9 @@ public class LinkData {
                     .writeBlockPos(instance.getPosition() == null ? new BlockPos(0, 0, 0) : instance.getPosition()));
             nbt.putFloat("rotation", instance.getRotation());
             ListNBT effectsList = new ListNBT();
-            instance.getLinkEffects().forEach((effect) -> {
+            for (LinkEffect effect : instance.getLinkEffects()) {
                 effectsList.add(StringNBT.valueOf(effect.getRegistryName().toString()));
-            });
+            }
             nbt.put("effects", effectsList);
             return nbt;
         }

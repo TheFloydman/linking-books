@@ -3,9 +3,13 @@ package thefloydman.linkingbooks.event;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -17,9 +21,9 @@ import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
-import thefloydman.linkingbooks.network.ModNetworkHandler;
-import thefloydman.linkingbooks.network.packets.OpenLinkingBookScreen;
+import thefloydman.linkingbooks.tileentity.BookDisplayTileEntity;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
@@ -57,15 +61,15 @@ public class ForgeEventHandler {
                 if (!bookStack.isEmpty()) {
                     if (player.isSneaking()) {
                         player.addItemStackToInventory(bookStack);
-
-                        // Syncs player inventory to client:
-                        player.sendContainerToPlayer(player.container);
-
+                        player.container.detectAndSendChanges();
                         target.remove();
                     } else {
                         ILinkData linkCapability = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
                         if (linkCapability != null) {
-                            ModNetworkHandler.sendToPlayer(new OpenLinkingBookScreen(), player);
+                            player.openContainer(
+                                    new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
+                                        return new LinkingBookContainer(id, playerInventory);
+                                    }, new StringTextComponent("")));
                         }
                     }
                 }
@@ -90,9 +94,42 @@ public class ForgeEventHandler {
 
     }
 
+    /**
+     * Use to attach capabilities to tileentities not native to Linking Books.
+     */
+    @SubscribeEvent
+    public static void attachTileEntityCapabilities(AttachCapabilitiesEvent<TileEntity> event) {
+
+    }
+
     @SubscribeEvent
     public static void serverStarting(FMLServerStartingEvent event) {
         LinkCommand.register(event.getServer().getCommandManager().getDispatcher());
+    }
+
+    @SubscribeEvent
+    public static void rightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        World world = event.getWorld();
+        PlayerEntity player = event.getPlayer();
+        Hand hand = event.getHand();
+        if (world.isRemote() || hand.equals(Hand.OFF_HAND) || !player.isSneaking()) {
+            return;
+        }
+        BlockPos pos = event.getPos();
+        TileEntity generic = world.getTileEntity(pos);
+        if (!(generic instanceof BookDisplayTileEntity)) {
+            return;
+        }
+        BookDisplayTileEntity tileEntity = (BookDisplayTileEntity) generic;
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
+            tileEntity.setBook(stack);
+            player.container.detectAndSendChanges();
+        } else if (stack.isEmpty() && tileEntity.hasBook()) {
+            player.addItemStackToInventory(tileEntity.getBook());
+            player.container.detectAndSendChanges();
+            tileEntity.setBook(ItemStack.EMPTY);
+        }
     }
 
 }

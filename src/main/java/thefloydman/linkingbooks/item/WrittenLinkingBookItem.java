@@ -1,17 +1,17 @@
 package thefloydman.linkingbooks.item;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.network.ModNetworkHandler;
-import thefloydman.linkingbooks.network.packets.OpenLinkingBookScreen;
+import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
 
@@ -22,8 +22,10 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack heldStack = player.getHeldItem(hand);
-        if (!world.isRemote()) {
-            ModNetworkHandler.sendToPlayer(new OpenLinkingBookScreen(), (ServerPlayerEntity) player);
+        if (!world.isRemote() && !player.isSneaking()) {
+            player.openContainer(new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
+                return new LinkingBookContainer(id, playerInventory);
+            }, new StringTextComponent("")));
         }
         return ActionResult.resultPass(heldStack);
     }
