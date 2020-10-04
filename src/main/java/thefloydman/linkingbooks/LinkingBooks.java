@@ -21,7 +21,7 @@ import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
-import thefloydman.linkingbooks.client.renderer.tileentity.BookDisplayRenderer;
+import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.inventory.container.ModContainerTypes;
@@ -71,7 +71,7 @@ public class LinkingBooks {
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
 
         // Register TileEntity renderers.
-        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.BOOK_DISPLAY.get(), BookDisplayRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
 
         // Register containers.
         ScreenManager.registerFactory(ModContainerTypes.LINKING_BOOK.get(),

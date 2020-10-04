@@ -11,27 +11,27 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Vector3f;
-import thefloydman.linkingbooks.block.BookDisplayBlock;
+import thefloydman.linkingbooks.block.LinkingLecternBlock;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
-import thefloydman.linkingbooks.tileentity.BookDisplayTileEntity;
+import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
 import thefloydman.linkingbooks.util.Reference.Resources;
 
-public class BookDisplayRenderer extends TileEntityRenderer<BookDisplayTileEntity> {
+public class LinkingLecternRenderer extends TileEntityRenderer<LinkingLecternTileEntity> {
 
     private LinkingBookCoverModel coverModel = new LinkingBookCoverModel();
     private LinkingBookPagesModel pagesModel = new LinkingBookPagesModel();
     private float[] color = { 1.0F, 1.0F, 1.0F };
 
-    public BookDisplayRenderer(TileEntityRendererDispatcher dispatcher) {
+    public LinkingLecternRenderer(TileEntityRendererDispatcher dispatcher) {
         super(dispatcher);
         this.coverModel.setBookState(0.95F);
         this.pagesModel.setBookState(0.95F);
     }
 
     @Override
-    public void render(BookDisplayTileEntity tileEntity, float arg1, MatrixStack matrixStack, IRenderTypeBuffer buffer,
+    public void render(LinkingLecternTileEntity tileEntity, float arg1, MatrixStack matrixStack, IRenderTypeBuffer buffer,
             int arg4, int arg5) {
         if (tileEntity.hasBook()) {
 
@@ -48,7 +48,7 @@ public class BookDisplayRenderer extends TileEntityRenderer<BookDisplayTileEntit
 
             float rotation = 0.0F;
             double[] translate = { 0.0D, 0.0D, 0.0D };
-            switch (tileEntity.getBlockState().get(BookDisplayBlock.FACING)) {
+            switch (tileEntity.getBlockState().get(LinkingLecternBlock.FACING)) {
                 case NORTH:
                     rotation = 1.0F;
                     translate[0] = 0.5D;

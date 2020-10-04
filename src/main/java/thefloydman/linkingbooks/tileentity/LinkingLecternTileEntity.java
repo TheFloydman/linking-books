@@ -10,12 +10,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants.NBT;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 
-public class BookDisplayTileEntity extends TileEntity {
+public class LinkingLecternTileEntity extends TileEntity {
 
     private ItemStack book = ItemStack.EMPTY;
 
-    public BookDisplayTileEntity() {
-        super(ModTileEntityTypes.BOOK_DISPLAY.get());
+    public LinkingLecternTileEntity() {
+        super(ModTileEntityTypes.LINKING_LECTERN.get());
     }
 
     /**

@@ -15,8 +15,8 @@ public class ModTileEntityTypes {
     public static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = DeferredRegister
             .create(ForgeRegistries.TILE_ENTITIES, Reference.MOD_ID);
 
-    public static final RegistryObject<TileEntityType<BookDisplayTileEntity>> BOOK_DISPLAY = TILE_ENTITIES
-            .register(TileEntityNames.BOOK_DISPLAY, () -> new TileEntityType<>(BookDisplayTileEntity::new,
-                    Sets.newHashSet(ModBlocks.BOOK_DISPLAY.get()), null));
+    public static final RegistryObject<TileEntityType<LinkingLecternTileEntity>> LINKING_LECTERN = TILE_ENTITIES
+            .register(TileEntityNames.LINKING_LECTERN, () -> new TileEntityType<>(LinkingLecternTileEntity::new,
+                    Sets.newHashSet(ModBlocks.LINKING_LECTERN.get()), null));
 
 }

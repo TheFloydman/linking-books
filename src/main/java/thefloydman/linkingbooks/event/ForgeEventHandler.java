@@ -17,13 +17,14 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
-import thefloydman.linkingbooks.tileentity.BookDisplayTileEntity;
+import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
@@ -66,10 +67,10 @@ public class ForgeEventHandler {
                     } else {
                         ILinkData linkCapability = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
                         if (linkCapability != null) {
-                            player.openContainer(
+                            NetworkHooks.openGui(player,
                                     new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
                                         return new LinkingBookContainer(id, playerInventory);
-                                    }, new StringTextComponent("")));
+                                    }, new StringTextComponent("")), buf -> buf.writeItemStack(bookStack));
                         }
                     }
                 }
@@ -117,10 +118,10 @@ public class ForgeEventHandler {
         }
         BlockPos pos = event.getPos();
         TileEntity generic = world.getTileEntity(pos);
-        if (!(generic instanceof BookDisplayTileEntity)) {
+        if (!(generic instanceof LinkingLecternTileEntity)) {
             return;
         }
-        BookDisplayTileEntity tileEntity = (BookDisplayTileEntity) generic;
+        LinkingLecternTileEntity tileEntity = (LinkingLecternTileEntity) generic;
         ItemStack stack = player.getHeldItem(hand);
         if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
             tileEntity.setBook(stack);

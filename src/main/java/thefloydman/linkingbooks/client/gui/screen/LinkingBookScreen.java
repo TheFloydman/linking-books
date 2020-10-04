@@ -18,14 +18,14 @@ public class LinkingBookScreen extends ContainerScreen<LinkingBookContainer> {
 
     @Override
     protected void func_231160_c_() {
-        NestedWidget linkingBook = this.func_230480_a_(new LinkingBookWidget((this.field_230708_k_ - 256) / 2,
-                (this.field_230709_l_ - 192) / 2, 0.0F, 256, 192, new StringTextComponent("Linking Book")));
+        NestedWidget linkingBook = this.func_230480_a_(
+                new LinkingBookWidget((this.field_230708_k_ - 256) / 2, (this.field_230709_l_ - 192) / 2, 0.0F, 256,
+                        192, new StringTextComponent("Linking Book"), this.getContainer().book));
         linkingBook.addListener(this);
     }
 
     @Override
     protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-
     }
 
 }

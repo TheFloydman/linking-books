@@ -18,8 +18,8 @@ public final class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
             Reference.MOD_ID);
 
-    public static final RegistryObject<Block> BOOK_DISPLAY = BLOCKS.register(BlockNames.BOOK_DISPLAY,
-            () -> new BookDisplayBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
+    public static final RegistryObject<Block> LINKING_LECTERN = BLOCKS.register(BlockNames.LINKING_LECTERN,
+            () -> new LinkingLecternBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
                     .harvestLevel(2).harvestTool(ToolType.AXE)));
 
     public static final RegistryObject<FlowingFluidBlock> INK = BLOCKS.register(BlockNames.INK,

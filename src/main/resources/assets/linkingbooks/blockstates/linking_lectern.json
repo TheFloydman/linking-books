@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "linkingbooks:block/linking_lectern" },
+        "facing=south": { "model": "linkingbooks:block/linking_lectern", "y": 180 },
+        "facing=west":  { "model": "linkingbooks:block/linking_lectern", "y": 270 },
+        "facing=east":  { "model": "linkingbooks:block/linking_lectern", "y": 90 }
+    }
+}

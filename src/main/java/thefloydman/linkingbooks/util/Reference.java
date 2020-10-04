@@ -19,7 +19,7 @@ public class Reference {
 
     public static class BlockNames {
         public static final String INK = "ink";
-        public static final String BOOK_DISPLAY = "book_display";
+        public static final String LINKING_LECTERN = "linking_lectern";
     }
 
     public static class ItemNames {
@@ -33,7 +33,7 @@ public class Reference {
     }
 
     public static class TileEntityNames {
-        public static final String BOOK_DISPLAY = "book_display";
+        public static final String LINKING_LECTERN = "linking_lectern";
     }
 
     public static class FluidNames {
