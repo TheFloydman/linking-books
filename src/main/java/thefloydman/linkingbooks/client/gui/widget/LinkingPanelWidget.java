@@ -12,7 +12,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class LinkingPanelWidget extends NestedWidget {
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration) {
-        super(x, y, zLevel, width, height, narration);
+        super(x, y, width, height, narration);
     }
 
     @Override
