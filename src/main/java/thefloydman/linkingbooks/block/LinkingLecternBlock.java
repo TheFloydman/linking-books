@@ -4,7 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.LecternBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -12,14 +11,12 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
-import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
 import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
+import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class LinkingLecternBlock extends LecternBlock {
 
@@ -47,10 +44,7 @@ public class LinkingLecternBlock extends LecternBlock {
                 ItemStack stack = tileEntity.getBook();
                 Item item = stack.getItem();
                 if (item instanceof WrittenLinkingBookItem) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player,
-                            new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
-                                return new LinkingBookContainer(id, playerInventory);
-                            }, new StringTextComponent("")), buf -> buf.writeItemStack(stack));
+                    LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, stack);
                 }
             }
         }

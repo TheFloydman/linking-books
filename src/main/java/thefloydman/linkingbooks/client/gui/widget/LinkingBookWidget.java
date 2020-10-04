@@ -33,7 +33,7 @@ public class LinkingBookWidget extends NestedWidget {
         super(x, y, width, height, narration);
         this.book = book;
         NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget(this.field_230690_l_ + 155,
-                this.field_230691_m_ + 41, 0.0F, 64, 42, new StringTextComponent("Linking Panel")));
+                this.field_230691_m_ + 41, 0.0F, 64, 42, new StringTextComponent("Linking Panel"), book));
         for (IGuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }

@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -11,8 +12,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class LinkingPanelWidget extends NestedWidget {
 
-    public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration) {
+    private ItemStack book = ItemStack.EMPTY;
+
+    public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
+            ItemStack book) {
         super(x, y, width, height, narration);
+        this.book = book;
     }
 
     @Override

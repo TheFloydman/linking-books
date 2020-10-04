@@ -47,7 +47,6 @@ public class Reference {
 
     public static class CapabilityNames {
         public static final ResourceLocation LINK_DATA = getAsResourceLocation("link_data");
-        public static final ResourceLocation ITEMSTACK = getAsResourceLocation("itemstack");
     }
 
     public static class LinkEffectNames {

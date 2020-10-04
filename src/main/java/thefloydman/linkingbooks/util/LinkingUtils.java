@@ -10,16 +10,20 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.network.NetworkHooks;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.ModItems;
 
 public class LinkingUtils {
@@ -76,9 +80,9 @@ public class LinkingUtils {
             }
 
             BlockPos pos = linkInfo.getPosition();
-            double x = (double) pos.getX() + 0.5D;
-            double y = (double) pos.getY();
-            double z = (double) pos.getZ() + 0.5D;
+            double x = pos.getX() + 0.5D;
+            double y = pos.getY();
+            double z = pos.getZ() + 0.5D;
             float rotation = linkInfo.getRotation();
 
             /*
@@ -115,6 +119,12 @@ public class LinkingUtils {
             linked += linkEntity(entity, linkInfo) == true ? 1 : 0;
         }
         return linked;
+    }
+
+    public static void openLinkingBookGui(ServerPlayerEntity player, ItemStack book) {
+        NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
+            return new LinkingBookContainer(id, playerInventory);
+        }, new StringTextComponent("")), buf -> buf.writeItemStack(book));
     }
 
 }
