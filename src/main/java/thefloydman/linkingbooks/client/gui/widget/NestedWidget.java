@@ -1,20 +1,15 @@
 package thefloydman.linkingbooks.client.gui.widget;
 
+import java.nio.FloatBuffer;
 import java.util.List;
-
-import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldVertexBufferUploader;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -26,9 +21,8 @@ public abstract class NestedWidget extends Widget {
     protected final List<NestedWidget> children = Lists.newArrayList();
     protected final List<IGuiEventListener> listeners = Lists.newArrayList();
 
-    public NestedWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration) {
+    public NestedWidget(int x, int y, int width, int height, ITextComponent narration) {
         super(x, y, width, height, narration);
-        this.zLevel = zLevel;
     }
 
     @Override
@@ -51,6 +45,9 @@ public abstract class NestedWidget extends Widget {
         this.listeners.add(listener);
     }
 
+    /**
+     * A z-level-dependent version of AbstractGui::func_238467_a_.
+     */
     /**
      * Z-sensitive fill method.
      */
@@ -87,10 +84,25 @@ public abstract class NestedWidget extends Widget {
         WorldVertexBufferUploader.draw(bufferBuilder);
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
+    public void fill(final MatrixStack matrixStack, final int x, final int y, final int width, final int height,
+            final int color) {
+        float difference = zDifference(matrixStack, this.zLevel);
+        matrixStack.translate(0, 0, difference);
+        AbstractGui.func_238467_a_(matrixStack, x, y, width, height, color);
+        matrixStack.translate(0, 0, -difference);
     }
 
     public void point(final MatrixStack matrixStack, int x, int y, final int color) {
         this.fill(matrixStack, x, y, x + 1, y + 1, color);
+    /**
+     * Returns a positive difference if the zLevel needs to be raised and a negative
+     * difference if it should be lowered.
+     */
+    public static float zDifference(MatrixStack matrixStack, float zLevel) {
+        FloatBuffer floatBuffer = FloatBuffer.allocate(16);
+        matrixStack.getLast().getMatrix().write(floatBuffer);
+        float currentZ = floatBuffer.get(10);
+        return zLevel - currentZ < 0 ? zLevel - MathHelper.abs(currentZ) : zLevel + MathHelper.abs(currentZ);
     }
 
 }

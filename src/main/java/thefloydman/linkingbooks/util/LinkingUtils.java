@@ -26,11 +26,11 @@ public class LinkingUtils {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static final Map<Item, Item> BLANK_TO_WRITTEN = new HashMap<Item, Item>() {
-        {
-            put(ModItems.BLACK_BLANK_LINKING_BOOK.get(), ModItems.BLACK_WRITTEN_LINKING_BOOK.get());
-        }
-    };
+    public static final Map<Item, Item> BLANK_TO_WRITTEN = new HashMap<Item, Item>();
+
+    static {
+        BLANK_TO_WRITTEN.put(ModItems.BLACK_BLANK_LINKING_BOOK.get(), ModItems.BLACK_WRITTEN_LINKING_BOOK.get());
+    }
 
     public static ItemStack createWrittenLinkingBook(PlayerEntity player, Item blankItem) {
         Item writtenItem = BLANK_TO_WRITTEN.get(blankItem);
