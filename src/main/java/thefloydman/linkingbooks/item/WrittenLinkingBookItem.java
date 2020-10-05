@@ -25,7 +25,7 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
         if (!world.isRemote() && !player.isSneaking()) {
             ILinkData linkData = heldStack.getCapability(LinkData.LINK_DATA).orElse(null);
             if (linkData != null) {
-                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, this.color, linkData);
+                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, true, this.color, linkData);
             }
         }
         return ActionResult.resultPass(heldStack);

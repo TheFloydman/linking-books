@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 public class LinkingBookContainer extends Container {
 
+    public boolean holdingBook = false;
     public DyeColor bookColor = DyeColor.GREEN;
     public String dimension = "minecraft:overworld";
     public BlockPos blockPos = new BlockPos(0, 0, 0);
@@ -28,6 +29,7 @@ public class LinkingBookContainer extends Container {
 
     public LinkingBookContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
         this(windowId, playerInventory);
+        this.holdingBook = extraData.readBoolean();
         this.bookColor = extraData.readEnumValue(DyeColor.class);
         this.dimension = extraData.readString();
         this.blockPos = extraData.readBlockPos();

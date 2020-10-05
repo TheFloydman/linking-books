@@ -127,21 +127,23 @@ public class LinkingUtils {
         return linked;
     }
 
-    public static void openLinkingBookGui(ServerPlayerEntity player, DyeColor color, ILinkData linkData) {
+    public static void openLinkingBookGui(ServerPlayerEntity player, boolean holdingBook, DyeColor color,
+            ILinkData linkData) {
         NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
             return new LinkingBookContainer(id, playerInventory);
-        }, new StringTextComponent("")), buffer -> {
-            buffer.writeEnumValue(color);
-            buffer.writeString(linkData.getDimension().toString());
-            buffer.writeBlockPos(linkData.getPosition());
-            buffer.writeFloat(linkData.getRotation());
+        }, new StringTextComponent("")), extraData -> {
+            extraData.writeBoolean(holdingBook);
+            extraData.writeEnumValue(color);
+            extraData.writeString(linkData.getDimension().toString());
+            extraData.writeBlockPos(linkData.getPosition());
+            extraData.writeFloat(linkData.getRotation());
             ListNBT list = new ListNBT();
             for (LinkEffect effect : linkData.getLinkEffects()) {
                 list.add(StringNBT.valueOf(effect.getRegistryName().toString()));
             }
             CompoundNBT compound = new CompoundNBT();
             compound.put("effects", list);
-            buffer.writeCompoundTag(compound);
+            extraData.writeCompoundTag(compound);
         });
     }
 

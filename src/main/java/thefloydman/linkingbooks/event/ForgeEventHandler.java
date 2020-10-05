@@ -16,6 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.block.LinkingLecternBlock;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
@@ -39,7 +40,7 @@ public class ForgeEventHandler {
             event.setCanceled(true);
             PlayerEntity player = event.getPlayer();
             World world = event.getEntity().getEntityWorld();
-            LinkingBookEntity entity = new LinkingBookEntity(world, stack);
+            LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
             Vector3d lookVec = player.getLookVec();
             entity.setPosition(player.getPosX() + lookVec.getX(), player.getPosY() + 1.75D + lookVec.getY(),
                     player.getPosZ() + lookVec.getZ());
@@ -65,8 +66,8 @@ public class ForgeEventHandler {
                     } else {
                         ILinkData linkData = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
                         if (linkData != null) {
-                            LinkingUtils.openLinkingBookGui(player, ((LinkingBookItem) bookStack.getItem()).getColor(),
-                                    linkData);
+                            LinkingUtils.openLinkingBookGui(player, false,
+                                    ((LinkingBookItem) bookStack.getItem()).getColor(), linkData);
                         }
                     }
                 }
@@ -113,19 +114,21 @@ public class ForgeEventHandler {
             return;
         }
         BlockPos pos = event.getPos();
-        TileEntity generic = world.getTileEntity(pos);
-        if (!(generic instanceof LinkingLecternTileEntity)) {
-            return;
-        }
-        LinkingLecternTileEntity tileEntity = (LinkingLecternTileEntity) generic;
-        ItemStack stack = player.getHeldItem(hand);
-        if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
-            tileEntity.setBook(stack);
-            player.container.detectAndSendChanges();
-        } else if (stack.isEmpty() && tileEntity.hasBook()) {
-            player.addItemStackToInventory(tileEntity.getBook());
-            player.container.detectAndSendChanges();
-            tileEntity.setBook(ItemStack.EMPTY);
+        if (!(world.getBlockState(pos).getBlock() instanceof LinkingLecternBlock)) {
+            TileEntity generic = world.getTileEntity(pos);
+            if (!(generic instanceof LinkingLecternTileEntity)) {
+                return;
+            }
+            LinkingLecternTileEntity tileEntity = (LinkingLecternTileEntity) generic;
+            ItemStack stack = player.getHeldItem(hand);
+            if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
+                tileEntity.setBook(stack);
+                player.container.detectAndSendChanges();
+            } else if (stack.isEmpty() && tileEntity.hasBook()) {
+                player.addItemStackToInventory(tileEntity.getBook());
+                player.container.detectAndSendChanges();
+                tileEntity.setBook(ItemStack.EMPTY);
+            }
         }
     }
 

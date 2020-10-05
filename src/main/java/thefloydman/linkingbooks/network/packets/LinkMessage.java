@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -12,21 +13,26 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class LinkMessage implements IMessage {
 
+    public boolean holdingBook = false;
     public String dimension = "minecraft:overworld";
     public BlockPos blockPos = new BlockPos(0, 0, 0);
     public float rotation = 0.0F;
     public List<String> linkEffects = new ArrayList<String>();
 
-    public LinkMessage(String dimension, BlockPos pos, float rotation, List<String> linkEffects) {
+    public LinkMessage(boolean holdingBook, String dimension, BlockPos pos, float rotation, List<String> linkEffects) {
+        this.holdingBook = holdingBook;
         this.dimension = dimension;
         this.blockPos = pos;
         this.rotation = rotation;
@@ -34,11 +40,12 @@ public class LinkMessage implements IMessage {
     }
 
     public LinkMessage() {
-        this("minecraft:overworld", new BlockPos(0, 0, 0), 0.0F, new ArrayList<String>());
+        this(false, "minecraft:overworld", new BlockPos(0, 0, 0), 0.0F, new ArrayList<String>());
     }
 
     @Override
     public PacketBuffer toData(PacketBuffer buffer) {
+        buffer.writeBoolean(this.holdingBook);
         buffer.writeString(this.dimension);
         buffer.writeBlockPos(this.blockPos);
         buffer.writeFloat(this.rotation);
@@ -54,6 +61,7 @@ public class LinkMessage implements IMessage {
 
     @Override
     public void fromData(PacketBuffer buffer) {
+        this.holdingBook = buffer.readBoolean();
         this.dimension = buffer.readString();
         this.blockPos = buffer.readBlockPos();
         this.rotation = buffer.readFloat();
@@ -81,6 +89,19 @@ public class LinkMessage implements IMessage {
                 }
             }
             linkData.setLinkEffects(effects);
+
+            ServerPlayerEntity player = ctx.getSender();
+            if (player != null && this.holdingBook) {
+                World world = player.getEntityWorld();
+                LinkingBookEntity entity = new LinkingBookEntity(world, player.getHeldItemMainhand().copy());
+                Vector3d lookVec = player.getLookVec();
+                entity.setPosition(player.getPosX() + (lookVec.getX() / 4.0D), player.getPosY() + 1.0D,
+                        player.getPosZ() + (lookVec.getZ() / 4.0D));
+                entity.rotationYaw = player.rotationYawHead;
+                world.addEntity(entity);
+                player.getHeldItemMainhand().shrink(1);
+            }
+
             LinkingUtils.linkEntity(ctx.getSender(), linkData);
         });
     }

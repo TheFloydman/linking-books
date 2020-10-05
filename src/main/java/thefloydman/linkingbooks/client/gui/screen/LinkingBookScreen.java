@@ -20,8 +20,8 @@ public class LinkingBookScreen extends ContainerScreen<LinkingBookContainer> {
     protected void func_231160_c_() {
         NestedWidget linkingBook = this.func_230480_a_(new LinkingBookWidget((this.field_230708_k_ - 256) / 2,
                 (this.field_230709_l_ - 192) / 2, 0.0F, 256, 192, new StringTextComponent("Linking Book"),
-                this.getContainer().bookColor, this.getContainer().dimension, this.getContainer().blockPos,
-                this.getContainer().rotation, this.getContainer().linkEffects));
+                this.getContainer().holdingBook, this.getContainer().bookColor, this.getContainer().dimension,
+                this.getContainer().blockPos, this.getContainer().rotation, this.getContainer().linkEffects));
         linkingBook.addListener(this);
     }
 

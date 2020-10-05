@@ -16,14 +16,16 @@ import thefloydman.linkingbooks.network.packets.LinkMessage;
 @OnlyIn(Dist.CLIENT)
 public class LinkingPanelWidget extends NestedWidget {
 
+    public boolean holdingBook = false;
     public String dimension = "minecraft:overworld";
     public BlockPos blockPos = new BlockPos(0, 0, 0);
     public float rotation = 0.0F;
     public List<String> linkEffects = new ArrayList<String>();
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            String dimension, BlockPos pos, float rotation, List<String> linkEffects) {
+            boolean holdingBook, String dimension, BlockPos pos, float rotation, List<String> linkEffects) {
         super(x, y, width, height, narration);
+        this.holdingBook = holdingBook;
         this.dimension = dimension;
         this.blockPos = pos;
         this.rotation = rotation;
@@ -43,7 +45,8 @@ public class LinkingPanelWidget extends NestedWidget {
 
     @Override
     public void onMouseClickChildren(double mouseX, double mouseY) {
-        ModNetworkHandler.sendToServer(new LinkMessage(this.dimension, this.blockPos, this.rotation, this.linkEffects));
+        ModNetworkHandler.sendToServer(
+                new LinkMessage(this.holdingBook, this.dimension, this.blockPos, this.rotation, this.linkEffects));
         super.onMouseClickChildren(mouseX, mouseY);
     }
 

@@ -48,7 +48,7 @@ public class LinkingLecternBlock extends LecternBlock {
                 if (item instanceof WrittenLinkingBookItem) {
                     ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
                     if (linkData != null) {
-                        LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player,
+                        LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, false,
                                 ((WrittenLinkingBookItem) item).getColor(), linkData);
                     }
                 }
