@@ -1,23 +1,33 @@
 package thefloydman.linkingbooks.client.gui.widget;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import thefloydman.linkingbooks.network.ModNetworkHandler;
+import thefloydman.linkingbooks.network.packets.LinkMessage;
 
 @OnlyIn(Dist.CLIENT)
 public class LinkingPanelWidget extends NestedWidget {
 
-    private ItemStack book = ItemStack.EMPTY;
+    public String dimension = "minecraft:overworld";
+    public BlockPos blockPos = new BlockPos(0, 0, 0);
+    public float rotation = 0.0F;
+    public List<String> linkEffects = new ArrayList<String>();
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            ItemStack book) {
+            String dimension, BlockPos pos, float rotation, List<String> linkEffects) {
         super(x, y, width, height, narration);
-        this.book = book;
+        this.dimension = dimension;
+        this.blockPos = pos;
+        this.rotation = rotation;
+        this.linkEffects = linkEffects;
     }
 
     @Override
@@ -29,6 +39,12 @@ public class LinkingPanelWidget extends NestedWidget {
                 this.field_230691_m_ + this.field_230689_k_, Color.BLACK.getRGB());
 
         this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public void onMouseClickChildren(double mouseX, double mouseY) {
+        ModNetworkHandler.sendToServer(new LinkMessage(this.dimension, this.blockPos, this.rotation, this.linkEffects));
+        super.onMouseClickChildren(mouseX, mouseY);
     }
 
 }

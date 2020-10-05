@@ -2,18 +2,16 @@ package thefloydman.linkingbooks.item;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.network.NetworkHooks;
+import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
+import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
 
@@ -25,10 +23,10 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack heldStack = player.getHeldItem(hand);
         if (!world.isRemote() && !player.isSneaking()) {
-            NetworkHooks.openGui((ServerPlayerEntity) player,
-                    new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
-                        return new LinkingBookContainer(id, playerInventory);
-                    }, new StringTextComponent("")), buf -> buf.writeItemStack(heldStack));
+            ILinkData linkData = heldStack.getCapability(LinkData.LINK_DATA).orElse(null);
+            if (linkData != null) {
+                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, this.color, linkData);
+            }
         }
         return ActionResult.resultPass(heldStack);
     }

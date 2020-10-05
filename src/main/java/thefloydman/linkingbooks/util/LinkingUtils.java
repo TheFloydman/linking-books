@@ -11,8 +11,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -92,6 +96,8 @@ public class LinkingUtils {
 
             if (entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                player.closeContainer();
+                player.closeScreen();
                 player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
                 for (LinkEffect effect : linkInfo.getLinkEffects()) {
                     effect.onLinkEnd(player);
@@ -121,10 +127,22 @@ public class LinkingUtils {
         return linked;
     }
 
-    public static void openLinkingBookGui(ServerPlayerEntity player, ItemStack book) {
+    public static void openLinkingBookGui(ServerPlayerEntity player, DyeColor color, ILinkData linkData) {
         NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
             return new LinkingBookContainer(id, playerInventory);
-        }, new StringTextComponent("")), buf -> buf.writeItemStack(book));
+        }, new StringTextComponent("")), buffer -> {
+            buffer.writeEnumValue(color);
+            buffer.writeString(linkData.getDimension().toString());
+            buffer.writeBlockPos(linkData.getPosition());
+            buffer.writeFloat(linkData.getRotation());
+            ListNBT list = new ListNBT();
+            for (LinkEffect effect : linkData.getLinkEffects()) {
+                list.add(StringNBT.valueOf(effect.getRegistryName().toString()));
+            }
+            CompoundNBT compound = new CompoundNBT();
+            compound.put("effects", list);
+            buffer.writeCompoundTag(compound);
+        });
     }
 
 }

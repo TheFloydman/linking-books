@@ -19,6 +19,7 @@ import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
 import thefloydman.linkingbooks.util.LinkingUtils;
@@ -62,9 +63,10 @@ public class ForgeEventHandler {
                         player.container.detectAndSendChanges();
                         target.remove();
                     } else {
-                        ILinkData linkCapability = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
-                        if (linkCapability != null) {
-                            LinkingUtils.openLinkingBookGui(player, bookStack);
+                        ILinkData linkData = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
+                        if (linkData != null) {
+                            LinkingUtils.openLinkingBookGui(player, ((LinkingBookItem) bookStack.getItem()).getColor(),
+                                    linkData);
                         }
                     }
                 }

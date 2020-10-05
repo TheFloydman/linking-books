@@ -1,5 +1,7 @@
 package thefloydman.linkingbooks.client.gui.widget;
 
+import java.util.List;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -8,14 +10,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.util.Reference;
 
 @OnlyIn(Dist.CLIENT)
@@ -26,14 +27,15 @@ public class LinkingBookWidget extends NestedWidget {
     private static final ResourceLocation PAPER_TEXTURE = Reference
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
 
-    private ItemStack book = ItemStack.EMPTY;
+    public DyeColor color = DyeColor.GREEN;
 
     public LinkingBookWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            ItemStack book) {
+            DyeColor color, String dimension, BlockPos pos, float rotation, List<String> linkEffects) {
         super(x, y, width, height, narration);
-        this.book = book;
-        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget(this.field_230690_l_ + 155,
-                this.field_230691_m_ + 41, 0.0F, 64, 42, new StringTextComponent("Linking Panel"), book));
+        this.color = color;
+        NestedWidget linkingPanel = this
+                .addChild(new LinkingPanelWidget(this.field_230690_l_ + 155, this.field_230691_m_ + 41, 0.0F, 64, 42,
+                        new StringTextComponent("Linking Panel"), dimension, pos, rotation, linkEffects));
         for (IGuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }
@@ -50,10 +52,7 @@ public class LinkingBookWidget extends NestedWidget {
         RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                 DestFactor.ZERO);
         Minecraft.getInstance().getTextureManager().bindTexture(COVER_TEXTURE);
-        float[] color = DyeColor.GREEN.getColorComponentValues();
-        if (this.book.getItem() instanceof LinkingBookItem) {
-            color = ((LinkingBookItem) book.getItem()).getColor().getColorComponentValues();
-        }
+        float[] color = this.color.getColorComponentValues();
         RenderSystem.color4f(MathHelper.clamp(color[0], 0.1F, 1.0F), MathHelper.clamp(color[1], 0.1F, 1.0F),
                 MathHelper.clamp(color[2], 0.1F, 1.0F), 1.0F);
         this.func_238474_b_(matrixStack, this.field_230690_l_, this.field_230691_m_, 0, 0, this.field_230688_j_,

@@ -13,6 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
 import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
@@ -44,7 +46,11 @@ public class LinkingLecternBlock extends LecternBlock {
                 ItemStack stack = tileEntity.getBook();
                 Item item = stack.getItem();
                 if (item instanceof WrittenLinkingBookItem) {
-                    LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, stack);
+                    ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
+                    if (linkData != null) {
+                        LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player,
+                                ((WrittenLinkingBookItem) item).getColor(), linkData);
+                    }
                 }
             }
         }

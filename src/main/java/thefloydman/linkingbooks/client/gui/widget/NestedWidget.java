@@ -39,8 +39,19 @@ public abstract class NestedWidget extends Widget {
     }
 
     public void renderChildren(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        for (int i = 0; i < this.children.size(); ++i) {
-            this.children.get(i).func_230431_b_(matrixStack, mouseX, mouseY, partialTicks);
+        for (NestedWidget widget : this.children) {
+            widget.func_230431_b_(matrixStack, mouseX, mouseY, partialTicks);
+        }
+    }
+
+    @Override
+    public void func_230982_a_(double mouseX, double mouseY) {
+        this.onMouseClickChildren(mouseX, mouseY);
+    }
+
+    public void onMouseClickChildren(double mouseX, double mouseY) {
+        for (NestedWidget widget : this.children) {
+            widget.func_230982_a_(mouseX, mouseY);
         }
     }
 
