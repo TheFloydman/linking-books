@@ -1,15 +1,14 @@
 package thefloydman.linkingbooks.client.gui.widget;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.LinkMessage;
 
@@ -17,19 +16,13 @@ import thefloydman.linkingbooks.network.packets.LinkMessage;
 public class LinkingPanelWidget extends NestedWidget {
 
     public boolean holdingBook = false;
-    public String dimension = "minecraft:overworld";
-    public BlockPos blockPos = new BlockPos(0, 0, 0);
-    public float rotation = 0.0F;
-    public List<String> linkEffects = new ArrayList<String>();
+    public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            boolean holdingBook, String dimension, BlockPos pos, float rotation, List<String> linkEffects) {
+            boolean holdingBook, ILinkData linkData) {
         super(x, y, width, height, narration);
         this.holdingBook = holdingBook;
-        this.dimension = dimension;
-        this.blockPos = pos;
-        this.rotation = rotation;
-        this.linkEffects = linkEffects;
+        this.linkData = linkData;
     }
 
     @Override
@@ -45,8 +38,7 @@ public class LinkingPanelWidget extends NestedWidget {
 
     @Override
     public void onMouseClickChildren(double mouseX, double mouseY) {
-        ModNetworkHandler.sendToServer(
-                new LinkMessage(this.holdingBook, this.dimension, this.blockPos, this.rotation, this.linkEffects));
+        ModNetworkHandler.sendToServer(new LinkMessage(this.holdingBook, this.linkData));
         super.onMouseClickChildren(mouseX, mouseY);
     }
 

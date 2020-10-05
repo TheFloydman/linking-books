@@ -114,7 +114,7 @@ public class ForgeEventHandler {
             return;
         }
         BlockPos pos = event.getPos();
-        if (!(world.getBlockState(pos).getBlock() instanceof LinkingLecternBlock)) {
+        if (world.getBlockState(pos).getBlock() instanceof LinkingLecternBlock) {
             TileEntity generic = world.getTileEntity(pos);
             if (!(generic instanceof LinkingLecternTileEntity)) {
                 return;

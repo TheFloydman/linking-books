@@ -10,6 +10,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -86,6 +87,18 @@ public class LinkData {
         @Override
         public boolean removeLinkEffect(LinkEffect effect) {
             return this.getLinkEffects().remove(effect);
+        }
+
+        @Override
+        public PacketBuffer write(PacketBuffer buffer) {
+            CompoundNBT compound = (CompoundNBT) LINK_DATA.getStorage().writeNBT(LINK_DATA, this, null);
+            buffer.writeCompoundTag(compound);
+            return buffer;
+        }
+
+        @Override
+        public void read(PacketBuffer buffer) {
+            LINK_DATA.getStorage().readNBT(LINK_DATA, this, null, buffer.readCompoundTag());
         }
 
     }

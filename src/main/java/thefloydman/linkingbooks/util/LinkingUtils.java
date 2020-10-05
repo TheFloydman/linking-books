@@ -14,9 +14,6 @@ import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -134,16 +131,7 @@ public class LinkingUtils {
         }, new StringTextComponent("")), extraData -> {
             extraData.writeBoolean(holdingBook);
             extraData.writeEnumValue(color);
-            extraData.writeString(linkData.getDimension().toString());
-            extraData.writeBlockPos(linkData.getPosition());
-            extraData.writeFloat(linkData.getRotation());
-            ListNBT list = new ListNBT();
-            for (LinkEffect effect : linkData.getLinkEffects()) {
-                list.add(StringNBT.valueOf(effect.getRegistryName().toString()));
-            }
-            CompoundNBT compound = new CompoundNBT();
-            compound.put("effects", list);
-            extraData.writeCompoundTag(compound);
+            linkData.write(extraData);
         });
     }
 

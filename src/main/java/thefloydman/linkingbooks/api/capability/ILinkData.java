@@ -2,6 +2,7 @@ package thefloydman.linkingbooks.api.capability;
 
 import java.util.Set;
 
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
@@ -27,5 +28,9 @@ public interface ILinkData {
     public boolean addLinkEffect(LinkEffect effect);
 
     public boolean removeLinkEffect(LinkEffect effect);
+
+    public PacketBuffer write(PacketBuffer buffer);
+
+    public void read(PacketBuffer buffer);
 
 }
