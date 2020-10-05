@@ -15,4 +15,7 @@ public class LinkEffects {
     public static final RegistryObject<PotionLinkEffect> POISON_EFFECT = LINK_EFFECTS
             .register(LinkEffectNames.POISON_EFFECT, () -> new PotionLinkEffect(Effects.POISON, 20 * 10));
 
+    public static final RegistryObject<IntraAgeLinkingLinkEffect> INTRAAGE_LINKING = LINK_EFFECTS
+            .register(LinkEffectNames.INTRAAGE_LINKING, () -> new IntraAgeLinkingLinkEffect());
+
 }

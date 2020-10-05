@@ -33,7 +33,7 @@ public class LinkCommand {
                             linkInfo.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
                             linkInfo.setRotation(0.0F);
                             return LinkingUtils.linkEntities(
-                                    new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkInfo);
+                                    new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkInfo, false);
                         })))
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
@@ -45,7 +45,8 @@ public class LinkCommand {
                                     linkInfo.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
                                     linkInfo.setRotation(0.0F);
                                     return LinkingUtils.linkEntities(
-                                            new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkInfo);
+                                            new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkInfo,
+                                            false);
                                 }))))
 
         );

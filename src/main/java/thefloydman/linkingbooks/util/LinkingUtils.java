@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -24,8 +25,10 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.linking.LinkEffects;
 
 public class LinkingUtils {
 
@@ -57,7 +60,7 @@ public class LinkingUtils {
      * Teleport an entity to a dimension and position. Should only be called
      * server-side.
      */
-    public static boolean linkEntity(Entity entity, ILinkData linkInfo) {
+    public static boolean linkEntity(Entity entity, ILinkData linkInfo, boolean holdingBook) {
 
         World world = entity.getEntityWorld();
 
@@ -70,6 +73,15 @@ public class LinkingUtils {
             LOGGER.info("ILinkInfo::getDimension returned null. Link failed.");
         } else if (linkInfo.getPosition() == null) {
             LOGGER.info("ILinkInfo::getPosition returned null. Link failed.");
+        } else if (!linkInfo.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())
+                && world.func_234923_W_().func_240901_a_().equals(linkInfo.getDimension())) {
+            if (entity instanceof PlayerEntity) {
+                ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                player.closeScreen();
+                player.closeContainer();
+                /* TODO: Localize message. */
+                player.sendStatusMessage(new StringTextComponent("Cannot link within the same Age."), true);
+            }
         } else {
 
             ServerWorld serverWorld = world.getServer()
@@ -91,8 +103,17 @@ public class LinkingUtils {
              * world.
              */
 
+            ServerPlayerEntity player = (ServerPlayerEntity) entity;
             if (entity instanceof ServerPlayerEntity) {
-                ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                if (holdingBook) {
+                    LinkingBookEntity book = new LinkingBookEntity(world, player.getHeldItemMainhand().copy());
+                    Vector3d lookVec = player.getLookVec();
+                    book.setPosition(player.getPosX() + (lookVec.getX() / 4.0D), player.getPosY() + 1.0D,
+                            player.getPosZ() + (lookVec.getZ() / 4.0D));
+                    book.rotationYaw = player.rotationYawHead;
+                    world.addEntity(book);
+                    player.getHeldItemMainhand().shrink(1);
+                }
                 player.closeContainer();
                 player.closeScreen();
                 player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
@@ -116,10 +137,10 @@ public class LinkingUtils {
      * @param linkInfo
      * @return The number of entities that were successfully teleported.
      */
-    public static int linkEntities(List<Entity> entities, ILinkData linkInfo) {
+    public static int linkEntities(List<Entity> entities, ILinkData linkInfo, boolean holdingBook) {
         int linked = 0;
         for (Entity entity : entities) {
-            linked += linkEntity(entity, linkInfo) == true ? 1 : 0;
+            linked += linkEntity(entity, linkInfo, holdingBook) == true ? 1 : 0;
         }
         return linked;
     }

@@ -51,6 +51,7 @@ public class Reference {
 
     public static class LinkEffectNames {
         public static final String POISON_EFFECT = "poison_effect";
+        public static final String INTRAAGE_LINKING = "intraage_linking";
     }
 
     public static class Resources {
