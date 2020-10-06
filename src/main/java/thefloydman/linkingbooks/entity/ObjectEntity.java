@@ -15,6 +15,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.network.NetworkHooks;
 import thefloydman.linkingbooks.LinkingBooks;
@@ -169,6 +171,18 @@ public class ObjectEntity extends Entity {
     @Override
     public boolean canBePushed() {
         return this.isAlive();
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public boolean isInRangeToRenderDist(double distance) {
+        double d0 = this.getBoundingBox().getAverageEdgeLength();
+        if (Double.isNaN(d0)) {
+            d0 = 1.0D;
+        }
+
+        d0 = d0 * 256.0D * getRenderDistanceWeight();
+        return distance < d0 * d0;
     }
 
 }

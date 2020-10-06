@@ -38,6 +38,7 @@ public class LinkingUtils {
 
     static {
         BLANK_TO_WRITTEN.put(ModItems.BLACK_BLANK_LINKING_BOOK.get(), ModItems.BLACK_WRITTEN_LINKING_BOOK.get());
+        BLANK_TO_WRITTEN.put(ModItems.GREEN_BLANK_LINKING_BOOK.get(), ModItems.GREEN_WRITTEN_LINKING_BOOK.get());
     }
 
     public static ItemStack createWrittenLinkingBook(PlayerEntity player, Item blankItem) {

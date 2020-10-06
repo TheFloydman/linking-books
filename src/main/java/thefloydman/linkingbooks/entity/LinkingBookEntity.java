@@ -9,10 +9,12 @@ public class LinkingBookEntity extends ObjectEntity {
 
     protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, World world) {
         super(type, world, WrittenLinkingBookItem.class, 10.0F);
+        setRenderDistanceWeight(2.0D);
     }
 
     protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, World world, ItemStack item) {
         super(type, world, WrittenLinkingBookItem.class, 10.0F, item);
+        setRenderDistanceWeight(2.0D);
     }
 
     public LinkingBookEntity(World world) {

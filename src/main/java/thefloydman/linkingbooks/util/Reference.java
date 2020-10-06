@@ -26,6 +26,8 @@ public class Reference {
         public static final String INK_BUCKET = "ink_bucket";
         public static final String BLACK_BLANK_LINKNG_BOOK = "black_blank_linking_book";
         public static final String BLACK_WRITTEN_LINKNG_BOOK = "black_written_linking_book";
+        public static final String GREEN_BLANK_LINKNG_BOOK = "green_blank_linking_book";
+        public static final String GREEN_WRITTEN_LINKNG_BOOK = "green_written_linking_book";
     }
 
     public static class EntityNames {

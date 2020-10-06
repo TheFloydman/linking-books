@@ -23,6 +23,14 @@ public class ModItems {
             Reference.ItemNames.BLACK_WRITTEN_LINKNG_BOOK,
             () -> new WrittenLinkingBookItem(DyeColor.BLACK, new Item.Properties().maxStackSize(1)));
 
+    public static final RegistryObject<Item> GREEN_BLANK_LINKING_BOOK = ITEMS
+            .register(Reference.ItemNames.GREEN_BLANK_LINKNG_BOOK, () -> new BlankLinkingBookItem(DyeColor.GREEN,
+                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS).maxStackSize(16)));
+
+    public static final RegistryObject<Item> GREEN_WRITTEN_LINKING_BOOK = ITEMS.register(
+            Reference.ItemNames.GREEN_WRITTEN_LINKNG_BOOK,
+            () -> new WrittenLinkingBookItem(DyeColor.GREEN, new Item.Properties().maxStackSize(1)));
+
     public static final RegistryObject<Item> BOOK_DISPLAY = ITEMS.register(Reference.BlockNames.LINKING_LECTERN,
             () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(),
                     new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
