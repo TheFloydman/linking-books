@@ -74,8 +74,7 @@ public class LinkingBooks {
         ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
 
         // Register containers.
-        ScreenManager.registerFactory(ModContainerTypes.LINKING_BOOK.get(),
-                (container, inventory, narration) -> new LinkingBookScreen(container, inventory, narration));
+        ScreenManager.registerFactory(ModContainerTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
 
     }
 
