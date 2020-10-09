@@ -18,6 +18,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import thefloydman.linkingbooks.block.ModBlocks;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
@@ -26,6 +27,7 @@ import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.inventory.container.ModContainerTypes;
 import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.item.crafting.ModRecipeSerializers;
 import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
@@ -47,6 +49,7 @@ public class LinkingBooks {
         ModTileEntityTypes.TILE_ENTITIES.register(eventBus);
         ModContainerTypes.CONTAINERS.register(eventBus);
         LinkEffects.LINK_EFFECTS.register(eventBus);
+        ModRecipeSerializers.RECIPES.register(eventBus);
 
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
@@ -64,6 +67,7 @@ public class LinkingBooks {
     private void commonSetup(final FMLCommonSetupEvent event) {
         ModNetworkHandler.registerAllMessages();
         LinkData.register();
+        ColorCapability.register();
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

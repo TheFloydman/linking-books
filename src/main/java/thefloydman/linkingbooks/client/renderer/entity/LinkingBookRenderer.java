@@ -1,5 +1,7 @@
 package thefloydman.linkingbooks.client.renderer.entity;
 
+import java.awt.Color;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -7,11 +9,12 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
@@ -23,7 +26,7 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
 
     private LinkingBookCoverModel coverModel = new LinkingBookCoverModel();
     private LinkingBookPagesModel pagesModel = new LinkingBookPagesModel();
-    private float[] color = { 1.0F, 1.0F, 1.0F };
+    private float[] color = { 0.0F, 1.0F, 0.0F };
 
     public LinkingBookRenderer(EntityRendererManager renderManager) {
         super(renderManager);
@@ -39,8 +42,10 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
         if (bookStack != null && !bookStack.isEmpty()) {
             Item item = bookStack.getItem();
             if (item != null && item instanceof WrittenLinkingBookItem) {
-                DyeColor dyeColor = ((WrittenLinkingBookItem) item).getColor();
-                this.color = dyeColor.getColorComponentValues();
+                IColorCapability color = bookStack.getCapability(ColorCapability.COLOR).orElse(null);
+                if (color != null) {
+                    this.color = new Color(color.getColor()).getRGBColorComponents(this.color);
+                }
             }
         }
 

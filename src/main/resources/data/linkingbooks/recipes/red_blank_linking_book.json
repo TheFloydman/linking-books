@@ -1,0 +1,14 @@
+{
+    "type": "linkingbooks:blank_linking_book",
+    "ingredients": [
+        {
+            "item": "minecraft:nether_star"
+        }
+    ],
+    "color":
+    {
+        "red": 1.0,
+        "green": 0.0,
+        "blue": 0.0
+    }
+}

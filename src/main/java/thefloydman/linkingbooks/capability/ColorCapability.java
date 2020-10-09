@@ -1,0 +1,82 @@
+package thefloydman.linkingbooks.capability;
+
+import java.awt.Color;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.IntNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
+
+public class ColorCapability {
+
+    @CapabilityInject(IColorCapability.class)
+    public static final Capability<IColorCapability> COLOR = null;
+
+    public static void register() {
+        CapabilityManager.INSTANCE.register(IColorCapability.class, new Storage(), Default::new);
+    }
+
+    public static class Default implements IColorCapability {
+
+        private int color = Color.GREEN.getRGB();
+
+        @Override
+        public void setColor(int color) {
+            this.color = color;
+        }
+
+        @Override
+        public int getColor() {
+            return this.color;
+        }
+
+    }
+
+    public static class Storage implements Capability.IStorage<IColorCapability> {
+        @Nullable
+        @Override
+        public INBT writeNBT(Capability<IColorCapability> capability, IColorCapability instance, Direction side) {
+            return IntNBT.valueOf(instance.getColor());
+        }
+
+        @Override
+        public void readNBT(Capability<IColorCapability> capability, IColorCapability instance, Direction side,
+                INBT nbt) {
+            if (nbt instanceof IntNBT) {
+                instance.setColor(((IntNBT) nbt).getInt());
+            }
+        }
+    }
+
+    public static class Provider implements ICapabilitySerializable<INBT> {
+
+        private LazyOptional<IColorCapability> instance = LazyOptional.of(() -> COLOR.getDefaultInstance());
+
+        @Override
+        public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+            if (cap.equals(COLOR) && COLOR != null) {
+                return instance.cast();
+            }
+            return LazyOptional.empty();
+        }
+
+        @Override
+        public INBT serializeNBT() {
+            return COLOR.getStorage().writeNBT(COLOR, instance.orElse(COLOR.getDefaultInstance()), null);
+        }
+
+        @Override
+        public void deserializeNBT(INBT nbt) {
+            COLOR.getStorage().readNBT(COLOR, instance.orElse(COLOR.getDefaultInstance()), null, nbt);
+        }
+
+    }
+
+}

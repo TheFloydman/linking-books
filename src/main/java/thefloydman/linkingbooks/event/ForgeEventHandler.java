@@ -15,8 +15,10 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.block.LinkingLecternBlock;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
@@ -123,6 +125,10 @@ public class ForgeEventHandler {
             ItemStack stack = player.getHeldItem(hand);
             if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
                 tileEntity.setBook(stack);
+                IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
+                if (color != null) {
+                    System.out.println(color.getColor());
+                }
                 player.container.detectAndSendChanges();
             } else if (stack.isEmpty() && tileEntity.hasBook()) {
                 player.addItemStackToInventory(tileEntity.getBook());

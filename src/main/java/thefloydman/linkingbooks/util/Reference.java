@@ -24,10 +24,8 @@ public class Reference {
 
     public static class ItemNames {
         public static final String INK_BUCKET = "ink_bucket";
-        public static final String BLACK_BLANK_LINKNG_BOOK = "black_blank_linking_book";
-        public static final String BLACK_WRITTEN_LINKNG_BOOK = "black_written_linking_book";
-        public static final String GREEN_BLANK_LINKNG_BOOK = "green_blank_linking_book";
-        public static final String GREEN_WRITTEN_LINKNG_BOOK = "green_written_linking_book";
+        public static final String BLANK_LINKNG_BOOK = "blank_linking_book";
+        public static final String WRITTEN_LINKNG_BOOK = "written_linking_book";
     }
 
     public static class EntityNames {
@@ -49,6 +47,10 @@ public class Reference {
 
     public static class CapabilityNames {
         public static final ResourceLocation LINK_DATA = getAsResourceLocation("link_data");
+    }
+
+    public static class RecipeSerializerNames {
+        public static final String BLANK_LINKING_BOOK = "blank_linking_book";
     }
 
     public static class LinkEffectNames {

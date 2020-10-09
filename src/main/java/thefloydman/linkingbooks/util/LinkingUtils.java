@@ -1,8 +1,6 @@
 package thefloydman.linkingbooks.util;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +10,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +19,10 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
@@ -34,27 +33,26 @@ public class LinkingUtils {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static final Map<Item, Item> BLANK_TO_WRITTEN = new HashMap<Item, Item>();
+    public static ItemStack createWrittenLinkingBook(PlayerEntity player, ItemStack originItem) {
 
-    static {
-        BLANK_TO_WRITTEN.put(ModItems.BLACK_BLANK_LINKING_BOOK.get(), ModItems.BLACK_WRITTEN_LINKING_BOOK.get());
-        BLANK_TO_WRITTEN.put(ModItems.GREEN_BLANK_LINKING_BOOK.get(), ModItems.GREEN_WRITTEN_LINKING_BOOK.get());
-    }
+        ItemStack resultItem = ModItems.WRITTEN_LINKING_BOOK.get().getDefaultInstance();
 
-    public static ItemStack createWrittenLinkingBook(PlayerEntity player, Item blankItem) {
-        Item writtenItem = BLANK_TO_WRITTEN.get(blankItem);
-        if (writtenItem == null) {
+        ILinkData linkData = resultItem.getCapability(LinkData.LINK_DATA).orElse(null);
+        if (linkData == null) {
             return ItemStack.EMPTY;
         }
-        ItemStack stack = new ItemStack(writtenItem);
-        ILinkData capability = stack.getCapability(LinkData.LINK_DATA).orElse(null);
-        if (capability == null) {
+        linkData.setDimension(player.getEntityWorld().func_234923_W_().func_240901_a_());
+        linkData.setPosition(player.func_233580_cy_());
+        linkData.setRotation(player.rotationYaw);
+
+        IColorCapability originColor = originItem.getCapability(ColorCapability.COLOR).orElse(null);
+        IColorCapability resultColor = resultItem.getCapability(ColorCapability.COLOR).orElse(null);
+        if (originColor == null || resultColor == null) {
             return ItemStack.EMPTY;
         }
-        capability.setDimension(player.getEntityWorld().func_234923_W_().func_240901_a_());
-        capability.setPosition(player.func_233580_cy_());
-        capability.setRotation(player.rotationYaw);
-        return stack;
+        resultColor.setColor(originColor.getColor());
+
+        return resultItem;
     }
 
     /**

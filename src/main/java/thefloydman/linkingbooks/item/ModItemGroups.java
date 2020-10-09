@@ -11,7 +11,7 @@ public class ModItemGroups {
     public static final ItemGroup LINKING_BOOKS = new ItemGroup(Reference.MOD_ID) {
         @OnlyIn(Dist.CLIENT)
         public ItemStack createIcon() {
-            return new ItemStack(ModItems.BLACK_WRITTEN_LINKING_BOOK.get());
+            return new ItemStack(ModItems.WRITTEN_LINKING_BOOK.get());
         }
     };
 

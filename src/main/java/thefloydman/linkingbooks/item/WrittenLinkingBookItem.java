@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.capability.LinkingBookCapabilityProvider;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
@@ -33,7 +34,7 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
-        return new LinkData.Provider();
+        return new LinkingBookCapabilityProvider();
     }
 
 }

@@ -1,5 +1,7 @@
 package thefloydman.linkingbooks.client.renderer.tileentity;
 
+import java.awt.Color;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -7,11 +9,12 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Vector3f;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.block.LinkingLecternBlock;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
@@ -31,16 +34,18 @@ public class LinkingLecternRenderer extends TileEntityRenderer<LinkingLecternTil
     }
 
     @Override
-    public void render(LinkingLecternTileEntity tileEntity, float arg1, MatrixStack matrixStack, IRenderTypeBuffer buffer,
-            int arg4, int arg5) {
+    public void render(LinkingLecternTileEntity tileEntity, float arg1, MatrixStack matrixStack,
+            IRenderTypeBuffer buffer, int arg4, int arg5) {
         if (tileEntity.hasBook()) {
 
             ItemStack bookStack = tileEntity.getBook();
             if (bookStack != null && !bookStack.isEmpty()) {
                 Item item = bookStack.getItem();
                 if (item != null && item instanceof WrittenLinkingBookItem) {
-                    DyeColor dyeColor = ((WrittenLinkingBookItem) item).getColor();
-                    this.color = dyeColor.getColorComponentValues();
+                    IColorCapability color = bookStack.getCapability(ColorCapability.COLOR).orElse(null);
+                    if (color != null) {
+                        this.color = new Color(color.getColor()).getRGBColorComponents(this.color);
+                    }
                 }
             }
 
@@ -74,7 +79,10 @@ public class LinkingLecternRenderer extends TileEntityRenderer<LinkingLecternTil
                     translate[2] = 0.5D;
                     break;
                 default:
-                    rotation = 4.0F;
+                    rotation = 1.0F;
+                    translate[0] = 0.5D;
+                    translate[1] = 1.0D;
+                    translate[2] = 0.4D;
             }
             matrixStack.translate(translate[0], translate[1], translate[2]);
             matrixStack.rotate(Vector3f.YP.rotation((float) Math.PI * rotation / 2.0F));

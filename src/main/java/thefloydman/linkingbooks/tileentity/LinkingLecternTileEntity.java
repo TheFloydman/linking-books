@@ -32,7 +32,7 @@ public class LinkingLecternTileEntity extends TileEntity {
     }
 
     public boolean hasBook() {
-        return this.book.getItem() instanceof WrittenLinkingBookItem;
+        return this.getBook().getItem() instanceof WrittenLinkingBookItem;
     }
 
     @Override
