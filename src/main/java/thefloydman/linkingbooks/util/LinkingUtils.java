@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -144,13 +143,13 @@ public class LinkingUtils {
         return linked;
     }
 
-    public static void openLinkingBookGui(ServerPlayerEntity player, boolean holdingBook, DyeColor color,
+    public static void openLinkingBookGui(ServerPlayerEntity player, boolean holdingBook, int color,
             ILinkData linkData) {
         NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
             return new LinkingBookContainer(id, playerInventory);
         }, new StringTextComponent("")), extraData -> {
             extraData.writeBoolean(holdingBook);
-            extraData.writeEnumValue(color);
+            extraData.writeInt(color);
             linkData.write(extraData);
         });
     }

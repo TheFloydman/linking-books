@@ -1,5 +1,7 @@
 package thefloydman.linkingbooks.client.gui.widget;
 
+import java.awt.Color;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -25,10 +27,10 @@ public class LinkingBookWidget extends NestedWidget {
     private static final ResourceLocation PAPER_TEXTURE = Reference
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
 
-    public DyeColor color = DyeColor.GREEN;
+    public int color = DyeColor.GREEN.getColorValue();
 
     public LinkingBookWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            boolean holdingBook, DyeColor color, ILinkData linkData) {
+            boolean holdingBook, int color, ILinkData linkData) {
         super(x, y, width, height, narration);
         this.color = color;
         NestedWidget linkingPanel = this
@@ -50,7 +52,7 @@ public class LinkingBookWidget extends NestedWidget {
         RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                 DestFactor.ZERO);
         Minecraft.getInstance().getTextureManager().bindTexture(COVER_TEXTURE);
-        float[] color = this.color.getColorComponentValues();
+        float[] color = new Color(this.color).getRGBColorComponents(null);
         RenderSystem.color4f(MathHelper.clamp(color[0], 0.1F, 1.0F), MathHelper.clamp(color[1], 0.1F, 1.0F),
                 MathHelper.clamp(color[2], 0.1F, 1.0F), 1.0F);
         this.func_238474_b_(matrixStack, this.field_230690_l_, this.field_230691_m_, 0, 0, this.field_230688_j_,

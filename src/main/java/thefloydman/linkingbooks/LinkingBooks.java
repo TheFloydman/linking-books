@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
@@ -26,6 +28,7 @@ import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRendere
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.inventory.container.ModContainerTypes;
+import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.crafting.ModRecipeSerializers;
 import thefloydman.linkingbooks.linking.LinkEffects;
@@ -79,6 +82,11 @@ public class LinkingBooks {
 
         // Register containers.
         ScreenManager.registerFactory(ModContainerTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
+
+        // Register ItemColors.
+        ItemColors itemColors = Minecraft.getInstance().getItemColors();
+        itemColors.register((stack, index) -> LinkingBookItem.getColor(stack, index),
+                ModItems.BLANK_LINKING_BOOK.get());
 
     }
 

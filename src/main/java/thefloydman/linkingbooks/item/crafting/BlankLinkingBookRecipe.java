@@ -1,12 +1,13 @@
 package thefloydman.linkingbooks.item.crafting;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
@@ -18,6 +19,7 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.RecipeMatcher;
 import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.item.ModItems;
@@ -26,35 +28,35 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
 
     private final ResourceLocation id;
     private final ItemStack recipeOutput;
-    private final NonNullList<Ingredient> recipeInput;
+    private final NonNullList<Ingredient> recipeInputs;
     private final boolean isSimple;
 
     public BlankLinkingBookRecipe(ResourceLocation id, ItemStack recipeOutput, NonNullList<Ingredient> recipeInput) {
         this.id = id;
         this.recipeOutput = recipeOutput;
-        this.recipeInput = recipeInput;
+        this.recipeInputs = recipeInput;
         this.isSimple = recipeInput.stream().allMatch(Ingredient::isSimple);
     }
 
     @Override
     public boolean matches(CraftingInventory inventory, World world) {
         RecipeItemHelper recipeItemHelper = new RecipeItemHelper();
-        java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
+        List<ItemStack> inputs = new ArrayList<>();
         int i = 0;
 
         for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-            ItemStack itemstack = inventory.getStackInSlot(j);
-            if (!itemstack.isEmpty()) {
+            ItemStack stack = inventory.getStackInSlot(j);
+            if (!stack.isEmpty()) {
                 ++i;
                 if (this.isSimple)
-                    recipeItemHelper.func_221264_a(itemstack, 1);
+                    recipeItemHelper.func_221264_a(stack, 1);
                 else
-                    inputs.add(itemstack);
+                    inputs.add(stack);
             }
         }
 
-        return i == this.recipeInput.size() && (this.isSimple ? recipeItemHelper.canCraft(this, (IntList) null)
-                : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs, this.recipeInput) != null);
+        return i == this.recipeInputs.size() && (this.isSimple ? recipeItemHelper.canCraft(this, null)
+                : RecipeMatcher.findMatches(inputs, this.recipeInputs) != null);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
 
     @Override
     public boolean canFit(int width, int height) {
-        return width * height >= this.recipeInput.size();
+        return width * height >= this.recipeInputs.size();
     }
 
     @Override
@@ -80,6 +82,11 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
     @Override
     public ResourceLocation getId() {
         return this.id;
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return this.recipeInputs;
     }
 
     public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>>
@@ -133,9 +140,9 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
 
         @Override
         public void write(PacketBuffer buffer, BlankLinkingBookRecipe recipe) {
-            buffer.writeVarInt(recipe.recipeInput.size());
+            buffer.writeVarInt(recipe.recipeInputs.size());
 
-            for (Ingredient ingredient : recipe.recipeInput) {
+            for (Ingredient ingredient : recipe.recipeInputs) {
                 ingredient.write(buffer);
             }
 

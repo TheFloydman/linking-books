@@ -11,7 +11,7 @@ import thefloydman.linkingbooks.capability.LinkData;
 public class LinkingBookContainer extends Container {
 
     public boolean holdingBook = false;
-    public DyeColor bookColor = DyeColor.GREEN;
+    public int bookColor = DyeColor.GREEN.getColorValue();
     public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
 
     public LinkingBookContainer(int windowId, PlayerInventory playerInventory) {
@@ -21,7 +21,7 @@ public class LinkingBookContainer extends Container {
     public LinkingBookContainer(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
         this(windowId, playerInventory);
         this.holdingBook = extraData.readBoolean();
-        this.bookColor = extraData.readEnumValue(DyeColor.class);
+        this.bookColor = extraData.readInt();
         this.linkData.read(extraData);
     }
 

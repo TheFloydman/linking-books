@@ -3,18 +3,15 @@ package thefloydman.linkingbooks.item;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class BlankLinkingBookItem extends LinkingBookItem {
 
     public BlankLinkingBookItem(DyeColor color, Properties properties) {
-        super(color, properties);
+        super(properties);
     }
 
     @Override
@@ -25,11 +22,6 @@ public class BlankLinkingBookItem extends LinkingBookItem {
             return ActionResult.resultPass(writtenBook);
         }
         return ActionResult.resultPass(heldStack);
-    }
-
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
-        return new ColorCapability.Provider();
     }
 
 }

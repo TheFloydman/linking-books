@@ -4,20 +4,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.capability.LinkingBookCapabilityProvider;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
 
     public WrittenLinkingBookItem(DyeColor color, Properties properties) {
-        super(color, properties);
+        super(properties);
     }
 
     @Override
@@ -25,16 +24,12 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
         ItemStack heldStack = player.getHeldItem(hand);
         if (!world.isRemote() && !player.isSneaking()) {
             ILinkData linkData = heldStack.getCapability(LinkData.LINK_DATA).orElse(null);
-            if (linkData != null) {
-                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, true, this.color, linkData);
+            IColorCapability color = heldStack.getCapability(ColorCapability.COLOR).orElse(null);
+            if (linkData != null && color != null) {
+                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, true, color.getColor(), linkData);
             }
         }
         return ActionResult.resultPass(heldStack);
-    }
-
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
-        return new LinkingBookCapabilityProvider();
     }
 
 }
