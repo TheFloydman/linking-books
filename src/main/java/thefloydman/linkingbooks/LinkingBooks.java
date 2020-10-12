@@ -87,6 +87,8 @@ public class LinkingBooks {
         ItemColors itemColors = Minecraft.getInstance().getItemColors();
         itemColors.register((stack, index) -> LinkingBookItem.getColor(stack, index),
                 ModItems.BLANK_LINKING_BOOK.get());
+        itemColors.register((stack, index) -> LinkingBookItem.getColor(stack, index),
+                ModItems.WRITTEN_LINKING_BOOK.get());
 
     }
 

@@ -16,8 +16,7 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Reference.MOD_ID);
 
     public static final RegistryObject<Item> BLANK_LINKING_BOOK = ITEMS.register(Reference.ItemNames.BLANK_LINKNG_BOOK,
-            () -> new BlankLinkingBookItem(DyeColor.BLACK,
-                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS).maxStackSize(16)));
+            () -> new BlankLinkingBookItem(DyeColor.BLACK, new Item.Properties().maxStackSize(16)));
 
     public static final RegistryObject<Item> WRITTEN_LINKING_BOOK = ITEMS.register(
             Reference.ItemNames.WRITTEN_LINKNG_BOOK,

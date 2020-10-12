@@ -20,6 +20,9 @@ public abstract class LinkingBookItem extends Item {
         return new LinkingBookCapabilityProvider();
     }
 
+    /**
+     * Used to color item texture. Any tintIndex besides 0 will return -1.
+     */
     public static int getColor(ItemStack stack, int tintIndex) {
         if (tintIndex != 0) {
             return -1;
