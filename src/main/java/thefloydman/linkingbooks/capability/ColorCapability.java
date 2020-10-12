@@ -1,9 +1,8 @@
 package thefloydman.linkingbooks.capability;
 
-import java.awt.Color;
-
 import javax.annotation.Nullable;
 
+import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.util.Direction;
@@ -25,7 +24,7 @@ public class ColorCapability {
 
     public static class Default implements IColorCapability {
 
-        private int color = Color.GREEN.getRGB();
+        private int color = DyeColor.GREEN.getColorValue();
 
         @Override
         public void setColor(int color) {

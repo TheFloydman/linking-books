@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +26,7 @@ import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
+import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.inventory.container.ModContainerTypes;
@@ -65,6 +67,9 @@ public class LinkingBooks {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+        // Register configs.
+        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

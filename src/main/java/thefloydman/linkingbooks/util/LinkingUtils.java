@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -23,6 +24,7 @@ import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.ModItems;
@@ -78,7 +80,8 @@ public class LinkingUtils {
                 player.closeScreen();
                 player.closeContainer();
                 /* TODO: Localize message. */
-                player.sendStatusMessage(new StringTextComponent("Cannot link within the same Age."), true);
+                player.sendStatusMessage(new TranslationTextComponent("message.linkingbooks.no_intraage_linking"),
+                        true);
             }
         } else {
 
@@ -118,6 +121,7 @@ public class LinkingUtils {
                 for (LinkEffect effect : linkInfo.getLinkEffects()) {
                     effect.onLinkEnd(player);
                 }
+                player.giveExperiencePoints(ModConfig.CONFIG.linkingcost.get() * -1);
             } else {
                 entity.func_241206_a_(serverWorld);
                 entity.teleportKeepLoaded(x, y, z);

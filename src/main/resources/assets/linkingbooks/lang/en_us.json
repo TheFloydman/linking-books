@@ -4,5 +4,7 @@
 	"item.linkingbooks.blank_linking_book": "Blank Linking Book",
 	"item.linkingbooks.written_linking_book": "Written Linking Book",
 	"fluid.linkingbooks.ink": "Ink",
-	"itemGroup.linkingbooks": "Linking Books"
+	"itemGroup.linkingbooks": "Linking Books",
+	"message.linkingbooks.no_intraage_linking": "You cannot link within the same Age.",
+	"linkingbooks.configgui.linkingcost.tooltip": "How many experience points (not levels) it costs to use a linking book."
 }
