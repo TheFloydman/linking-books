@@ -6,5 +6,6 @@
 	"fluid.linkingbooks.ink": "Ink",
 	"itemGroup.linkingbooks": "Linking Books",
 	"message.linkingbooks.no_intraage_linking": "You cannot link within the same Age.",
-	"linkingbooks.configgui.linkingcost.tooltip": "How many experience points (not levels) it costs to use a linking book."
+	"linkingbooks.configgui.linkingcost_points.tooltip": "How many experience points it costs to use a linking book. Stacks with levels option.",
+	"linkingbooks.configgui.linkingcost_levels.tooltip": "How many experience levels it costs to use a linking book. Stacks with points option."
 }

@@ -121,7 +121,9 @@ public class LinkingUtils {
                 for (LinkEffect effect : linkInfo.getLinkEffects()) {
                     effect.onLinkEnd(player);
                 }
-                player.giveExperiencePoints(ModConfig.CONFIG.linkingcost.get() * -1);
+                // Deduct experience points/levels if a cost has been set in config.
+                player.giveExperiencePoints((ModConfig.COMMON.linkingCostExperiencePoints.get()
+                        + ModConfig.COMMON.linkingCostExperienceLevels.get()) * -1);
             } else {
                 entity.func_241206_a_(serverWorld);
                 entity.teleportKeepLoaded(x, y, z);
