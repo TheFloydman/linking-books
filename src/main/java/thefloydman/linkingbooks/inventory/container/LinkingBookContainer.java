@@ -13,6 +13,7 @@ public class LinkingBookContainer extends Container {
     public boolean holdingBook = false;
     public int bookColor = DyeColor.GREEN.getColorValue();
     public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+    public boolean canLink = false;
 
     public LinkingBookContainer(int windowId, PlayerInventory playerInventory) {
         super(ModContainerTypes.LINKING_BOOK.get(), windowId);
@@ -23,6 +24,7 @@ public class LinkingBookContainer extends Container {
         this.holdingBook = extraData.readBoolean();
         this.bookColor = extraData.readInt();
         this.linkData.read(extraData);
+        this.canLink = extraData.readBoolean();
     }
 
     @Override

@@ -26,7 +26,8 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
             ILinkData linkData = heldStack.getCapability(LinkData.LINK_DATA).orElse(null);
             IColorCapability color = heldStack.getCapability(ColorCapability.COLOR).orElse(null);
             if (linkData != null && color != null) {
-                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, true, color.getColor(), linkData);
+                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, true, color.getColor(), linkData,
+                        world.func_234923_W_().func_240901_a_());
             }
         }
         return ActionResult.resultPass(heldStack);

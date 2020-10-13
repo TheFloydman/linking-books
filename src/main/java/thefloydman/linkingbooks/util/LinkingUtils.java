@@ -11,6 +11,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
@@ -79,7 +80,6 @@ public class LinkingUtils {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 player.closeScreen();
                 player.closeContainer();
-                /* TODO: Localize message. */
                 player.sendStatusMessage(new TranslationTextComponent("message.linkingbooks.no_intraage_linking"),
                         true);
             }
@@ -122,8 +122,17 @@ public class LinkingUtils {
                     effect.onLinkEnd(player);
                 }
                 // Deduct experience points/levels if a cost has been set in config.
-                player.giveExperiencePoints((ModConfig.COMMON.linkingCostExperiencePoints.get()
-                        + ModConfig.COMMON.linkingCostExperienceLevels.get()) * -1);
+                player.giveExperiencePoints(ModConfig.COMMON.linkingCostExperiencePoints.get() * -1);
+                player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
+                if (player.experienceLevel < 0) {
+                    player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get());
+                    player.giveExperiencePoints(ModConfig.COMMON.linkingCostExperiencePoints.get());
+                    player.closeScreen();
+                    player.closeContainer();
+                    player.sendStatusMessage(
+                            new TranslationTextComponent("message.linkingbooks.insufficient_experience"), true);
+                    return false;
+                }
             } else {
                 entity.func_241206_a_(serverWorld);
                 entity.teleportKeepLoaded(x, y, z);
@@ -149,14 +158,17 @@ public class LinkingUtils {
         return linked;
     }
 
-    public static void openLinkingBookGui(ServerPlayerEntity player, boolean holdingBook, int color,
-            ILinkData linkData) {
+    public static void openLinkingBookGui(ServerPlayerEntity player, boolean holdingBook, int color, ILinkData linkData,
+            ResourceLocation currentDimension) {
         NetworkHooks.openGui(player, new SimpleNamedContainerProvider((id, playerInventory, playerEntity) -> {
             return new LinkingBookContainer(id, playerInventory);
         }, new StringTextComponent("")), extraData -> {
             extraData.writeBoolean(holdingBook);
             extraData.writeInt(color);
             linkData.write(extraData);
+            boolean canLink = !currentDimension.equals(linkData.getDimension())
+                    || linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get());
+            extraData.writeBoolean(canLink);
         });
     }
 

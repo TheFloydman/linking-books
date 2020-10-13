@@ -68,7 +68,8 @@ public class ForgeEventHandler {
                         ILinkData linkData = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
                         IColorCapability color = bookStack.getCapability(ColorCapability.COLOR).orElse(null);
                         if (linkData != null && color != null) {
-                            LinkingUtils.openLinkingBookGui(player, false, color.getColor(), linkData);
+                            LinkingUtils.openLinkingBookGui(player, false, color.getColor(), linkData,
+                                    player.getEntityWorld().func_234923_W_().func_240901_a_());
                         }
                     }
                 }

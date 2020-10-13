@@ -17,12 +17,14 @@ public class LinkingPanelWidget extends NestedWidget {
 
     public boolean holdingBook = false;
     public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+    public boolean canLink = false;
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            boolean holdingBook, ILinkData linkData) {
+            boolean holdingBook, ILinkData linkData, boolean canLink) {
         super(x, y, width, height, narration);
         this.holdingBook = holdingBook;
         this.linkData = linkData;
+        this.canLink = canLink;
     }
 
     @Override
@@ -30,8 +32,9 @@ public class LinkingPanelWidget extends NestedWidget {
         if (!this.field_230694_p_) {
             return;
         }
+        int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
         this.fill(matrixStack, this.field_230690_l_, this.field_230691_m_, this.field_230690_l_ + this.field_230688_j_,
-                this.field_230691_m_ + this.field_230689_k_, Color.BLACK.getRGB());
+                this.field_230691_m_ + this.field_230689_k_, panelColor);
 
         this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }

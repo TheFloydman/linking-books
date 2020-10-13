@@ -30,12 +30,12 @@ public class LinkingBookWidget extends NestedWidget {
     public int color = DyeColor.GREEN.getColorValue();
 
     public LinkingBookWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            boolean holdingBook, int color, ILinkData linkData) {
+            boolean holdingBook, int color, ILinkData linkData, boolean canLink) {
         super(x, y, width, height, narration);
         this.color = color;
         NestedWidget linkingPanel = this
                 .addChild(new LinkingPanelWidget(this.field_230690_l_ + 155, this.field_230691_m_ + 41, 0.0F, 64, 42,
-                        new StringTextComponent("Linking Panel"), holdingBook, linkData));
+                        new StringTextComponent("Linking Panel"), holdingBook, linkData, canLink));
         for (IGuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }
