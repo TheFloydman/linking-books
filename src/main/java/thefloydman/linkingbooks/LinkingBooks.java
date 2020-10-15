@@ -69,7 +69,8 @@ public class LinkingBooks {
         MinecraftForge.EVENT_BUS.register(this);
 
         // Register configs.
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.SPEC);
+        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.SPEC,
+                Reference.MOD_ID + ".toml");
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
