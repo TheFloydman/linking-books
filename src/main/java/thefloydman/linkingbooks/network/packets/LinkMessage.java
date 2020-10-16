@@ -39,6 +39,7 @@ public class LinkMessage implements IMessage {
         ctx.enqueueWork(() -> {
             ServerPlayerEntity player = ctx.getSender();
             LinkingUtils.linkEntity(player, this.linkData, this.holdingBook);
+            ctx.setPacketHandled(true);
         });
     }
 
