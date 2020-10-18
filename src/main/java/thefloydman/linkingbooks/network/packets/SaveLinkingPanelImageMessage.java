@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
@@ -17,7 +19,7 @@ public class SaveLinkingPanelImageMessage implements IMessage {
     private UUID uuid;
 
     public SaveLinkingPanelImageMessage(NativeImage image, UUID uuid) {
-        if (image != null && image.getWidth() > 64 && image.getHeight() > 42) {
+        if (image != null) {
             this.image = image;
         }
         this.uuid = uuid;
@@ -42,12 +44,25 @@ public class SaveLinkingPanelImageMessage implements IMessage {
     @Override
     public void fromData(PacketBuffer buffer) {
         this.uuid = buffer.readUniqueId();
-        ByteBuffer buf = ByteBuffer.allocate(buffer.readableBytes());
-        buf.put(buffer.readByteArray());
-        try {
-            this.image = NativeImage.read(buf);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        if (RenderSystem.isOnRenderThread()) {
+            ByteBuffer buf = ByteBuffer.allocate(buffer.readableBytes());
+            buf.put(buffer.readByteArray());
+            try {
+                this.image = NativeImage.read(buf);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            RenderSystem.recordRenderCall(() -> {
+                ByteBuffer buf = ByteBuffer.allocate(buffer.readableBytes());
+                buf.put(buffer.readByteArray());
+                try {
+                    this.image = NativeImage.read(buf);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 

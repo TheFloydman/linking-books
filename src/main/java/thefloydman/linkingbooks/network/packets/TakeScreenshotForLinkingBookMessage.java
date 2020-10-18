@@ -61,9 +61,9 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
         Framebuffer buffer = mc.getFramebuffer();
         int backupWidth = buffer.framebufferWidth;
         int backupHeight = buffer.framebufferHeight;
-        buffer.resize(64, 42, false);
+        buffer.resize(192, 126, false);
         NativeImage image = new NativeImage(buffer.framebufferWidth, buffer.framebufferHeight, false);
-        RenderSystem.bindTexture(buffer.func_242996_f());
+        buffer.bindFramebufferTexture();
         image.downloadFromTexture(0, true);
         image.flip();
         buffer.resize(backupWidth, backupHeight, false);
