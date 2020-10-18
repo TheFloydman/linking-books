@@ -2,6 +2,7 @@ package thefloydman.linkingbooks.capability;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -37,6 +38,7 @@ public class LinkData {
         private ResourceLocation dimension = new ResourceLocation("overworld");
         private BlockPos position = new BlockPos(0, 0, 0);
         private float rotation = 0.0F;
+        private UUID uuid = UUID.randomUUID();
         private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
 
         @Override
@@ -99,6 +101,16 @@ public class LinkData {
         @Override
         public void read(PacketBuffer buffer) {
             LINK_DATA.getStorage().readNBT(LINK_DATA, this, null, buffer.readCompoundTag());
+        }
+
+        @Override
+        public void setUUID(UUID uuid) {
+            this.uuid = uuid;
+        }
+
+        @Override
+        public UUID getUUID() {
+            return this.uuid;
         }
 
     }

@@ -30,6 +30,8 @@ import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.linking.LinkEffects;
+import thefloydman.linkingbooks.network.ModNetworkHandler;
+import thefloydman.linkingbooks.network.packets.TakeScreenshotForLinkingBookMessage;
 
 public class LinkingUtils {
 
@@ -54,6 +56,9 @@ public class LinkingUtils {
         }
         resultColor.setColor(originColor.getColor());
 
+        ModNetworkHandler.sendToPlayer(new TakeScreenshotForLinkingBookMessage(linkData.getUUID()),
+                (ServerPlayerEntity) player);
+
         return resultItem;
     }
 
@@ -61,21 +66,21 @@ public class LinkingUtils {
      * Teleport an entity to a dimension and position. Should only be called
      * server-side.
      */
-    public static boolean linkEntity(Entity entity, ILinkData linkInfo, boolean holdingBook) {
+    public static boolean linkEntity(Entity entity, ILinkData linkData, boolean holdingBook) {
 
         World world = entity.getEntityWorld();
 
         if (world.isRemote()) {
             LOGGER.info(
                     "An attempt has been made to directly link an entity from the client. Only do this from the server.");
-        } else if (linkInfo == null) {
+        } else if (linkData == null) {
             LOGGER.info("An null ILinkInfo has been supplied. Link failed.");
-        } else if (linkInfo.getDimension() == null) {
+        } else if (linkData.getDimension() == null) {
             LOGGER.info("ILinkInfo::getDimension returned null. Link failed.");
-        } else if (linkInfo.getPosition() == null) {
+        } else if (linkData.getPosition() == null) {
             LOGGER.info("ILinkInfo::getPosition returned null. Link failed.");
-        } else if (!linkInfo.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())
-                && world.func_234923_W_().func_240901_a_().equals(linkInfo.getDimension())) {
+        } else if (!linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())
+                && world.func_234923_W_().func_240901_a_().equals(linkData.getDimension())) {
             if (entity instanceof PlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 player.closeScreen();
@@ -86,18 +91,18 @@ public class LinkingUtils {
         } else {
 
             ServerWorld serverWorld = world.getServer()
-                    .getWorld(RegistryKey.func_240903_a_(Registry.field_239699_ae_, linkInfo.getDimension()));
+                    .getWorld(RegistryKey.func_240903_a_(Registry.field_239699_ae_, linkData.getDimension()));
 
             if (serverWorld == null) {
-                LOGGER.info("Cannot find dimension \"" + linkInfo.getDimension().toString() + "\". Link failed.");
+                LOGGER.info("Cannot find dimension \"" + linkData.getDimension().toString() + "\". Link failed.");
                 return false;
             }
 
-            BlockPos pos = linkInfo.getPosition();
+            BlockPos pos = linkData.getPosition();
             double x = pos.getX() + 0.5D;
             double y = pos.getY();
             double z = pos.getZ() + 0.5D;
-            float rotation = linkInfo.getRotation();
+            float rotation = linkData.getRotation();
 
             /*
              * TODO: Find a way to teleport without client moving entity model through
@@ -118,7 +123,7 @@ public class LinkingUtils {
                 player.closeContainer();
                 player.closeScreen();
                 player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
-                for (LinkEffect effect : linkInfo.getLinkEffects()) {
+                for (LinkEffect effect : linkData.getLinkEffects()) {
                     effect.onLinkEnd(player);
                 }
                 // Deduct experience points/levels if a cost has been set in config.

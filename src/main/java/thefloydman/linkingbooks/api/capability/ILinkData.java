@@ -1,6 +1,7 @@
 package thefloydman.linkingbooks.api.capability;
 
 import java.util.Set;
+import java.util.UUID;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -20,6 +21,10 @@ public interface ILinkData {
     public void setRotation(float rotation);
 
     public float getRotation();
+
+    public void setUUID(UUID uuid);
+
+    public UUID getUUID();
 
     public void setLinkEffects(Set<LinkEffect> effects);
 

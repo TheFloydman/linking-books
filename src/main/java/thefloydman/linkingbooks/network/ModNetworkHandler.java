@@ -9,6 +9,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import thefloydman.linkingbooks.network.packets.IMessage;
 import thefloydman.linkingbooks.network.packets.LinkMessage;
+import thefloydman.linkingbooks.network.packets.SaveLinkingPanelImageMessage;
+import thefloydman.linkingbooks.network.packets.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.util.Reference;
 
 public class ModNetworkHandler {
@@ -21,6 +23,8 @@ public class ModNetworkHandler {
     public static void registerAllMessages() {
         int id = 0;
         registerMessage(id++, LinkMessage.class, LinkMessage::new);
+        registerMessage(id++, TakeScreenshotForLinkingBookMessage.class, TakeScreenshotForLinkingBookMessage::new);
+        registerMessage(id++, SaveLinkingPanelImageMessage.class, SaveLinkingPanelImageMessage::new);
     }
 
     private static <MSG extends IMessage> void registerMessage(int id, Class<MSG> clazz, Supplier<MSG> supplier) {

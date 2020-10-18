@@ -30,6 +30,7 @@ public class Reference {
 
     public static class EntityNames {
         public static final String LINKING_BOOK = "linking_book";
+        public static final String CAMERA = "camera";
     }
 
     public static class TileEntityNames {
