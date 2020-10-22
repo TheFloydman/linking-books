@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -32,6 +33,7 @@ import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.TakeScreenshotForLinkingBookMessage;
+import thefloydman.linkingbooks.world.storage.LinkingBooksGlobalSavedData;
 
 public class LinkingUtils {
 
@@ -174,6 +176,10 @@ public class LinkingUtils {
             boolean canLink = !currentDimension.equals(linkData.getDimension())
                     || linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get());
             extraData.writeBoolean(canLink);
+            LinkingBooksGlobalSavedData savedData = player.getServer().getWorld(World.field_234918_g_).getSavedData()
+                    .getOrCreate(LinkingBooksGlobalSavedData::new, Reference.MOD_ID);
+            NativeImage image = savedData.getLinkingPanelImage(linkData.getUUID());
+            extraData.writeCompoundTag(ImageUtils.imageToNBT(image));
         });
     }
 

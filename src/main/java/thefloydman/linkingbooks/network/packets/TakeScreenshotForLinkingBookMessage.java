@@ -1,10 +1,6 @@
 package thefloydman.linkingbooks.network.packets;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
-
-import org.apache.logging.log4j.LogManager;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -12,9 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ScreenShotHelper;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
-import thefloydman.linkingbooks.util.Reference;
 
 public class TakeScreenshotForLinkingBookMessage implements IMessage {
 
@@ -59,34 +55,41 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
 
         Minecraft mc = Minecraft.getInstance();
         Framebuffer buffer = mc.getFramebuffer();
-        int backupWidth = buffer.framebufferWidth;
-        int backupHeight = buffer.framebufferHeight;
-        buffer.resize(192, 126, false);
-        NativeImage image = new NativeImage(buffer.framebufferWidth, buffer.framebufferHeight, false);
-        buffer.bindFramebufferTexture();
-        image.downloadFromTexture(0, true);
-        image.flip();
-        buffer.resize(backupWidth, backupHeight, false);
-
-        ModNetworkHandler.sendToServer(new SaveLinkingPanelImageMessage(image, this.uuid));
-
-        File folder = Minecraft.getInstance().gameDir;
-        // file.mkdir();
-        final File file2 = new File(folder, this.uuid.toString() + ".png");
-        if (!file2.exists()) {
-            try {
-                file2.createNewFile();
-                image.write(file2);
-            } catch (IOException e) {
-                LogManager.getLogger(Reference.MOD_ID).info("Could not save linking panel image to client.");
-                e.printStackTrace();
-            } finally {
-                image.close();
+        float largeWidth = buffer.framebufferWidth;
+        float largeHeight = buffer.framebufferHeight;
+        float smallWidth = 64.0F;
+        float smallHeight = 42.0F;
+        if (largeWidth / largeHeight > smallWidth / smallHeight) {
+            while (largeHeight % 42 != 0) {
+                largeHeight--;
             }
-        } else {
-            LogManager.getLogger(Reference.MOD_ID)
-                    .info("Could not save linking panel image to client. File already exists.");
+            while (largeWidth / largeHeight != smallWidth / smallHeight) {
+                largeWidth--;
+            }
+        } else if (largeWidth / largeHeight < smallWidth / smallHeight) {
+            while (largeWidth % 64 != 0) {
+                largeWidth--;
+            }
+            while (largeWidth / largeHeight != smallWidth / smallHeight) {
+                largeHeight--;
+            }
         }
+        NativeImage fullImage = ScreenShotHelper.createScreenshot(mc.getMainWindow().getFramebufferWidth(),
+                mc.getMainWindow().getFramebufferHeight(), mc.getFramebuffer());
+        NativeImage largeImage = new NativeImage((int) largeWidth, (int) largeHeight, false);
+        int initialX = (int) ((buffer.framebufferWidth - largeWidth) / 2);
+        int initialY = (int) ((buffer.framebufferHeight - largeHeight) / 2);
+        for (int largeY = 0, fullY = initialY; largeY < largeHeight; largeY++, fullY++) {
+            for (int largeX = 0, fullX = initialX; largeX < largeWidth; largeX++, fullX++) {
+                largeImage.setPixelRGBA(largeX, largeY, fullImage.getPixelRGBA(fullX, fullY));
+            }
+        }
+        NativeImage smallImage = new NativeImage((int) smallWidth, (int) smallHeight, false);
+        largeImage.resizeSubRectTo(0, 0, (int) largeWidth, (int) largeHeight, smallImage);
+        largeImage.close();
+        fullImage.close();
+
+        ModNetworkHandler.sendToServer(new SaveLinkingPanelImageMessage(smallImage, this.uuid));
     }
 
 }

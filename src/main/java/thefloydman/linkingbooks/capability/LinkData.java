@@ -72,6 +72,16 @@ public class LinkData {
         }
 
         @Override
+        public void setUUID(UUID uuid) {
+            this.uuid = uuid;
+        }
+
+        @Override
+        public UUID getUUID() {
+            return this.uuid;
+        }
+
+        @Override
         public void setLinkEffects(Set<LinkEffect> effects) {
             this.linkEffects = effects;
         }
@@ -103,16 +113,6 @@ public class LinkData {
             LINK_DATA.getStorage().readNBT(LINK_DATA, this, null, buffer.readCompoundTag());
         }
 
-        @Override
-        public void setUUID(UUID uuid) {
-            this.uuid = uuid;
-        }
-
-        @Override
-        public UUID getUUID() {
-            return this.uuid;
-        }
-
     }
 
     public static class Storage implements Capability.IStorage<ILinkData> {
@@ -129,6 +129,7 @@ public class LinkData {
             for (LinkEffect effect : instance.getLinkEffects()) {
                 effectsList.add(StringNBT.valueOf(effect.getRegistryName().toString()));
             }
+            nbt.putUniqueId("uuid", instance.getUUID());
             nbt.put("effects", effectsList);
             return nbt;
         }
@@ -145,6 +146,9 @@ public class LinkData {
                 }
                 if (compound.contains("rotation", NBT.TAG_FLOAT)) {
                     instance.setRotation(compound.getFloat("rotation"));
+                }
+                if (compound.contains("uuid", NBT.TAG_INT_ARRAY)) {
+                    instance.setUUID(compound.getUniqueId("uuid"));
                 }
                 if (compound.contains("effects", NBT.TAG_LIST)) {
                     for (INBT item : compound.getList("effects", NBT.TAG_STRING)) {

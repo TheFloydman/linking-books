@@ -104,6 +104,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void serverStarting(FMLServerStartingEvent event) {
+        // Register commands.
         LinkCommand.register(event.getServer().getCommandManager().getDispatcher());
     }
 

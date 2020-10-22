@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -30,12 +31,12 @@ public class LinkingBookWidget extends NestedWidget {
     public int color = DyeColor.GREEN.getColorValue();
 
     public LinkingBookWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            boolean holdingBook, int color, ILinkData linkData, boolean canLink) {
+            boolean holdingBook, int color, ILinkData linkData, boolean canLink, NativeImage linkingPanelImage) {
         super(x, y, width, height, narration);
         this.color = color;
         NestedWidget linkingPanel = this
                 .addChild(new LinkingPanelWidget(this.field_230690_l_ + 155, this.field_230691_m_ + 41, 0.0F, 64, 42,
-                        new StringTextComponent("Linking Panel"), holdingBook, linkData, canLink));
+                        new StringTextComponent("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
         for (IGuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }
