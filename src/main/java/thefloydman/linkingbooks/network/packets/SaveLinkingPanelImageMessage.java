@@ -15,7 +15,6 @@ public class SaveLinkingPanelImageMessage implements IMessage {
     private static final int MAX_HEIGHT = 42;
     private NativeImage image = new NativeImage(MAX_WIDTH, MAX_HEIGHT, false);
     private UUID uuid;
-    private int[] colors;
 
     public SaveLinkingPanelImageMessage(NativeImage image, UUID uuid) {
         if (image != null) {
