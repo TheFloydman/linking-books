@@ -2,13 +2,14 @@ package thefloydman.linkingbooks.network.packets;
 
 import java.util.UUID;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ScreenShotHelper;
+import net.minecraft.util.Util;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 
@@ -74,8 +75,18 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
                 largeHeight--;
             }
         }
-        NativeImage fullImage = ScreenShotHelper.createScreenshot(mc.getMainWindow().getFramebufferWidth(),
-                mc.getMainWindow().getFramebufferHeight(), mc.getFramebuffer());
+
+        NativeImage fullImage = new NativeImage(buffer.framebufferTextureWidth, buffer.framebufferTextureHeight, false);
+        MatrixStack matrixStack = new MatrixStack();
+        mc.getFramebuffer().bindFramebuffer(true);
+        boolean hide = mc.gameSettings.hideGUI;
+        mc.gameSettings.hideGUI = true;
+        mc.gameRenderer.renderWorld(mc.getRenderPartialTicks(), Util.nanoTime(), new MatrixStack());
+        mc.gameSettings.hideGUI = hide;
+        buffer.bindFramebufferTexture();
+        fullImage.downloadFromTexture(0, true);
+        mc.getFramebuffer().unbindFramebuffer();
+        fullImage.flip();
         NativeImage largeImage = new NativeImage((int) largeWidth, (int) largeHeight, false);
         int initialX = (int) ((buffer.framebufferWidth - largeWidth) / 2);
         int initialY = (int) ((buffer.framebufferHeight - largeHeight) / 2);
