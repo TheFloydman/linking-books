@@ -47,8 +47,8 @@ public class LinkingUtils {
         if (linkData == null) {
             return ItemStack.EMPTY;
         }
-        linkData.setDimension(player.getEntityWorld().func_234923_W_().func_240901_a_());
-        linkData.setPosition(player.func_233580_cy_());
+        linkData.setDimension(player.getEntityWorld().getDimensionKey().getLocation());
+        linkData.setPosition(player.getPosition());
         linkData.setRotation(player.rotationYaw);
 
         IColorCapability originColor = originItem.getCapability(ColorCapability.COLOR).orElse(null);
@@ -82,7 +82,7 @@ public class LinkingUtils {
         } else if (linkData.getPosition() == null) {
             LOGGER.info("ILinkInfo::getPosition returned null. Link failed.");
         } else if (!linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())
-                && world.func_234923_W_().func_240901_a_().equals(linkData.getDimension())) {
+                && world.getDimensionKey().getLocation().equals(linkData.getDimension())) {
             if (entity instanceof PlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 player.closeScreen();
@@ -93,7 +93,7 @@ public class LinkingUtils {
         } else {
 
             ServerWorld serverWorld = world.getServer()
-                    .getWorld(RegistryKey.func_240903_a_(Registry.field_239699_ae_, linkData.getDimension()));
+                    .getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()));
 
             if (serverWorld == null) {
                 LOGGER.info("Cannot find dimension \"" + linkData.getDimension().toString() + "\". Link failed.");
@@ -141,7 +141,7 @@ public class LinkingUtils {
                     return false;
                 }
             } else {
-                entity.func_241206_a_(serverWorld);
+                entity.setWorld(serverWorld);
                 entity.teleportKeepLoaded(x, y, z);
             }
             return true;
@@ -176,7 +176,7 @@ public class LinkingUtils {
             boolean canLink = !currentDimension.equals(linkData.getDimension())
                     || linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get());
             extraData.writeBoolean(canLink);
-            LinkingBooksGlobalSavedData savedData = player.getServer().getWorld(World.field_234918_g_).getSavedData()
+            LinkingBooksGlobalSavedData savedData = player.getServer().getWorld(World.OVERWORLD).getSavedData()
                     .getOrCreate(LinkingBooksGlobalSavedData::new, Reference.MOD_ID);
             NativeImage image = savedData.getLinkingPanelImage(linkData.getUUID());
             extraData.writeCompoundTag(ImageUtils.imageToNBT(image));

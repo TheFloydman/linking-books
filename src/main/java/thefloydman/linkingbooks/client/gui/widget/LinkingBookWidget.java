@@ -34,17 +34,16 @@ public class LinkingBookWidget extends NestedWidget {
             boolean holdingBook, int color, ILinkData linkData, boolean canLink, NativeImage linkingPanelImage) {
         super(x, y, width, height, narration);
         this.color = color;
-        NestedWidget linkingPanel = this
-                .addChild(new LinkingPanelWidget(this.field_230690_l_ + 155, this.field_230691_m_ + 41, 0.0F, 64, 42,
-                        new StringTextComponent("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
+        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget(this.x + 155, this.y + 41, 0.0F, 64, 42,
+                new StringTextComponent("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
         for (IGuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }
     }
 
     @Override
-    public void func_230431_b_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (!this.field_230694_p_) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        if (!this.visible) {
             return;
         }
         matrixStack.push();
@@ -56,13 +55,11 @@ public class LinkingBookWidget extends NestedWidget {
         float[] color = new Color(this.color).getRGBColorComponents(null);
         RenderSystem.color4f(MathHelper.clamp(color[0], 0.1F, 1.0F), MathHelper.clamp(color[1], 0.1F, 1.0F),
                 MathHelper.clamp(color[2], 0.1F, 1.0F), 1.0F);
-        this.func_238474_b_(matrixStack, this.field_230690_l_, this.field_230691_m_, 0, 0, this.field_230688_j_,
-                this.field_230689_k_);
+        this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getInstance().getTextureManager().bindTexture(PAPER_TEXTURE);
-        this.func_238474_b_(matrixStack, this.field_230690_l_, this.field_230691_m_, 0, 0, this.field_230688_j_,
-                this.field_230689_k_);
+        this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
 
         RenderSystem.popMatrix();
         matrixStack.pop();

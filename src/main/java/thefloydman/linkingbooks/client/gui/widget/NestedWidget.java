@@ -34,25 +34,28 @@ public abstract class NestedWidget extends Widget {
     }
 
     @Override
-    public void func_230431_b_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     public void renderChildren(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         for (NestedWidget widget : this.children) {
-            widget.func_230431_b_(matrixStack, mouseX, mouseY, partialTicks);
+            widget.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
-    public void func_230982_a_(double mouseX, double mouseY) {
-        this.onMouseClickChildren(mouseX, mouseY);
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return this.onMouseClickChildren(mouseX, mouseY, button);
     }
 
-    public void onMouseClickChildren(double mouseX, double mouseY) {
+    public boolean onMouseClickChildren(double mouseX, double mouseY, int button) {
+        boolean eatenGeneral = false;
         for (NestedWidget widget : this.children) {
-            widget.func_230982_a_(mouseX, mouseY);
+            boolean eatenChild = widget.mouseClicked(mouseX, mouseY, button);
+            eatenGeneral = eatenChild == true ? eatenChild : eatenGeneral;
         }
+        return eatenGeneral;
     }
 
     public <T extends NestedWidget> T addChild(T widget) {
@@ -70,7 +73,7 @@ public abstract class NestedWidget extends Widget {
     /**
      * Z-sensitive fill method.
      */
-    public void fill(final MatrixStack matrixStack, int xStart, int yStart, int xEnd, int yEnd, final int color) {
+    public void zFill(final MatrixStack matrixStack, int xStart, int yStart, int xEnd, int yEnd, final int color) {
 
         if (xStart < xEnd) {
             int endUpdated = xStart;
@@ -106,7 +109,7 @@ public abstract class NestedWidget extends Widget {
     }
 
     public void point(final MatrixStack matrixStack, int x, int y, final int color) {
-        this.fill(matrixStack, x, y, x + 1, y + 1, color);
+        this.zFill(matrixStack, x, y, x + 1, y + 1, color);
     }
 
     /**

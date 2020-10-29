@@ -42,8 +42,8 @@ public class LinkingLecternTileEntity extends TileEntity {
     }
 
     @Override
-    public void func_230337_a_(BlockState state, CompoundNBT nbt) {
-        super.func_230337_a_(state, nbt);
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
         if (nbt.contains("book", NBT.TAG_COMPOUND)) {
             this.book = ItemStack.read(nbt.getCompound("book"));
         }
@@ -72,12 +72,12 @@ public class LinkingLecternTileEntity extends TileEntity {
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT nbt) {
         super.handleUpdateTag(state, nbt);
-        this.func_230337_a_(state, nbt);
+        this.read(state, nbt);
     }
 
     @Override
     public void onDataPacket(NetworkManager manager, SUpdateTileEntityPacket packet) {
-        this.func_230337_a_(Blocks.AIR.getDefaultState(), packet.getNbtCompound());
+        this.read(Blocks.AIR.getDefaultState(), packet.getNbtCompound());
     }
 
 }

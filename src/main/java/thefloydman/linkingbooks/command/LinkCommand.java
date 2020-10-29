@@ -29,7 +29,7 @@ public class LinkCommand {
                         .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
                             ILinkData linkInfo = LinkData.LINK_DATA.getDefaultInstance();
                             linkInfo.setDimension(
-                                    context.getSource().asPlayer().getEntityWorld().func_234923_W_().func_240901_a_());
+                                    context.getSource().asPlayer().getEntityWorld().getDimensionKey().getLocation());
                             linkInfo.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
                             linkInfo.setRotation(0.0F);
                             return LinkingUtils.linkEntities(
@@ -41,7 +41,7 @@ public class LinkCommand {
                                 .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
                                     ILinkData linkInfo = LinkData.LINK_DATA.getDefaultInstance();
                                     linkInfo.setDimension(DimensionArgument.getDimensionArgument(context, DIMENSION)
-                                            .func_234923_W_().func_240901_a_());
+                                            .getDimensionKey().getLocation());
                                     linkInfo.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
                                     linkInfo.setRotation(0.0F);
                                     return LinkingUtils.linkEntities(

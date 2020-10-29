@@ -68,8 +68,8 @@ public class SaveLinkingPanelImageMessage implements IMessage {
     @Override
     public void handle(Context ctx) {
         ctx.enqueueWork(() -> {
-            LinkingBooksGlobalSavedData worldData = ctx.getSender().getServer().getWorld(World.field_234918_g_)
-                    .getSavedData().getOrCreate(LinkingBooksGlobalSavedData::new, Reference.MOD_ID);
+            LinkingBooksGlobalSavedData worldData = ctx.getSender().getServer().getWorld(World.OVERWORLD).getSavedData()
+                    .getOrCreate(LinkingBooksGlobalSavedData::new, Reference.MOD_ID);
             worldData.addLinkingPanelImage(this.uuid, this.image);
             ctx.setPacketHandled(true);
         });

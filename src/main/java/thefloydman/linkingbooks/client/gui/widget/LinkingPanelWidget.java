@@ -41,20 +41,18 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public void func_230431_b_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (!this.field_230694_p_) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        if (!this.visible) {
             return;
         }
         int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
-        this.fill(matrixStack, this.field_230690_l_, this.field_230691_m_, this.field_230690_l_ + this.field_230688_j_,
-                this.field_230691_m_ + this.field_230689_k_, panelColor);
+        this.zFill(matrixStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
 
         if (this.canLink) {
             if (this.linkingPanelImage != null) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 this.linkingPanelImage.bindTexture();
-                this.func_238474_b_(matrixStack, this.field_230690_l_, this.field_230691_m_, 0, 0,
-                        this.linkingPanelImage.getTextureData().getWidth(),
+                this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getTextureData().getWidth(),
                         this.linkingPanelImage.getTextureData().getHeight());
             }
         }
@@ -63,9 +61,9 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public void onMouseClickChildren(double mouseX, double mouseY) {
+    public boolean onMouseClickChildren(double mouseX, double mouseY, int button) {
         ModNetworkHandler.sendToServer(new LinkMessage(this.holdingBook, this.linkData));
-        super.onMouseClickChildren(mouseX, mouseY);
+        return true;
     }
 
 }

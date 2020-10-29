@@ -52,7 +52,7 @@ public class LinkingLecternBlock extends LecternBlock {
                     IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
                     if (linkData != null && color != null) {
                         LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, false, color.getColor(), linkData,
-                                world.func_234923_W_().func_240901_a_());
+                                world.getDimensionKey().getLocation());
                     }
                 }
             }
