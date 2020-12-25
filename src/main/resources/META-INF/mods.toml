@@ -18,7 +18,7 @@ issueTrackerURL="https://gitlab.com/TheFloydman/linking-books/issues" #optional
 modId="linkingbooks" #mandatory
 
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="1.16.3-1.0.0.0" #mandatory
+version="1.16.3-0.1.0.0" #mandatory
 
 # A display name for the mod
 displayName="Linking Books" #mandatory
@@ -33,7 +33,7 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/linkingbooks" #optional
 logoFile="examplemod.png" #optional
 
 # A text field displayed in the mod UI
-credits="Thank you to Cyan, Inc. for creating the Myst universe and to XCompWiz for Mystcraft." #optional
+credits="Thank you to Cyan, Inc. for creating the Myst universe and to XCompWiz for inspiration from Mystcraft." #optional
 
 # A text field displayed in the mod UI
 authors="TheFloydman" #optional
