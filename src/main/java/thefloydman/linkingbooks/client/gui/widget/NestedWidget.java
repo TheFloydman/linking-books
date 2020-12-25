@@ -58,6 +58,10 @@ public abstract class NestedWidget extends Widget {
         return eatenGeneral;
     }
 
+    public boolean isInside(double x, double y) {
+        return x >= this.x && x < this.x + this.width && y >= this.y && y < this.y + this.height;
+    }
+
     public <T extends NestedWidget> T addChild(T widget) {
         this.children.add(widget);
         return widget;

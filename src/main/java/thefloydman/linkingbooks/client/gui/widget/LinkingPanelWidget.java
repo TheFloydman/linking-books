@@ -61,9 +61,12 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public boolean onMouseClickChildren(double mouseX, double mouseY, int button) {
-        ModNetworkHandler.sendToServer(new LinkMessage(this.holdingBook, this.linkData));
-        return true;
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.isInside(mouseX, mouseY)) {
+            ModNetworkHandler.sendToServer(new LinkMessage(this.holdingBook, this.linkData));
+            return true;
+        }
+        return this.onMouseClickChildren(mouseX, mouseY, button);
     }
 
 }
