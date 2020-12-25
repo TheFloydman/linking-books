@@ -17,6 +17,7 @@ import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
 import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
@@ -58,6 +59,26 @@ public class LinkingLecternBlock extends LecternBlock {
             }
         }
         return ActionResultType.PASS;
+    }
+
+    @Override
+    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            TileEntity tileEntity = world.getTileEntity(pos);
+            if (tileEntity instanceof LinkingLecternTileEntity) {
+                LinkingLecternTileEntity lecternTE = (LinkingLecternTileEntity) tileEntity;
+                if (lecternTE.hasBook()) {
+                    ItemStack stack = lecternTE.getBook();
+                    if (stack.getItem() instanceof WrittenLinkingBookItem) {
+                        LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
+                        entity.setPosition(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
+                        entity.rotationYaw = state.get(FACING).getHorizontalAngle() + 180.0F;
+                        world.addEntity(entity);
+                    }
+                }
+                super.onReplaced(state, world, pos, newState, isMoving);
+            }
+        }
     }
 
 }
