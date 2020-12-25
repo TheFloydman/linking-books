@@ -3,6 +3,7 @@
 	"item.linkingbooks.ink_bucket": "Ink Bucket",
 	"item.linkingbooks.blank_linking_book": "Blank Linking Book",
 	"item.linkingbooks.written_linking_book": "Written Linking Book",
+	"item.linkingbooks.linking_panel": "Linking Panel",
 	"fluid.linkingbooks.ink": "Ink",
 	"itemGroup.linkingbooks": "Linking Books",
 	"message.linkingbooks.no_intraage_linking": "You cannot link within the same Age.",

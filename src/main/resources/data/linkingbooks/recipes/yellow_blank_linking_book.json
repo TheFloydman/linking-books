@@ -8,13 +8,13 @@
             "item": "minecraft:leather"
         },
         {
-            "tag": "forge:dyes/red"
+            "tag": "forge:dyes/yellow"
         }
     ],
     "color":
     {
-        "red": 0.6901961,
-        "green": 0.18039216,
-        "blue": 0.14901961
+        "red": 0.99607843,
+        "green": 0.84705883,
+        "blue": 0.23921569
     }
 }
