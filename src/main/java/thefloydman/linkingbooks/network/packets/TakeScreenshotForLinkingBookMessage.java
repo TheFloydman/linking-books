@@ -77,7 +77,6 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
         }
 
         NativeImage fullImage = new NativeImage(buffer.framebufferTextureWidth, buffer.framebufferTextureHeight, false);
-        MatrixStack matrixStack = new MatrixStack();
         mc.getFramebuffer().bindFramebuffer(true);
         boolean hide = mc.gameSettings.hideGUI;
         mc.gameSettings.hideGUI = true;

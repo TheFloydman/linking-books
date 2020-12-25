@@ -26,6 +26,9 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(),
                     new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
+    public static final RegistryObject<Item> LINKING_PANEL = ITEMS.register(Reference.ItemNames.LINKING_PANEL,
+            () -> new LinkingPanelItem(new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+
     public static final RegistryObject<Item> INK_BUCKET = ITEMS.register(Reference.ItemNames.INK_BUCKET,
             () -> new BucketItem(ModFluids.INK, new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
