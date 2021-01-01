@@ -2,7 +2,6 @@ package thefloydman.linkingbooks.item;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -15,7 +14,7 @@ import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
 
-    public WrittenLinkingBookItem(DyeColor color, Properties properties) {
+    public WrittenLinkingBookItem(Properties properties) {
         super(properties);
     }
 

@@ -2,7 +2,6 @@ package thefloydman.linkingbooks.event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -16,15 +15,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import thefloydman.linkingbooks.api.capability.IColorCapability;
-import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.block.LinkingLecternBlock;
 import thefloydman.linkingbooks.capability.ColorCapability;
-import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
-import thefloydman.linkingbooks.util.LinkingUtils;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
@@ -48,33 +44,6 @@ public class ForgeEventHandler {
             entity.rotationYaw = player.rotationYawHead;
             entity.addVelocity(lookVec.x / 4, lookVec.y / 4, lookVec.z / 4);
             world.addEntity(entity);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Entity target = event.getTarget();
-        if (target instanceof LinkingBookEntity && !event.getPlayer().getEntityWorld().isRemote()) {
-            ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-            LinkingBookEntity bookEntity = (LinkingBookEntity) target;
-            if (event.getHand().equals(Hand.MAIN_HAND)) {
-                ItemStack bookStack = bookEntity.getItem();
-                if (!bookStack.isEmpty()) {
-                    if (player.isSneaking()) {
-                        player.addItemStackToInventory(bookStack);
-                        player.container.detectAndSendChanges();
-                        target.remove();
-                    } else {
-                        ILinkData linkData = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
-                        IColorCapability color = bookStack.getCapability(ColorCapability.COLOR).orElse(null);
-                        if (linkData != null && color != null) {
-                            LinkingUtils.openLinkingBookGui(player, false, color.getColor(), linkData,
-                                    player.getEntityWorld().getDimensionKey().getLocation());
-                        }
-                    }
-                }
-
-            }
         }
     }
 

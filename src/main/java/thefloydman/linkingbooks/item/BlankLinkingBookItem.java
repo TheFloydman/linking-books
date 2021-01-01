@@ -1,7 +1,6 @@
 package thefloydman.linkingbooks.item;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -10,7 +9,7 @@ import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class BlankLinkingBookItem extends LinkingBookItem {
 
-    public BlankLinkingBookItem(DyeColor color, Properties properties) {
+    public BlankLinkingBookItem(Properties properties) {
         super(properties);
     }
 

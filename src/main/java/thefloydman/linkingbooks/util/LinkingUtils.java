@@ -100,6 +100,10 @@ public class LinkingUtils {
                 return false;
             }
 
+            for (LinkEffect effect : linkData.getLinkEffects()) {
+                effect.onLinkStart(entity, linkData);
+            }
+
             BlockPos pos = linkData.getPosition();
             double x = pos.getX() + 0.5D;
             double y = pos.getY();
@@ -125,9 +129,6 @@ public class LinkingUtils {
                 player.closeContainer();
                 player.closeScreen();
                 player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
-                for (LinkEffect effect : linkData.getLinkEffects()) {
-                    effect.onLinkEnd(player);
-                }
                 // Deduct experience points/levels if a cost has been set in config.
                 player.giveExperiencePoints(ModConfig.COMMON.linkingCostExperiencePoints.get() * -1);
                 player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
@@ -143,6 +144,9 @@ public class LinkingUtils {
             } else {
                 entity.setWorld(serverWorld);
                 entity.teleportKeepLoaded(x, y, z);
+            }
+            for (LinkEffect effect : linkData.getLinkEffects()) {
+                effect.onLinkEnd(entity, linkData);
             }
             return true;
         }

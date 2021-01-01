@@ -19,7 +19,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.network.NetworkHooks;
-import thefloydman.linkingbooks.LinkingBooks;
 
 public class ObjectEntity extends Entity {
 
@@ -150,15 +149,12 @@ public class ObjectEntity extends Entity {
     }
 
     public void onKilled() {
-        LinkingBooks.LOGGER.info("KILLED");
         this.onKillCommand();
     }
 
     @Override
     public void onCollideWithPlayer(PlayerEntity player) {
-        if (MathHelper
-                .sqrt(Math.pow(player.getPosX() - this.getPosX(), 2) + Math.pow(player.getPosY() - this.getPosY(), 2)
-                        + Math.pow(player.getPosZ() - this.getPosZ(), 2)) < 0.75) {
+        if (this.getDistance(player) < 0.75) {
             player.applyEntityCollision(this);
         }
     }
