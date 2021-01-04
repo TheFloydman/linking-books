@@ -6,7 +6,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.Item;
@@ -91,10 +90,9 @@ public class LinkingLecternRenderer extends TileEntityRenderer<LinkingLecternTil
             matrixStack.scale(0.75F, 0.75F, 0.75F);
             IVertexBuilder vertexBuilder = buffer
                     .getBuffer(this.coverModel.getRenderType(Resources.LINKING_BOOK_TEXTURE));
-            this.coverModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, this.color[0],
-                    this.color[1], this.color[2], 1.0F);
-            this.pagesModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
+            this.coverModel.render(matrixStack, vertexBuilder, arg4, arg5, this.color[0], this.color[1], this.color[2],
                     1.0F);
+            this.pagesModel.render(matrixStack, vertexBuilder, arg4, arg5, 1.0F, 1.0F, 1.0F, 1.0F);
 
             matrixStack.pop();
 
