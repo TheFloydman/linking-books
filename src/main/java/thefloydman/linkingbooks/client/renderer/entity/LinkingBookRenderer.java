@@ -59,14 +59,14 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
         IVertexBuilder vertexBuilder = buffer.getBuffer(this.coverModel.getRenderType(Resources.LINKING_BOOK_TEXTURE));
 
         if (entity.hurtTime > 0) {
-            this.coverModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
+            this.coverModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
                     0.4F);
-            this.pagesModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
+            this.pagesModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
                     0.4F);
         } else {
-            this.coverModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, this.color[0],
+            this.coverModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, this.color[0],
                     this.color[1], this.color[2], 1.0F);
-            this.pagesModel.render(matrixStack, vertexBuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
+            this.pagesModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
                     1.0F);
         }
 

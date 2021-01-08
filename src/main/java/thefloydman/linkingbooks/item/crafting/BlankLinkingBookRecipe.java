@@ -19,7 +19,6 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.RecipeMatcher;
 import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.item.ModItems;
@@ -29,13 +28,11 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
     private final ResourceLocation id;
     private final ItemStack recipeOutput;
     private final NonNullList<Ingredient> recipeInputs;
-    private final boolean isSimple;
 
     public BlankLinkingBookRecipe(ResourceLocation id, ItemStack recipeOutput, NonNullList<Ingredient> recipeInput) {
         this.id = id;
         this.recipeOutput = recipeOutput;
         this.recipeInputs = recipeInput;
-        this.isSimple = recipeInput.stream().allMatch(Ingredient::isSimple);
     }
 
     @Override
@@ -43,20 +40,39 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
         RecipeItemHelper recipeItemHelper = new RecipeItemHelper();
         List<ItemStack> inputs = new ArrayList<>();
         int i = 0;
-
+        // Determines how many non-empty stacks are in the crafting grid. Also places
+        // non-empty stacks into a DefaultedList.
+        NonNullList<Ingredient> craftingInputs = NonNullList.create();
         for (int j = 0; j < inventory.getSizeInventory(); ++j) {
             ItemStack stack = inventory.getStackInSlot(j);
             if (!stack.isEmpty()) {
                 ++i;
-                if (this.isSimple)
-                    recipeItemHelper.func_221264_a(stack, 1);
-                else
-                    inputs.add(stack);
+                inputs.add(stack);
+                craftingInputs.add(Ingredient.fromStacks(inventory.getStackInSlot(j)));
             }
         }
 
-        return i == this.recipeInputs.size() && (this.isSimple ? recipeItemHelper.canCraft(this, null)
-                : RecipeMatcher.findMatches(inputs, this.recipeInputs) != null);
+        // Checks if the previously created DefaultedList exactly matches the inputs for
+        // this recipe.
+        boolean matches = true;
+        for (int j = 0; j < craftingInputs.size(); j++) {
+            boolean foundMatch = false;
+            for (int k = 0; k < this.recipeInputs.size(); k++) {
+                ItemStack[] stacks = this.recipeInputs.get(k).getMatchingStacks();
+                for (ItemStack stack : stacks) {
+                    if (stack.getItem() == craftingInputs.get(j).getMatchingStacks()[0].getItem()) {
+                        foundMatch = true;
+                        break;
+                    }
+                }
+            }
+            if (!foundMatch) {
+                matches = false;
+                break;
+            }
+        }
+
+        return i == this.recipeInputs.size() && matches;
     }
 
     @Override

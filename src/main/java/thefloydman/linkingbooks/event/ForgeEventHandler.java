@@ -33,6 +33,10 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public static void tossItem(ItemTossEvent event) {
         ItemStack stack = event.getEntityItem().getItem();
+        /*
+         * Override WrittenLinkingBookItem.createEntity() specifically for player tosses
+         * so that we can use player information to set entity attributes.
+         */
         if (stack.getItem() instanceof WrittenLinkingBookItem) {
             event.setCanceled(true);
             PlayerEntity player = event.getPlayer();

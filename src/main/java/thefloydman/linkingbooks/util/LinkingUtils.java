@@ -5,12 +5,12 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -182,8 +182,8 @@ public class LinkingUtils {
             extraData.writeBoolean(canLink);
             LinkingBooksGlobalSavedData savedData = player.getServer().getWorld(World.OVERWORLD).getSavedData()
                     .getOrCreate(LinkingBooksGlobalSavedData::new, Reference.MOD_ID);
-            NativeImage image = savedData.getLinkingPanelImage(linkData.getUUID());
-            extraData.writeCompoundTag(ImageUtils.imageToNBT(image));
+            CompoundNBT image = savedData.getLinkingPanelImage(linkData.getUUID());
+            extraData.writeCompoundTag(image);
         });
     }
 

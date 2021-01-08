@@ -11,6 +11,7 @@ import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.command.arguments.EntityArgument;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class LinkCommand {
@@ -27,25 +28,27 @@ public class LinkCommand {
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
                         .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
-                            ILinkData linkInfo = LinkData.LINK_DATA.getDefaultInstance();
-                            linkInfo.setDimension(
+                            ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                            linkData.setDimension(
                                     context.getSource().asPlayer().getEntityWorld().getDimensionKey().getLocation());
-                            linkInfo.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
-                            linkInfo.setRotation(0.0F);
+                            linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
+                            linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                            linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             return LinkingUtils.linkEntities(
-                                    new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkInfo, false);
+                                    new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData, false);
                         })))
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
                         .then(Commands.argument(DIMENSION, DimensionArgument.getDimension())
                                 .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
-                                    ILinkData linkInfo = LinkData.LINK_DATA.getDefaultInstance();
-                                    linkInfo.setDimension(DimensionArgument.getDimensionArgument(context, DIMENSION)
+                                    ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                                    linkData.setDimension(DimensionArgument.getDimensionArgument(context, DIMENSION)
                                             .getDimensionKey().getLocation());
-                                    linkInfo.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
-                                    linkInfo.setRotation(0.0F);
+                                    linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
+                                    linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                                    linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                                     return LinkingUtils.linkEntities(
-                                            new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkInfo,
+                                            new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData,
                                             false);
                                 }))))
 

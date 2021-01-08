@@ -35,7 +35,7 @@ public class LinkData {
 
     public static class Default implements ILinkData {
 
-        private ResourceLocation dimension = new ResourceLocation("overworld");
+        private ResourceLocation dimension = new ResourceLocation("minecraft:overworld");
         private BlockPos position = new BlockPos(0, 0, 0);
         private float rotation = 0.0F;
         private UUID uuid = UUID.randomUUID();

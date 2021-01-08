@@ -12,6 +12,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Util;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
+import thefloydman.linkingbooks.util.ImageUtils;
 
 public class TakeScreenshotForLinkingBookMessage implements IMessage {
 
@@ -99,7 +100,7 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
         largeImage.close();
         fullImage.close();
 
-        ModNetworkHandler.sendToServer(new SaveLinkingPanelImageMessage(smallImage, this.uuid));
+        ModNetworkHandler.sendToServer(new SaveLinkingPanelImageMessage(ImageUtils.imageToNBT(smallImage), this.uuid));
     }
 
 }

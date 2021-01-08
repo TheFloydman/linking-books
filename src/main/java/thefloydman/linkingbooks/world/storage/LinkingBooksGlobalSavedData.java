@@ -4,18 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
-import thefloydman.linkingbooks.util.ImageUtils;
 import thefloydman.linkingbooks.util.Reference;
 
 public class LinkingBooksGlobalSavedData extends WorldSavedData {
 
-    private Map<UUID, NativeImage> linkingPanelImages = new HashMap<UUID, NativeImage>();
+    private Map<UUID, CompoundNBT> linkingPanelImages = new HashMap<UUID, CompoundNBT>();
 
     public LinkingBooksGlobalSavedData() {
         super(Reference.MOD_ID);
@@ -25,7 +23,7 @@ public class LinkingBooksGlobalSavedData extends WorldSavedData {
         super(s);
     }
 
-    public boolean addLinkingPanelImage(UUID uuid, NativeImage image) {
+    public boolean addLinkingPanelImage(UUID uuid, CompoundNBT image) {
         if (this.linkingPanelImages.containsKey(uuid)) {
             return false;
         }
@@ -43,7 +41,7 @@ public class LinkingBooksGlobalSavedData extends WorldSavedData {
         return true;
     }
 
-    public NativeImage getLinkingPanelImage(UUID uuid) {
+    public CompoundNBT getLinkingPanelImage(UUID uuid) {
         return this.linkingPanelImages.get(uuid);
     }
 
@@ -55,8 +53,7 @@ public class LinkingBooksGlobalSavedData extends WorldSavedData {
                 CompoundNBT compound = (CompoundNBT) item;
                 if (compound.contains("uuid", NBT.TAG_INT_ARRAY)) {
                     UUID uuid = compound.getUniqueId("uuid");
-                    NativeImage image = ImageUtils.imageFromNBT(compound);
-                    linkingPanelImages.put(uuid, image);
+                    linkingPanelImages.put(uuid, compound);
                 }
             }
         }
@@ -66,9 +63,8 @@ public class LinkingBooksGlobalSavedData extends WorldSavedData {
     public CompoundNBT write(CompoundNBT nbt) {
         ListNBT list = new ListNBT();
         linkingPanelImages.forEach((uuid, image) -> {
-            CompoundNBT compound = ImageUtils.imageToNBT(image);
-            compound.putUniqueId("uuid", uuid);
-            list.add(compound);
+            image.putUniqueId("uuid", uuid);
+            list.add(image);
         });
         nbt.put("linkingPanelImages", list);
         return nbt;

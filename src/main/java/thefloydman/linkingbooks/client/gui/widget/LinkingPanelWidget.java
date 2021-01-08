@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -14,6 +15,7 @@ import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.LinkMessage;
+import thefloydman.linkingbooks.util.ImageUtils;
 
 @OnlyIn(Dist.CLIENT)
 public class LinkingPanelWidget extends NestedWidget {
@@ -24,12 +26,13 @@ public class LinkingPanelWidget extends NestedWidget {
     DynamicTexture linkingPanelImage = null;
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            boolean holdingBook, ILinkData linkData, boolean canLink, NativeImage linkingPanelImage) {
+            boolean holdingBook, ILinkData linkData, boolean canLink, CompoundNBT linkingPanelImageTag) {
         super(x, y, width, height, narration);
         this.holdingBook = holdingBook;
         this.linkData = linkData;
         this.canLink = canLink;
-        if (linkingPanelImage != null) {
+        if (linkingPanelImageTag != null && !linkingPanelImageTag.isEmpty()) {
+            NativeImage linkingPanelImage = ImageUtils.imageFromNBT(linkingPanelImageTag);
             NativeImage image256 = new NativeImage(256, 256, false);
             for (int textureY = 0; textureY < linkingPanelImage.getHeight(); textureY++) {
                 for (int textureX = 0; textureX < linkingPanelImage.getWidth(); textureX++) {

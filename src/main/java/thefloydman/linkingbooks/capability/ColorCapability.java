@@ -3,6 +3,7 @@ package thefloydman.linkingbooks.capability;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.DyeColor;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.util.Direction;
@@ -10,6 +11,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.LazyOptional;
 import thefloydman.linkingbooks.api.capability.IColorCapability;
 
@@ -36,6 +38,22 @@ public class ColorCapability {
             return this.color;
         }
 
+        @Override
+        public CompoundNBT writeToShareTag(CompoundNBT nbt) {
+            CompoundNBT tag = new CompoundNBT();
+            if (nbt != null) {
+                tag = nbt.copy();
+            }
+            tag.put("color", COLOR.writeNBT(this, null));
+            return tag;
+        }
+
+        @Override
+        public void readFromShareTag(CompoundNBT nbt) {
+            if (nbt != null && nbt.contains("color", NBT.TAG_INT)) {
+                COLOR.readNBT(this, null, nbt.get("color"));
+            }
+        }
     }
 
     public static class Storage implements Capability.IStorage<IColorCapability> {

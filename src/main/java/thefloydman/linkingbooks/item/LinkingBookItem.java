@@ -34,4 +34,37 @@ public abstract class LinkingBookItem extends Item {
         return DyeColor.GREEN.getColorValue();
     }
 
+    /*
+     * These two methods help ensure that itemstacks with capabilities in the
+     * creative menu and crafting table result keep their capabilities when placed
+     * in the player's inventories.
+     * 
+     * TODO: Remove when this issue is fixed:
+     * https://github.com/brandon3055/Draconic-Evolution/blob/
+     * 4af607da1f7eb144cd6fed5708611a86356f5c66/src/main/java/com/brandon3055/
+     * draconicevolution/items/equipment/IModularItem.java#L219-L227
+     */
+
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT nbt = stack.getTag();
+        IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
+        if (color != null) {
+            CompoundNBT tag = color.writeToShareTag(nbt);
+            return tag;
+        }
+        return nbt;
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, CompoundNBT nbt) {
+        stack.setTag(nbt);
+        if (nbt != null) {
+            IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
+            if (color != null) {
+                color.readFromShareTag(nbt);
+            }
+        }
+    }
+
 }

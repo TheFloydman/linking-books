@@ -1,14 +1,13 @@
 package thefloydman.linkingbooks.inventory.container;
 
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.DyeColor;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.util.ImageUtils;
 
 public class LinkingBookContainer extends Container {
 
@@ -16,7 +15,7 @@ public class LinkingBookContainer extends Container {
     public int bookColor = DyeColor.GREEN.getColorValue();
     public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
     public boolean canLink = false;
-    public NativeImage linkingPanelImage = null;
+    public CompoundNBT linkingPanelImage = new CompoundNBT();
 
     public LinkingBookContainer(int windowId, PlayerInventory playerInventory) {
         super(ModContainerTypes.LINKING_BOOK.get(), windowId);
@@ -28,20 +27,12 @@ public class LinkingBookContainer extends Container {
         this.bookColor = extraData.readInt();
         this.linkData.read(extraData);
         this.canLink = extraData.readBoolean();
-        this.linkingPanelImage = ImageUtils.imageFromNBT(extraData.readCompoundTag());
+        this.linkingPanelImage = extraData.readCompoundTag();
     }
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
         return true;
-    }
-
-    @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
-        if (this.linkingPanelImage != null) {
-            this.linkingPanelImage.close();
-        }
     }
 
 }

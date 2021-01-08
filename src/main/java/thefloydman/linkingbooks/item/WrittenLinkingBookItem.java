@@ -1,5 +1,6 @@
 package thefloydman.linkingbooks.item;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -10,6 +11,7 @@ import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
@@ -30,6 +32,20 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
             }
         }
         return ActionResult.resultPass(heldStack);
+    }
+
+    @Override
+    public Entity createEntity(World world, Entity itemEntity, ItemStack stack) {
+        LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
+        entity.setPosition(itemEntity.getPosX(), itemEntity.getPosY(), itemEntity.getPosZ());
+        entity.rotationYaw = itemEntity.rotationYaw;
+        entity.setMotion(itemEntity.getMotion());
+        return entity;
+    }
+
+    @Override
+    public boolean hasCustomEntity(ItemStack stack) {
+        return true;
     }
 
 }
