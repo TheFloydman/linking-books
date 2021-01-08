@@ -1,4 +1,8 @@
-This project is for the _Forge_ version of _Linking Books. For the _Fabric_ version, please see https://gitlab.com/TheFloydman/linking-books-fabric.
+This project is for the _Forge_ version of _Linking Books_. For the _Fabric_ version, please see https://gitlab.com/TheFloydman/linking-books-fabric.
+
+--------------------
+
+Builds hosted at CurseForge: https://www.curseforge.com/minecraft/mc-mods/linkingbooks
 
 --------------------
 
