@@ -21,6 +21,7 @@ package thefloydman.linkingbooks.command;
 
 import java.util.ArrayList;
 
+import com.google.common.collect.Lists;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.minecraft.command.CommandSource;
@@ -70,6 +71,30 @@ public class LinkCommand {
                                             new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData,
                                             false);
                                 }))))
+
+                .then(Commands.argument(DIMENSION, DimensionArgument.getDimension())
+                        .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
+                            ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                            linkData.setDimension(DimensionArgument.getDimensionArgument(context, DIMENSION)
+                                    .getDimensionKey().getLocation());
+                            linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
+                            linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                            linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                            return LinkingUtils.linkEntities(
+                                    new ArrayList<>(Lists.newArrayList(context.getSource().asPlayer())), linkData,
+                                    false);
+                        })))
+
+                .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
+                    ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                    linkData.setDimension(
+                            context.getSource().asPlayer().getEntityWorld().getDimensionKey().getLocation());
+                    linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
+                    linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                    linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                    return LinkingUtils.linkEntities(
+                            new ArrayList<>(Lists.newArrayList(context.getSource().asPlayer())), linkData, false);
+                }))
 
         );
     }
