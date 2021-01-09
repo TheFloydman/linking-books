@@ -37,7 +37,8 @@ import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class LinkCommand {
 
-    private static final String ENTITIES = "entities";
+    private static final String ENTITIES = "teleporting_entities";
+    private static final String ENTITY = "destination_entity";
     private static final String POSITION = "position";
     private static final String DIMENSION = "dimension";
 
@@ -97,15 +98,15 @@ public class LinkCommand {
                             new ArrayList<>(Lists.newArrayList(context.getSource().asPlayer())), linkData, false);
                 }))
 
-                .then(Commands.argument("teleporting_entities", EntityArgument.entities())
-                        .then(Commands.argument("destination_entity", EntityArgument.entity()).executes((context) -> {
+                .then(Commands.argument(ENTITIES, EntityArgument.entities())
+                        .then(Commands.argument(ENTITY, EntityArgument.entity()).executes((context) -> {
                             ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
-                            linkData.setDimension(EntityArgument.getEntity(context, "destination_entity")
-                                    .getEntityWorld().getDimensionKey().getLocation());
-                            linkData.setPosition(EntityArgument.getEntity(context, "destination_entity").getPosition());
+                            linkData.setDimension(EntityArgument.getEntity(context, ENTITY).getEntityWorld()
+                                    .getDimensionKey().getLocation());
+                            linkData.setPosition(EntityArgument.getEntity(context, ENTITY).getPosition());
                             linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             int i = 0;
-                            for (Entity entity : EntityArgument.getEntities(context, "teleporting_entities")) {
+                            for (Entity entity : EntityArgument.getEntities(context, ENTITIES)) {
                                 linkData.setRotation(entity.rotationYaw);
                                 i += LinkingUtils.linkEntities(new ArrayList<>(Lists.newArrayList(entity)), linkData,
                                         false);
