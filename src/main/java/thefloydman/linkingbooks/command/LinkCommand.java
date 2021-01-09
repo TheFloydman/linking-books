@@ -29,6 +29,7 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.Entity;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.linking.LinkEffects;
@@ -95,6 +96,22 @@ public class LinkCommand {
                     return LinkingUtils.linkEntities(
                             new ArrayList<>(Lists.newArrayList(context.getSource().asPlayer())), linkData, false);
                 }))
+
+                .then(Commands.argument("teleporting_entities", EntityArgument.entities())
+                        .then(Commands.argument("destination_entity", EntityArgument.entity()).executes((context) -> {
+                            ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                            linkData.setDimension(EntityArgument.getEntity(context, "destination_entity")
+                                    .getEntityWorld().getDimensionKey().getLocation());
+                            linkData.setPosition(EntityArgument.getEntity(context, "destination_entity").getPosition());
+                            linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                            int i = 0;
+                            for (Entity entity : EntityArgument.getEntities(context, "teleporting_entities")) {
+                                linkData.setRotation(entity.rotationYaw);
+                                i += LinkingUtils.linkEntities(new ArrayList<>(Lists.newArrayList(entity)), linkData,
+                                        false);
+                            }
+                            return i;
+                        })))
 
         );
     }
