@@ -13,9 +13,9 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.16.4-0.1.0.1'
-group = 'thefloydman.linkingbooks' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'linkingbooks'
+version = "${version}"
+group = "${group}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "${base_name}"
 
 ext {
 
@@ -29,7 +29,7 @@ ext {
 	// Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-	forge_version = 'net.minecraftforge:forge:1.16.4-35.1.13'
+	forge_version = "net.minecraftforge:forge:${forge_version}"
 	
 }
 
@@ -94,6 +94,11 @@ minecraft {
             }
         }
     }
+}
+
+repositories {
+  maven { url = "https://dvs1.progwml6.com/files/maven/" }
+  maven { url = "https://modmaven.k-4u.nl" }
 }
 
 dependencies {
