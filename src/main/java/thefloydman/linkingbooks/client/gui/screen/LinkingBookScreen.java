@@ -33,12 +33,15 @@ public class LinkingBookScreen extends ContainerScreen<LinkingBookContainer> {
 
     public LinkingBookScreen(LinkingBookContainer container, PlayerInventory inventory, ITextComponent narration) {
         super(container, inventory, narration);
+        this.xSize = 256;
+        this.ySize = 192;
     }
 
     @Override
     protected void init() {
-        NestedWidget linkingBook = this.addButton(new LinkingBookWidget((this.width - 256) / 2, (this.height - 192) / 2,
-                0.0F, 256, 192, new StringTextComponent("Linking Book"), this.getContainer().holdingBook,
+        super.init();
+        NestedWidget linkingBook = this.addButton(new LinkingBookWidget(this.guiLeft, this.guiTop, 0.0F, this.xSize,
+                this.ySize, new StringTextComponent("Linking Book"), this.getContainer().holdingBook,
                 this.getContainer().bookColor, this.getContainer().linkData, this.getContainer().canLink,
                 this.getContainer().linkingPanelImage));
         linkingBook.addListener(this);
