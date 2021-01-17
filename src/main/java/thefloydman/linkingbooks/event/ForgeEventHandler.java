@@ -19,9 +19,11 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.event;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -35,11 +37,13 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.block.LinkingLecternBlock;
+import thefloydman.linkingbooks.block.MarkerSwitchBlock;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
+import thefloydman.linkingbooks.tileentity.MarkerSwitchTileEntity;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
@@ -124,6 +128,29 @@ public class ForgeEventHandler {
                 player.addItemStackToInventory(tileEntity.getBook());
                 player.container.detectAndSendChanges();
                 tileEntity.setBook(ItemStack.EMPTY);
+            }
+        } else if (world.getBlockState(pos).getBlock() instanceof MarkerSwitchBlock) {
+            BlockState state = world.getBlockState(pos);
+            if (state.get(MarkerSwitchBlock.OPEN) == true) {
+                TileEntity generic = world.getTileEntity(pos);
+                if (generic instanceof MarkerSwitchTileEntity) {
+                    MarkerSwitchTileEntity tileEntity = (MarkerSwitchTileEntity) generic;
+                    MarkerSwitchTileEntity twinEntity = (MarkerSwitchTileEntity) (state
+                            .get(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER ? world.getTileEntity(pos.up())
+                                    : world.getTileEntity(pos.down()));
+                    ItemStack stack = player.getHeldItem(hand);
+                    if (tileEntity.isEmpty()) {
+                        tileEntity.setItem(stack);
+                        twinEntity.setItem(stack);
+                        stack.setCount(0);
+                        player.container.detectAndSendChanges();
+                    } else if (tileEntity.hasItem()) {
+                        player.addItemStackToInventory(tileEntity.getItem());
+                        player.container.detectAndSendChanges();
+                        tileEntity.setItem(ItemStack.EMPTY);
+                        twinEntity.setItem(ItemStack.EMPTY);
+                    }
+                }
             }
         }
     }

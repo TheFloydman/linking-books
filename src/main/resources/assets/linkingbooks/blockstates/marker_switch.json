@@ -1,0 +1,132 @@
+{
+  "multipart": [
+    {
+      "when": { "facing": "north", "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_bottom" }
+    },
+    {
+      "when": { "facing": "east", "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_bottom", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_bottom", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_bottom", "y": 270 }
+    },
+    {
+      "when": { "facing": "north", "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_top" }
+    },
+    {
+      "when": { "facing": "east", "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_top", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_top", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_podium_top", "y": 270 }
+    },
+    {
+      "when": { "facing": "north", "powered": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_on" }
+    },
+    {
+      "when": { "facing": "east", "powered": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_on", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "powered": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_on", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "powered": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_on", "y": 270 }
+    },
+    {
+      "when": { "facing": "north", "powered": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_off" }
+    },
+    {
+      "when": { "facing": "east", "powered": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_off", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "powered": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_off", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "powered": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_handle_off", "y": 270 }
+    },
+    {
+      "when": { "facing": "north", "open": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_open" }
+    },
+    {
+      "when": { "facing": "east", "open": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_open", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "open": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_open", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "open": true, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_open", "y": 270 }
+    },
+    {
+      "when": { "facing": "north", "open": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_closed" }
+    },
+    {
+      "when": { "facing": "east", "open": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_closed", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "open": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_closed", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "open": false, "half": "upper" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_top_closed", "y": 270 }
+    },
+    {
+      "when": { "facing": "north", "open": true, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_open" }
+    },
+    {
+      "when": { "facing": "east", "open": true, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_open", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "open": true, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_open", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "open": true, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_open", "y": 270 }
+    },
+    {
+      "when": { "facing": "north", "open": false, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_closed" }
+    },
+    {
+      "when": { "facing": "east", "open": false, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_closed", "y": 90 }
+    },
+    {
+      "when": { "facing": "south", "open": false, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_closed", "y": 180 }
+    },
+    {
+      "when": { "facing": "west", "open": false, "half": "lower" },
+      "apply": { "model": "linkingbooks:block/marker_switch_door_bottom_closed", "y": 270 }
+    }
+  ]
+}

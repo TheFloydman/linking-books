@@ -41,6 +41,10 @@ public final class ModBlocks {
             () -> new LinkingLecternBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
                     .harvestLevel(2).harvestTool(ToolType.AXE)));
 
+    public static final RegistryObject<Block> MARKER_SWITCH = BLOCKS.register(BlockNames.MARKER_SWITCH,
+            () -> new MarkerSwitchBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
+                    .harvestLevel(2).harvestTool(ToolType.AXE)));
+
     public static final RegistryObject<FlowingFluidBlock> INK = BLOCKS.register(BlockNames.INK,
             () -> new FlowingFluidBlock(ModFluids.INK, AbstractBlock.Properties.create(ModMaterials.INK)
                     .doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops()));

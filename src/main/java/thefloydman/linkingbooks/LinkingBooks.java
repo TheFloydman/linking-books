@@ -40,6 +40,7 @@ import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
+import thefloydman.linkingbooks.client.renderer.tileentity.MarkerSwitchRenderer;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
@@ -89,11 +90,13 @@ public class LinkingBooks {
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
+
         // Register Entity renderers.
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
 
         // Register TileEntity renderers.
         ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.MARKER_SWITCH.get(), MarkerSwitchRenderer::new);
 
         // Register containers.
         ScreenManager.registerFactory(ModContainerTypes.LINKING_BOOK.get(), LinkingBookScreen::new);

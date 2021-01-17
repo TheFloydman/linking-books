@@ -44,6 +44,10 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(),
                     new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
+    public static final RegistryObject<Item> MARKER_SWITCH = ITEMS.register(Reference.BlockNames.MARKER_SWITCH,
+            () -> new BlockItem(ModBlocks.MARKER_SWITCH.get(),
+                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+
     public static final RegistryObject<Item> LINKING_PANEL = ITEMS.register(Reference.ItemNames.LINKING_PANEL,
             () -> new LinkingPanelItem(new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 

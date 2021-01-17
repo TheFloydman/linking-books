@@ -38,4 +38,8 @@ public class ModTileEntityTypes {
             .register(TileEntityNames.LINKING_LECTERN, () -> new TileEntityType<>(LinkingLecternTileEntity::new,
                     Sets.newHashSet(ModBlocks.LINKING_LECTERN.get()), null));
 
+    public static final RegistryObject<TileEntityType<MarkerSwitchTileEntity>> MARKER_SWITCH = TILE_ENTITIES
+            .register(TileEntityNames.MARKER_SWITCH, () -> new TileEntityType<>(MarkerSwitchTileEntity::new,
+                    Sets.newHashSet(ModBlocks.MARKER_SWITCH.get()), null));
+
 }

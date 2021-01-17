@@ -1,0 +1,10 @@
+{
+	"loader": "forge:obj",
+	"model": "linkingbooks:models/block/marker_switch_podium_bottom.obj",
+	"ambientToFullbright": true,
+	"flip-v": false,
+	"detectCullableFaces": true,
+	"textures": {
+        "particle": "block/spruce_planks"
+    }
+}
