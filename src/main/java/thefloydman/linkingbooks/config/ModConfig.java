@@ -36,6 +36,8 @@ public class ModConfig {
 
     public final IntValue linkingCostExperiencePoints;
     public final IntValue linkingCostExperienceLevels;
+    public final IntValue linkingPanelChunkLoadRadius;
+    public final IntValue linkingPanelChunkRenderDistance;
 
     ModConfig(ForgeConfigSpec.Builder builder) {
 
@@ -48,6 +50,16 @@ public class ModConfig {
                 .comment("How many experience levels it costs to use a linking book. Stacks with points option.")
                 .translation("linkingbooks.configgui.linkingcost_levels")
                 .defineInRange("linkingCostLevels", 0, 0, Integer.MAX_VALUE);
+
+        this.linkingPanelChunkLoadRadius = builder
+                .comment("The radius of chunks to load when a linking panel is rendering.")
+                .translation("linkingbooks.configgui.panel_chunk_load_radius")
+                .defineInRange("linkingPanelChunkLoadRadius", 4, 0, Integer.MAX_VALUE);
+
+        this.linkingPanelChunkRenderDistance = builder
+                .comment("The maximum render distance (in chunks) of a linking panel.")
+                .translation("linkingbooks.configgui.panel_chunk_render_distance")
+                .defineInRange("linkingPanelChunkRenderDistance", 4, 0, Integer.MAX_VALUE);
 
     }
 

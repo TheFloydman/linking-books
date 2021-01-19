@@ -10,5 +10,7 @@
 	"message.linkingbooks.no_intraage_linking": "You cannot link within the same Age.",
 	"message.linkingbooks.insufficient_experience": "You do not have enough experience to link.",
 	"linkingbooks.configgui.linkingcost_points.tooltip": "How many experience points it costs to use a linking book. Stacks with levels option.",
-	"linkingbooks.configgui.linkingcost_levels.tooltip": "How many experience levels it costs to use a linking book. Stacks with points option."
+	"linkingbooks.configgui.linkingcost_levels.tooltip": "How many experience levels it costs to use a linking book. Stacks with points option.",
+	"linkingbooks.configgui.panel_chunk_load_radius.tooltip": "The radius of chunks to load when a linking panel is rendering.",
+	"linkingbooks.configgui.panel_chunk_render_distance.tooltip": "The maximum render distance (in chunks) of a linking panel."
 }

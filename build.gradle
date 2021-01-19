@@ -53,6 +53,9 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            // To help us develop with Immersive Portals.
+            property 'mixin.env.disableRefMap', 'true'
+
             mods {
                 linkingbooks {
                     source sourceSets.main
@@ -68,6 +71,9 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            
+            // To help us develop with Immersive Portals.
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 linkingbooks {
@@ -99,10 +105,13 @@ minecraft {
 repositories {
   maven { url = "https://dvs1.progwml6.com/files/maven/" }
   maven { url = "https://modmaven.k-4u.nl" }
+  maven { url "https://jitpack.io" }
 }
 
 dependencies {
     minecraft forge_version
+    // For linking panel real-time rendering.
+    compileOnly "com.github.qouteall:ImmersivePortalsModForForge:v${immersive_portals_version}"
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
