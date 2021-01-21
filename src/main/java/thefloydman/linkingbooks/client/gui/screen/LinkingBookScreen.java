@@ -51,8 +51,4 @@ public class LinkingBookScreen extends ContainerScreen<LinkingBookContainer> {
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
     }
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-    }
-
 }

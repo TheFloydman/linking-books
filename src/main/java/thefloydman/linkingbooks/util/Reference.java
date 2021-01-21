@@ -20,6 +20,7 @@
 package thefloydman.linkingbooks.util;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.ModList;
 
 public class Reference {
 
@@ -34,6 +35,10 @@ public class Reference {
      */
     public static ResourceLocation getAsResourceLocation(String path) {
         return new ResourceLocation(MOD_ID, path);
+    }
+
+    public static boolean isModLoaded(String modId) {
+        return ModList.get().isLoaded(modId);
     }
 
     public static class BlockNames {

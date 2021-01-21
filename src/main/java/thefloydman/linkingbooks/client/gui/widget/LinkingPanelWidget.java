@@ -23,20 +23,31 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.qouteall.immersive_portals.ClientWorldLoader;
+import com.qouteall.immersive_portals.render.GuiPortalRendering;
+import com.qouteall.immersive_portals.render.MyRenderHelper;
+import com.qouteall.immersive_portals.render.context_management.WorldRenderInfo;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.LinkMessage;
 import thefloydman.linkingbooks.util.ImageUtils;
+import thefloydman.linkingbooks.util.Reference;
 
 @OnlyIn(Dist.CLIENT)
 public class LinkingPanelWidget extends NestedWidget {
@@ -75,26 +86,23 @@ public class LinkingPanelWidget extends NestedWidget {
         this.zFill(matrixStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
 
         if (this.canLink) {
-            /*
-             * TODO: Enable Immersive Portals support when chunkloading is working if
-             * (ModList.get().isLoaded("immersive_portals")) { Matrix4f cameraTransformation
-             * = new Matrix4f(); cameraTransformation.setIdentity();
-             * cameraTransformation.mul(Vector3f.YP.rotationDegrees(this.linkData.
-             * getRotation() + 180.0F)); WorldRenderInfo worldRenderInfo = new
-             * WorldRenderInfo( ClientWorldLoader
-             * .getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY,
-             * this.linkData.getDimension())), new
-             * Vector3d(this.linkData.getPosition().getX() + 0.5D,
-             * this.linkData.getPosition().getY() + 1.5D, this.linkData.getPosition().getZ()
-             * + 0.5D), cameraTransformation, null,
-             * ModConfig.COMMON.linkingPanelChunkRenderDistance.get(), true);
-             * GuiPortalRendering.submitNextFrameRendering(worldRenderInfo, frameBuffer);
-             * MyRenderHelper.drawFramebuffer(frameBuffer, false, false, this.x * (float)
-             * client.getMainWindow().getGuiScaleFactor(), (this.x + this.width) * (float)
-             * client.getMainWindow().getGuiScaleFactor(), this.y * (float)
-             * client.getMainWindow().getGuiScaleFactor(), (this.y + this.height) * (float)
-             * client.getMainWindow().getGuiScaleFactor()); } else
-             */if (this.linkingPanelImage != null) {
+            if (Reference.isModLoaded("immersive_portals")) {
+                Matrix4f cameraTransformation = new Matrix4f();
+                cameraTransformation.setIdentity();
+                cameraTransformation.mul(Vector3f.YP.rotationDegrees(this.linkData.getRotation() + 180.0F));
+                WorldRenderInfo worldRenderInfo = new WorldRenderInfo(
+                        ClientWorldLoader
+                                .getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, this.linkData.getDimension())),
+                        new Vector3d(this.linkData.getPosition().getX() + 0.5D,
+                                this.linkData.getPosition().getY() + 1.5D, this.linkData.getPosition().getZ() + 0.5D),
+                        cameraTransformation, null, ModConfig.COMMON.linkingPanelChunkRenderDistance.get(), true);
+                GuiPortalRendering.submitNextFrameRendering(worldRenderInfo, frameBuffer);
+                MyRenderHelper.drawFramebuffer(frameBuffer, false, false,
+                        this.x * (float) client.getMainWindow().getGuiScaleFactor(),
+                        (this.x + this.width) * (float) client.getMainWindow().getGuiScaleFactor(),
+                        this.y * (float) client.getMainWindow().getGuiScaleFactor(),
+                        (this.y + this.height) * (float) client.getMainWindow().getGuiScaleFactor());
+            } else if (this.linkingPanelImage != null) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 this.linkingPanelImage.bindTexture();
                 this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getTextureData().getWidth(),
