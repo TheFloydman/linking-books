@@ -23,27 +23,18 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.qouteall.immersive_portals.ClientWorldLoader;
-import com.qouteall.immersive_portals.render.GuiPortalRendering;
-import com.qouteall.immersive_portals.render.MyRenderHelper;
-import com.qouteall.immersive_portals.render.context_management.WorldRenderInfo;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.config.ModConfig;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.LinkMessage;
 import thefloydman.linkingbooks.util.ImageUtils;
@@ -56,7 +47,7 @@ public class LinkingPanelWidget extends NestedWidget {
     public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
     public boolean canLink = false;
     DynamicTexture linkingPanelImage = null;
-    private static Framebuffer frameBuffer = new Framebuffer(64, 42, true, true);
+    private Framebuffer frameBuffer = new Framebuffer(64, 42, true, true);
     Minecraft client = Minecraft.getInstance();
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
@@ -87,21 +78,8 @@ public class LinkingPanelWidget extends NestedWidget {
 
         if (this.canLink) {
             if (Reference.isModLoaded("immersive_portals")) {
-                Matrix4f cameraTransformation = new Matrix4f();
-                cameraTransformation.setIdentity();
-                cameraTransformation.mul(Vector3f.YP.rotationDegrees(this.linkData.getRotation() + 180.0F));
-                WorldRenderInfo worldRenderInfo = new WorldRenderInfo(
-                        ClientWorldLoader
-                                .getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, this.linkData.getDimension())),
-                        new Vector3d(this.linkData.getPosition().getX() + 0.5D,
-                                this.linkData.getPosition().getY() + 1.5D, this.linkData.getPosition().getZ() + 0.5D),
-                        cameraTransformation, null, ModConfig.COMMON.linkingPanelChunkRenderDistance.get(), true);
-                GuiPortalRendering.submitNextFrameRendering(worldRenderInfo, frameBuffer);
-                MyRenderHelper.drawFramebuffer(frameBuffer, false, false,
-                        this.x * (float) client.getMainWindow().getGuiScaleFactor(),
-                        (this.x + this.width) * (float) client.getMainWindow().getGuiScaleFactor(),
-                        this.y * (float) client.getMainWindow().getGuiScaleFactor(),
-                        (this.y + this.height) * (float) client.getMainWindow().getGuiScaleFactor());
+                ImmersivePortalsIntegration.renderGuiPortal(this.linkData, this.frameBuffer, this.client, matrixStack,
+                        this.x, this.y, this.width, this.height);
             } else if (this.linkingPanelImage != null) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 this.linkingPanelImage.bindTexture();

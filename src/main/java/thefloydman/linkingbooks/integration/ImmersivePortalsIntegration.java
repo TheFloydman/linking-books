@@ -23,15 +23,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.qouteall.immersive_portals.ClientWorldLoader;
 import com.qouteall.immersive_portals.chunk_loading.ChunkVisibilityManager;
 import com.qouteall.immersive_portals.chunk_loading.ChunkVisibilityManager.ChunkLoader;
 import com.qouteall.immersive_portals.chunk_loading.DimensionalChunkPos;
 import com.qouteall.immersive_portals.chunk_loading.NewChunkTrackingGraph;
+import com.qouteall.immersive_portals.render.GuiPortalRendering;
+import com.qouteall.immersive_portals.render.MyRenderHelper;
+import com.qouteall.immersive_portals.render.context_management.WorldRenderInfo;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.config.ModConfig;
 
@@ -54,6 +66,25 @@ public class ImmersivePortalsIntegration {
         if (chunkLoader != null) {
             NewChunkTrackingGraph.removePerPlayerAdditionalChunkLoader(player, chunkLoader);
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void renderGuiPortal(ILinkData linkData, Framebuffer frameBuffer, Minecraft client,
+            MatrixStack matrixStack, int x, int y, int width, int height) {
+        Matrix4f cameraTransformation = new Matrix4f();
+        cameraTransformation.setIdentity();
+        cameraTransformation.mul(Vector3f.YP.rotationDegrees(linkData.getRotation() + 180.0F));
+        WorldRenderInfo worldRenderInfo = new WorldRenderInfo(
+                ClientWorldLoader.getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension())),
+                new Vector3d(linkData.getPosition().getX() + 0.5D, linkData.getPosition().getY() + 1.5D,
+                        linkData.getPosition().getZ() + 0.5D),
+                cameraTransformation, null, ModConfig.COMMON.linkingPanelChunkRenderDistance.get(), true);
+        GuiPortalRendering.submitNextFrameRendering(worldRenderInfo, frameBuffer);
+        MyRenderHelper.drawFramebuffer(frameBuffer, false, false,
+                x * (float) client.getMainWindow().getGuiScaleFactor(),
+                (x + width) * (float) client.getMainWindow().getGuiScaleFactor(),
+                y * (float) client.getMainWindow().getGuiScaleFactor(),
+                (y + height) * (float) client.getMainWindow().getGuiScaleFactor());
     }
 
 }
