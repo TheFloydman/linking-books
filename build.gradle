@@ -43,7 +43,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // To help us develop with mods that use mixins.
-            //property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 linkingbooks {
@@ -62,7 +62,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             
             // To help us develop with mods that use mixins.
-            //property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 linkingbooks {
@@ -81,7 +81,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             
             // To help us develop with mods that use mixins.
-            //property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.disableRefMap', 'true'
 
             args '--mod', 'linkingbooks', '--all', '--output', file('src/generated/resources/')
 
