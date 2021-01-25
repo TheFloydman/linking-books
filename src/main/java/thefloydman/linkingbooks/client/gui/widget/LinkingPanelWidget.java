@@ -34,11 +34,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.LinkMessage;
 import thefloydman.linkingbooks.util.ImageUtils;
-import thefloydman.linkingbooks.util.Reference;
 
 @OnlyIn(Dist.CLIENT)
 public class LinkingPanelWidget extends NestedWidget {
@@ -77,10 +75,11 @@ public class LinkingPanelWidget extends NestedWidget {
         this.zFill(matrixStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
 
         if (this.canLink) {
-            if (Reference.isModLoaded("immersive_portals")) {
-                ImmersivePortalsIntegration.renderGuiPortal(this.linkData, this.frameBuffer, this.client, matrixStack,
-                        this.x, this.y, this.width, this.height);
-            } else if (this.linkingPanelImage != null) {
+            /*
+             * if (Reference.isModLoaded("immersive_portals")) {
+             * ImmersivePortalsIntegration.renderGuiPortal(this.linkData, this.frameBuffer,
+             * this.client, matrixStack, this.x, this.y, this.width, this.height); } else
+             */if (this.linkingPanelImage != null) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 this.linkingPanelImage.bindTexture();
                 this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getTextureData().getWidth(),

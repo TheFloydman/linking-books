@@ -21,15 +21,12 @@ package thefloydman.linkingbooks.inventory.container;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
-import thefloydman.linkingbooks.util.Reference;
 
 public class LinkingBookContainer extends Container {
 
@@ -51,10 +48,12 @@ public class LinkingBookContainer extends Container {
         this.canLink = extraData.readBoolean();
         this.linkingPanelImage = extraData.readCompoundTag();
 
-        if (Reference.isModLoaded("immersive_portals") && !playerInventory.player.getEntityWorld().isRemote()
-                && this.canLink) {
-            ImmersivePortalsIntegration.addChunkLoader(this.linkData, (ServerPlayerEntity) playerInventory.player);
-        }
+        /*
+         * if (Reference.isModLoaded("immersive_portals") &&
+         * !playerInventory.player.getEntityWorld().isRemote() && this.canLink) {
+         * ImmersivePortalsIntegration.addChunkLoader(this.linkData,
+         * (ServerPlayerEntity) playerInventory.player); }
+         */
 
     }
 
@@ -66,9 +65,12 @@ public class LinkingBookContainer extends Container {
     @Override
     public void onContainerClosed(PlayerEntity player) {
 
-        if (Reference.isModLoaded("immersive_portals") && !player.getEntityWorld().isRemote() && this.canLink) {
-            ImmersivePortalsIntegration.removeChunkLoader(this.linkData, (ServerPlayerEntity) player);
-        }
+        /*
+         * if (Reference.isModLoaded("immersive_portals") &&
+         * !player.getEntityWorld().isRemote() && this.canLink) {
+         * ImmersivePortalsIntegration.removeChunkLoader(this.linkData,
+         * (ServerPlayerEntity) player); }
+         */
 
         super.onContainerClosed(player);
     }
