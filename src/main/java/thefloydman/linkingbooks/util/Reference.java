@@ -45,6 +45,9 @@ public class Reference {
         public static final String INK = "ink";
         public static final String LINKING_LECTERN = "linking_lectern";
         public static final String MARKER_SWITCH = "marker_switch";
+        public static final String NARA = "nara";
+        public static final String LINK_TRANSLATOR = "link_translator";
+        public static final String LINKING_PORTAL = "linking_portal";
     }
 
     public static class ItemNames {
@@ -56,11 +59,12 @@ public class Reference {
 
     public static class EntityNames {
         public static final String LINKING_BOOK = "linking_book";
-        public static final String CAMERA = "camera";
+        public static final String LINKING_PORTAL = "linking_portal";
     }
 
     public static class TileEntityNames {
         public static final String LINKING_LECTERN = "linking_lectern";
+        public static final String LINK_TRANSLATOR = "link_translator";
         public static final String MARKER_SWITCH = "marker_switch";
     }
 

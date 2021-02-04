@@ -22,7 +22,9 @@ package thefloydman.linkingbooks.block;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -40,6 +42,20 @@ public final class ModBlocks {
     public static final RegistryObject<Block> LINKING_LECTERN = BLOCKS.register(BlockNames.LINKING_LECTERN,
             () -> new LinkingLecternBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
                     .harvestLevel(2).harvestTool(ToolType.AXE)));
+
+    public static final RegistryObject<Block> NARA = BLOCKS.register(BlockNames.NARA,
+            () -> new NaraBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.BROWN)
+                    .hardnessAndResistance(100.0F, 2400.0F).harvestTool(ToolType.PICKAXE)));
+
+    public static final RegistryObject<Block> LINK_TRANSLATOR = BLOCKS.register(BlockNames.LINK_TRANSLATOR,
+            () -> new LinkTranslatorBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.BROWN)
+                    .hardnessAndResistance(25.0F, 600.0F).harvestTool(ToolType.PICKAXE)));
+
+    public static final RegistryObject<Block> LINKING_PORTAL = BLOCKS.register(BlockNames.LINKING_PORTAL,
+            () -> new LinkingPortalBlock(AbstractBlock.Properties.create(Material.PORTAL).doesNotBlockMovement()
+                    .hardnessAndResistance(-1.0F, -1.0F).sound(SoundType.GLASS).notSolid().setLightLevel((state) -> {
+                        return 11;
+                    })));
 
     public static final RegistryObject<Block> MARKER_SWITCH = BLOCKS.register(BlockNames.MARKER_SWITCH,
             () -> new MarkerSwitchBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)

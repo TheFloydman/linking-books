@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "linkingbooks:block/link_translator"
+    },
+      "facing=east": {
+      "model": "linkingbooks:block/link_translator",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "linkingbooks:block/link_translator",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "linkingbooks:block/link_translator",
+      "y": 270
+    }
+  }
+}

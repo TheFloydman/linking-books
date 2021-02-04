@@ -44,6 +44,13 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(),
                     new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
+    public static final RegistryObject<Item> NARA = ITEMS.register(Reference.BlockNames.NARA,
+            () -> new BlockItem(ModBlocks.NARA.get(), new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+
+    public static final RegistryObject<Item> LINK_TRANSLATOR = ITEMS.register(Reference.BlockNames.LINK_TRANSLATOR,
+            () -> new BlockItem(ModBlocks.LINK_TRANSLATOR.get(),
+                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+
     public static final RegistryObject<Item> MARKER_SWITCH = ITEMS.register(Reference.BlockNames.MARKER_SWITCH,
             () -> new BlockItem(ModBlocks.MARKER_SWITCH.get(),
                     new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));

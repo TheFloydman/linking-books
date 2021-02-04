@@ -24,6 +24,8 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -39,11 +41,13 @@ import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
+import thefloydman.linkingbooks.client.renderer.tileentity.LinkTranslatorRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.MarkerSwitchRenderer;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.inventory.container.ModContainerTypes;
 import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.ModItems;
@@ -93,9 +97,13 @@ public class LinkingBooks {
 
         // Register Entity renderers.
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
+        if (Reference.isModLoaded("immersive_portals")) {
+            ImmersivePortalsIntegration.registerEntityRenderingHandlers();
+        }
 
         // Register TileEntity renderers.
         ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.LINK_TRANSLATOR.get(), LinkTranslatorRenderer::new);
         ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.MARKER_SWITCH.get(), MarkerSwitchRenderer::new);
 
         // Register containers.
@@ -107,6 +115,9 @@ public class LinkingBooks {
                 ModItems.BLANK_LINKING_BOOK.get());
         itemColors.register((stack, index) -> LinkingBookItem.getColor(stack, index),
                 ModItems.WRITTEN_LINKING_BOOK.get());
+
+        // Register block layer renderers.
+        RenderTypeLookup.setRenderLayer(ModBlocks.LINKING_PORTAL.get(), RenderType.getTranslucent());
 
     }
 

@@ -26,7 +26,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.world.storage.LinkingBooksGlobalSavedData;
+import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 public class SaveLinkingPanelImageMessage implements IMessage {
 
@@ -58,8 +58,8 @@ public class SaveLinkingPanelImageMessage implements IMessage {
     @Override
     public void handle(Context ctx) {
         ctx.enqueueWork(() -> {
-            LinkingBooksGlobalSavedData worldData = ctx.getSender().getServer().getWorld(World.OVERWORLD).getSavedData()
-                    .getOrCreate(LinkingBooksGlobalSavedData::new, Reference.MOD_ID);
+            LinkingBooksSavedData worldData = ctx.getSender().getServer().getWorld(World.OVERWORLD).getSavedData()
+                    .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
             worldData.addLinkingPanelImage(this.uuid, this.image);
             ctx.setPacketHandled(true);
         });

@@ -20,34 +20,56 @@
 package thefloydman.linkingbooks.integration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.qouteall.immersive_portals.ClientWorldLoader;
 import com.qouteall.immersive_portals.chunk_loading.ChunkVisibilityManager;
-import com.qouteall.immersive_portals.chunk_loading.ChunkVisibilityManager.ChunkLoader;
 import com.qouteall.immersive_portals.chunk_loading.DimensionalChunkPos;
 import com.qouteall.immersive_portals.chunk_loading.NewChunkTrackingGraph;
+import com.qouteall.immersive_portals.portal.PortalManipulation;
 import com.qouteall.immersive_portals.render.GuiPortalRendering;
 import com.qouteall.immersive_portals.render.MyRenderHelper;
 import com.qouteall.immersive_portals.render.context_management.WorldRenderInfo;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.storage.ChunkLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.config.ModConfig;
+import thefloydman.linkingbooks.entity.LinkingPortalEntity;
+import thefloydman.linkingbooks.entity.ModEntityTypes;
+import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
+import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.util.Reference.EntityNames;
 
 public class ImmersivePortalsIntegration {
+
+    public static EntityType<LinkingPortalEntity> linkingPortalEntityType;
 
     private static Map<UUID, ChunkLoader> chunkLoaders = new HashMap<UUID, ChunkLoader>();
 
@@ -85,6 +107,56 @@ public class ImmersivePortalsIntegration {
                 (x + width) * (float) client.getMainWindow().getGuiScaleFactor(),
                 y * (float) client.getMainWindow().getGuiScaleFactor(),
                 (y + height) * (float) client.getMainWindow().getGuiScaleFactor());
+    }
+
+    public static UUID[] addImmersivePortal(World world, double[] pos, double width, double height, Axis axis,
+            ILinkData linkData, LinkTranslatorTileEntity blockEntity) {
+        if (axis == Axis.Y) {
+            return null;
+        }
+        ItemStack stack = ModItems.WRITTEN_LINKING_BOOK.get().getDefaultInstance();
+        ILinkData itemData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
+        itemData.setDimension(linkData.getDimension());
+        itemData.setLinkEffects(linkData.getLinkEffects());
+        itemData.setPosition(linkData.getPosition());
+        itemData.setRotation(linkData.getRotation());
+        itemData.setUUID(linkData.getUUID());
+        LinkingPortalEntity portal = new LinkingPortalEntity(ModEntityTypes.LINKING_PORTAL.get(), world, stack);
+        portal.setDestinationDimension(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()));
+        portal.setDestination(new Vector3d(linkData.getPosition().getX() + 0.5D,
+                linkData.getPosition().getY() + (height / 2.0D), linkData.getPosition().getZ() + 0.5D));
+        portal.setPosition(axis == Axis.X ? pos[0] : pos[0] + 1.0D, pos[1], axis == Axis.X ? pos[2] - 1.0D : pos[2]);
+        portal.setSquareShape(axis == Axis.X ? new Vector3d(1, 0, 0) : new Vector3d(0, 0, 1), new Vector3d(0, 1, 0),
+                width, height);
+        world.addEntity(portal);
+        LinkingPortalEntity reversePortal = PortalManipulation.createFlippedPortal(portal,
+                ModEntityTypes.LINKING_PORTAL.get());
+        reversePortal.setPosition(axis == Axis.X ? portal.getPosition().getX() : portal.getPosition().getX() - 1.0D,
+                portal.getPosition().getY(),
+                axis == Axis.X ? portal.getPosition().getZ() + 1.0D : portal.getPosition().getZ());
+        world.addEntity(reversePortal);
+        blockEntity.addImmersivePortalsEntity(portal);
+        blockEntity.addImmersivePortalsEntity(reversePortal);
+        return new UUID[] { portal.getUniqueID(), reversePortal.getUniqueID() };
+    }
+
+    @SubscribeEvent
+    public static void registerImmersivePortalsEntities(RegistryEvent.Register<EntityType<?>> event) {
+        linkingPortalEntityType = EntityType.Builder
+                .<LinkingPortalEntity>create(LinkingPortalEntity::new, EntityClassification.MISC).size(1.0F, 1.0F)
+                .setTrackingRange(96).immuneToFire()
+                .setCustomClientFactory((a, b) -> new LinkingPortalEntity(linkingPortalEntityType, b))
+                .build(Reference.MOD_ID + ":" + EntityNames.LINKING_PORTAL);
+        event.getRegistry().register(linkingPortalEntityType);
+    }
+
+    public static void registerEntityRenderingHandlers() {
+        RenderingRegistry.registerEntityRenderingHandler(linkingPortalEntityType, PortalEntityRenderer::new);
+    }
+
+    public static List<Entity> getNearbyLinkingPortals(BlockPos pos, World world) {
+        return world.getEntitiesWithinAABB(LinkingPortalEntity.class,
+                new AxisAlignedBB(pos.down(64).south(64).west(64), pos.up(64).north(64).east(64)), null);
     }
 
 }

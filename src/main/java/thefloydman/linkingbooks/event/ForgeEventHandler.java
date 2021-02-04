@@ -19,12 +19,16 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.event;
 
+import java.util.Optional;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -35,15 +39,21 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import thefloydman.linkingbooks.api.capability.IColorCapability;
+import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.block.LinkTranslatorBlock;
 import thefloydman.linkingbooks.block.LinkingLecternBlock;
 import thefloydman.linkingbooks.block.MarkerSwitchBlock;
-import thefloydman.linkingbooks.capability.ColorCapability;
+import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
+import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
-import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
+import thefloydman.linkingbooks.linking.LinkEffects;
+import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
+import thefloydman.linkingbooks.tileentity.LinkingBookHolderTileEntity;
 import thefloydman.linkingbooks.tileentity.MarkerSwitchTileEntity;
+import thefloydman.linkingbooks.util.LinkingPortalUtils;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.FORGE)
@@ -113,21 +123,37 @@ public class ForgeEventHandler {
             return;
         }
         BlockPos pos = event.getPos();
-        if (world.getBlockState(pos).getBlock() instanceof LinkingLecternBlock) {
+        if (world.getBlockState(pos).getBlock() instanceof LinkingLecternBlock
+                || world.getBlockState(pos).getBlock() instanceof LinkTranslatorBlock) {
             TileEntity generic = world.getTileEntity(pos);
-            if (!(generic instanceof LinkingLecternTileEntity)) {
+            if (!(generic instanceof LinkingBookHolderTileEntity)) {
                 return;
             }
-            LinkingLecternTileEntity tileEntity = (LinkingLecternTileEntity) generic;
+            LinkingBookHolderTileEntity tileEntity = (LinkingBookHolderTileEntity) generic;
             ItemStack stack = player.getHeldItem(hand);
             if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
+                ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
                 tileEntity.setBook(stack);
-                IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
                 player.container.detectAndSendChanges();
+                if (world.getTileEntity(pos) instanceof LinkTranslatorTileEntity) {
+                    LinkTranslatorTileEntity linkTranslatorBlockEntity = (LinkTranslatorTileEntity) tileEntity;
+                    tryMakePortalInDirection(world, pos, Direction.NORTH, linkData, linkTranslatorBlockEntity);
+                    tryMakePortalInDirection(world, pos, Direction.EAST, linkData, linkTranslatorBlockEntity);
+                    tryMakePortalInDirection(world, pos, Direction.SOUTH, linkData, linkTranslatorBlockEntity);
+                    tryMakePortalInDirection(world, pos, Direction.WEST, linkData, linkTranslatorBlockEntity);
+                }
             } else if (stack.isEmpty() && tileEntity.hasBook()) {
                 player.addItemStackToInventory(tileEntity.getBook());
                 player.container.detectAndSendChanges();
                 tileEntity.setBook(ItemStack.EMPTY);
+                if (world.getTileEntity(pos) instanceof LinkTranslatorTileEntity) {
+                    LinkTranslatorTileEntity linkTranslatorBlockEntity = (LinkTranslatorTileEntity) tileEntity;
+                    linkTranslatorBlockEntity.deleteImmersivePortals();
+                    tryErasePortalInDirection(world, pos, Direction.NORTH);
+                    tryErasePortalInDirection(world, pos, Direction.EAST);
+                    tryErasePortalInDirection(world, pos, Direction.SOUTH);
+                    tryErasePortalInDirection(world, pos, Direction.WEST);
+                }
             }
         } else if (world.getBlockState(pos).getBlock() instanceof MarkerSwitchBlock) {
             BlockState state = world.getBlockState(pos);
@@ -152,6 +178,37 @@ public class ForgeEventHandler {
                     }
                 }
             }
+        }
+    }
+
+    private static void tryMakePortalInDirection(World world, BlockPos pos, Direction direction, ILinkData linkData,
+            LinkTranslatorTileEntity blockEntity) {
+        if (world.getDimensionKey().getLocation().equals(linkData.getDimension())
+                && !linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING)) {
+            return;
+        }
+        Optional<LinkingPortalUtils> optional = LinkingPortalUtils.canMakePortal(world, pos.offset(direction), Axis.X);
+        if (optional.isPresent()) {
+            LinkingPortalUtils util = optional.get();
+            if (Reference.isModLoaded("immersive_portals")
+                    && ModConfig.COMMON.useImmersivePortalsForLinkingPortals.get() == true) {
+                double x = util.axis == Axis.X ? util.lowerCorner.getX()
+                        : util.lowerCorner.getX() + (util.width / 2.0D) - 1.0D;
+                double y = util.lowerCorner.getY() + (util.height / 2.0D);
+                double z = util.axis == Axis.Z ? util.lowerCorner.getZ() + 1.0D
+                        : util.lowerCorner.getZ() + (util.width / 2.0D);
+                ImmersivePortalsIntegration.addImmersivePortal(world, new double[] { x, y, z }, util.width, util.height,
+                        util.axis, linkData, blockEntity);
+            } else {
+                util.createPortal(linkData);
+            }
+        }
+    }
+
+    private static void tryErasePortalInDirection(World world, BlockPos pos, Direction direction) {
+        Optional<LinkingPortalUtils> optional = LinkingPortalUtils.canErasePortal(world, pos.offset(direction), Axis.X);
+        if (optional.isPresent()) {
+            optional.get().erasePortal();
         }
     }
 

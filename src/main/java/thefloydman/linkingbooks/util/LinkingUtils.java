@@ -52,7 +52,7 @@ import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.TakeScreenshotForLinkingBookMessage;
-import thefloydman.linkingbooks.world.storage.LinkingBooksGlobalSavedData;
+import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 public class LinkingUtils {
 
@@ -199,8 +199,8 @@ public class LinkingUtils {
             boolean canLink = !currentDimension.equals(linkData.getDimension())
                     || linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get());
             extraData.writeBoolean(canLink);
-            LinkingBooksGlobalSavedData savedData = player.getServer().getWorld(World.OVERWORLD).getSavedData()
-                    .getOrCreate(LinkingBooksGlobalSavedData::new, Reference.MOD_ID);
+            LinkingBooksSavedData savedData = player.getServer().getWorld(World.OVERWORLD).getSavedData()
+                    .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
             CompoundNBT image = savedData.getLinkingPanelImage(linkData.getUUID());
             extraData.writeCompoundTag(image);
         });

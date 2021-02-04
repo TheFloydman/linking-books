@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NNN",
+    "NR ",
+    "NNN"
+  ],
+  "key": {
+    "N": {
+      "item": "linkingbooks:nara"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "item": "linkingbooks:link_translator"
+  }
+}

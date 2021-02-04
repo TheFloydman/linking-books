@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "linkingbooks:block/linking_portal_ns"
+    },
+    "axis=z": {
+      "model": "linkingbooks:block/linking_portal_ew"
+    }
+  }
+}

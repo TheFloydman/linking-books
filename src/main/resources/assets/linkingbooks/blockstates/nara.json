@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "linkingbooks:block/nara"
+      },
+      {
+        "model": "linkingbooks:block/nara_mirrored"
+      },
+      {
+        "model": "linkingbooks:block/nara",
+        "y": 180
+      },
+      {
+        "model": "linkingbooks:block/nara_mirrored",
+        "y": 180
+      }
+    ]
+  }
+}
