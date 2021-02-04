@@ -69,9 +69,8 @@ import thefloydman.linkingbooks.util.Reference.EntityNames;
 
 public class ImmersivePortalsIntegration {
 
-    public static EntityType<LinkingPortalEntity> linkingPortalEntityType;
-
     private static Map<UUID, ChunkLoader> chunkLoaders = new HashMap<UUID, ChunkLoader>();
+    public static EntityType<LinkingPortalEntity> linkingPortalEntityType;
 
     public static void addChunkLoader(ILinkData linkData, ServerPlayerEntity player) {
         removeChunkLoader(linkData, player);
