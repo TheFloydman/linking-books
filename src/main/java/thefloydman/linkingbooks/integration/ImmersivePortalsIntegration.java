@@ -61,7 +61,6 @@ import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.LinkingPortalEntity;
-import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
 import thefloydman.linkingbooks.util.Reference;
@@ -120,7 +119,7 @@ public class ImmersivePortalsIntegration {
         itemData.setPosition(linkData.getPosition());
         itemData.setRotation(linkData.getRotation());
         itemData.setUUID(linkData.getUUID());
-        LinkingPortalEntity portal = new LinkingPortalEntity(ModEntityTypes.LINKING_PORTAL.get(), world, stack);
+        LinkingPortalEntity portal = new LinkingPortalEntity(linkingPortalEntityType, world, stack);
         portal.setDestinationDimension(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()));
         portal.setDestination(new Vector3d(linkData.getPosition().getX() + 0.5D,
                 linkData.getPosition().getY() + (height / 2.0D), linkData.getPosition().getZ() + 0.5D));
@@ -128,8 +127,7 @@ public class ImmersivePortalsIntegration {
         portal.setSquareShape(axis == Axis.X ? new Vector3d(1, 0, 0) : new Vector3d(0, 0, 1), new Vector3d(0, 1, 0),
                 width, height);
         world.addEntity(portal);
-        LinkingPortalEntity reversePortal = PortalManipulation.createFlippedPortal(portal,
-                ModEntityTypes.LINKING_PORTAL.get());
+        LinkingPortalEntity reversePortal = PortalManipulation.createFlippedPortal(portal, linkingPortalEntityType);
         reversePortal.setPosition(axis == Axis.X ? portal.getPosition().getX() : portal.getPosition().getX() - 1.0D,
                 portal.getPosition().getY(),
                 axis == Axis.X ? portal.getPosition().getZ() + 1.0D : portal.getPosition().getZ());
