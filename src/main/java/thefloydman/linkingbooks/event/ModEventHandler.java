@@ -44,7 +44,7 @@ public class ModEventHandler {
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
-        if (Reference.isModLoaded("immersive_portals")) {
+        if (Reference.isImmersivePortalsLoaded()) {
             ImmersivePortalsIntegration.registerImmersivePortalsEntities(event);
         }
     }

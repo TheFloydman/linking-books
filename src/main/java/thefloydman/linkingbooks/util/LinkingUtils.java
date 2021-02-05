@@ -148,17 +148,16 @@ public class LinkingUtils {
                 player.closeContainer();
                 player.closeScreen();
                 player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
-                // Deduct experience points/levels if a cost has been set in config.
-                player.giveExperiencePoints(ModConfig.COMMON.linkingCostExperiencePoints.get() * -1);
-                player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
-                if (player.experienceLevel < 0) {
+                // Deduct experience levels if a cost has been set in config.
+                if (!player.isCreative()) {
+                    if (player.experienceLevel < ModConfig.COMMON.linkingCostExperienceLevels.get()) {
+                        player.closeScreen();
+                        player.closeContainer();
+                        player.sendStatusMessage(
+                                new TranslationTextComponent("message.linkingbooks.insufficient_experience"), true);
+                        return false;
+                    }
                     player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get());
-                    player.giveExperiencePoints(ModConfig.COMMON.linkingCostExperiencePoints.get());
-                    player.closeScreen();
-                    player.closeContainer();
-                    player.sendStatusMessage(
-                            new TranslationTextComponent("message.linkingbooks.insufficient_experience"), true);
-                    return false;
                 }
             } else {
                 entity.setWorld(serverWorld);

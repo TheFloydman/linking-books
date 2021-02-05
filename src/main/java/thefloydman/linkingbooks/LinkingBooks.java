@@ -97,7 +97,7 @@ public class LinkingBooks {
 
         // Register Entity renderers.
         RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
-        if (Reference.isModLoaded("immersive_portals")) {
+        if (Reference.isImmersivePortalsLoaded()) {
             ImmersivePortalsIntegration.registerEntityRenderingHandlers();
         }
 

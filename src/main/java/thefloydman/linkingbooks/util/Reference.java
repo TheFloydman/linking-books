@@ -41,6 +41,10 @@ public class Reference {
         return ModList.get().isLoaded(modId);
     }
 
+    public static boolean isImmersivePortalsLoaded() {
+        return isModLoaded("immersive_portals");
+    }
+
     public static class BlockNames {
         public static final String INK = "ink";
         public static final String LINKING_LECTERN = "linking_lectern";

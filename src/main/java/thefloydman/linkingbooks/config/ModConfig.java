@@ -35,19 +35,13 @@ public class ModConfig {
         COMMON = specPair.getLeft();
     }
 
-    public final IntValue linkingCostExperiencePoints;
     public final IntValue linkingCostExperienceLevels;
     public final IntValue linkingPanelChunkLoadRadius;
     public final IntValue linkingPanelChunkRenderDistance;
-    public final BooleanValue useImmersivePortalsForLinkingPanels;
+    // public final BooleanValue useImmersivePortalsForLinkingPanels;
     public final BooleanValue useImmersivePortalsForLinkingPortals;
 
     ModConfig(ForgeConfigSpec.Builder builder) {
-
-        this.linkingCostExperiencePoints = builder
-                .comment("How many experience points it costs to use a linking book. Stacks with levels option.")
-                .translation("linkingbooks.configgui.linkingcost_points")
-                .defineInRange("linkingCostPoints", 0, 0, Integer.MAX_VALUE);
 
         this.linkingCostExperienceLevels = builder
                 .comment("How many experience levels it costs to use a linking book. Stacks with points option.")
@@ -64,10 +58,13 @@ public class ModConfig {
                 .translation("linkingbooks.configgui.panel_chunk_render_distance")
                 .defineInRange("linkingPanelChunkRenderDistance", 4, 0, Integer.MAX_VALUE);
 
-        this.useImmersivePortalsForLinkingPanels = builder
-                .comment("If Immersive Portals is present, uses it to render Linking Panels.")
-                .translation("linkingbooks.configgui.use_immersive_portals_for_linking_panels")
-                .define("useImmersivePortalsForLinkingPanels", true);
+        /*
+         * this.useImmersivePortalsForLinkingPanels = builder
+         * .comment("If Immersive Portals is present, uses it to render Linking Panels."
+         * ) .translation(
+         * "linkingbooks.configgui.use_immersive_portals_for_linking_panels")
+         * .define("useImmersivePortalsForLinkingPanels", true);
+         */
 
         this.useImmersivePortalsForLinkingPortals = builder
                 .comment("If Immersive Portals is present, uses it to render Linking Portals.")

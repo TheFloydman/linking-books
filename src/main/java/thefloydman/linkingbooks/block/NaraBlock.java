@@ -84,7 +84,9 @@ public class NaraBlock extends Block {
                                     && !this.canPortalExistInDirection(world, currentPos, Direction.SOUTH)
                                     && !this.canPortalExistInDirection(world, currentPos, Direction.WEST);
                             if (deletePortal) {
-                                translator.deleteImmersivePortals();
+                                if (Reference.isImmersivePortalsLoaded()) {
+                                    ImmersivePortalsIntegration.deleteLinkingPortals(translator);
+                                }
                             }
                         }
                     }
@@ -102,18 +104,18 @@ public class NaraBlock extends Block {
     private void tryMakePortalInDirection(World world, BlockPos pos, Direction direction, ILinkData linkData,
             LinkTranslatorTileEntity blockEntity) {
         if (world.getDimensionKey().getLocation().equals(linkData.getDimension())
-                && !linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING)) {
+                && !linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())) {
             return;
         }
         Optional<LinkingPortalUtils> optional = LinkingPortalUtils.canMakePortal(world, pos.offset(direction), Axis.X);
         if (optional.isPresent()) {
             LinkingPortalUtils util = optional.get();
-            if (Reference.isModLoaded("immersive_portals")
+            if (Reference.isImmersivePortalsLoaded()
                     && ModConfig.COMMON.useImmersivePortalsForLinkingPortals.get() == true) {
-                double x = util.axis == Axis.X ? util.lowerCorner.getX()
-                        : util.lowerCorner.getX() + (util.width / 2.0D) - 1.0D;
+                double x = util.axis == Axis.X ? util.lowerCorner.getX() + (util.width / 2.0D) - (util.width - 1.0D)
+                        : util.lowerCorner.getX() + 0.5D;
                 double y = util.lowerCorner.getY() + (util.height / 2.0D);
-                double z = util.axis == Axis.Z ? util.lowerCorner.getZ() + 1.0D
+                double z = util.axis == Axis.X ? util.lowerCorner.getZ() + 0.5D
                         : util.lowerCorner.getZ() + (util.width / 2.0D);
                 ImmersivePortalsIntegration.addImmersivePortal(world, new double[] { x, y, z }, util.width, util.height,
                         util.axis, linkData, blockEntity);

@@ -76,7 +76,8 @@ public class LinkingPanelWidget extends NestedWidget {
 
         if (this.canLink) {
             /*
-             * if (Reference.isModLoaded("immersive_portals")) {
+             * if (Reference.isImmersivePortalsLoaded() &&
+             * ModConfig.COMMON.useImmersivePortalsForLinkingPanels.get() == true) {
              * ImmersivePortalsIntegration.renderGuiPortal(this.linkData, this.frameBuffer,
              * this.client, matrixStack, this.x, this.y, this.width, this.height); } else
              */if (this.linkingPanelImage != null) {
