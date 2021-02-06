@@ -104,7 +104,8 @@ public class LinkingPortalEntity extends Portal {
                 lb = false;
             } else if (entity instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) entity;
-                lb = player.experienceLevel >= ModConfig.COMMON.linkingCostExperienceLevels.get();
+                lb = player.isCreative()
+                        || player.experienceLevel >= ModConfig.COMMON.linkingCostExperienceLevels.get();
             }
         }
         return ip && lb;
