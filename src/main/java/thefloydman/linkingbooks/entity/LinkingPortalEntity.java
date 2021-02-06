@@ -87,7 +87,9 @@ public class LinkingPortalEntity extends Portal {
         }
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
-            player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
+            if (!player.isCreative()) {
+                player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
+            }
         }
     }
 
