@@ -124,18 +124,19 @@ public class ImmersivePortalsIntegration {
         portal.setPosition(pos[0], pos[1], pos[2]);
         portal.setSquareShape(axis == Axis.X ? new Vector3d(1, 0, 0) : new Vector3d(0, 0, 1), new Vector3d(0, 1, 0),
                 width, height);
-        PortalManipulation
-                .setPortalTransformation(portal,
-                        RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()),
-                        new Vector3d(linkData.getPosition().getX() + 0.5D,
-                                linkData.getPosition().getY() + (height / 2.0D), linkData.getPosition().getZ() + 0.5D),
-                        null, 1.0D);
+        PortalManipulation.setPortalTransformation(portal,
+                RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()),
+                new Vector3d(linkData.getPosition().getX() + 0.5D, linkData.getPosition().getY() + (height / 2.0D),
+                        linkData.getPosition().getZ() + 0.5D),
+                Vector3f.YP.rotationDegrees(linkData.getRotation() + (axis == Axis.X ? 180.0F : -90.0F)), 1.0D);
         PortalManipulation.removeOverlappedPortals(world, portal.func_242274_V(), portal.getNormal(), (p) -> {
             return p instanceof LinkingPortalEntity;
         }, (p) -> {
         });
         world.addEntity(portal);
         LinkingPortalEntity reversePortal = PortalManipulation.createFlippedPortal(portal, linkingPortalEntityType);
+        reversePortal.setRotationTransformation(
+                Vector3f.YP.rotationDegrees(linkData.getRotation() + (axis == Axis.X ? 0.0F : 90.0F)));
         reversePortal.setTileEntityPos(portal.getTileEntityPos());
         PortalManipulation.removeOverlappedPortals(world, reversePortal.func_242274_V(), reversePortal.getNormal(),
                 (p) -> {

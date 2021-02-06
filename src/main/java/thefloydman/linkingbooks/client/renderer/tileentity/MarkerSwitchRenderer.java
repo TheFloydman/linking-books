@@ -21,6 +21,7 @@ package thefloydman.linkingbooks.client.renderer.tileentity;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -48,21 +49,25 @@ public class MarkerSwitchRenderer extends TileEntityRenderer<MarkerSwitchTileEnt
     @Override
     public void render(MarkerSwitchTileEntity tileEntity, float arg1, MatrixStack matrixStack, IRenderTypeBuffer buffer,
             int arg4, int arg5) {
-        if (tileEntity.getWorld().getBlockState(tileEntity.getPos()).get(MarkerSwitchBlock.OPEN) == true && tileEntity
-                .getWorld().getBlockState(tileEntity.getPos()).get(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER
-                && tileEntity.hasItem()) {
-            ItemStack itemStack = tileEntity.getItem();
-            matrixStack.push();
-            matrixStack.translate(0.5D, 0.6D, 0.5D);
-            matrixStack.scale(0.5F, 0.5F, 0.5F);
-            Direction facing = tileEntity.getBlockState().get(MarkerSwitchBlock.HORIZONTAL_FACING);
-            float rotation = facing == Direction.EAST || facing == Direction.WEST ? facing.getHorizontalAngle() + 45.0F
-                    : facing.getHorizontalAngle() - 135.0F;
-            matrixStack.rotate(Vector3f.YP.rotationDegrees(rotation));
-            int lightAbove = WorldRenderer.getCombinedLight(tileEntity.getWorld(), tileEntity.getPos().up());
-            this.itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED, lightAbove,
-                    OverlayTexture.NO_OVERLAY, matrixStack, buffer);
-            matrixStack.pop();
+        BlockState blockState = tileEntity.getWorld().getBlockState(tileEntity.getPos());
+        if (blockState.getBlock() instanceof MarkerSwitchBlock) {
+            if (blockState.get(MarkerSwitchBlock.OPEN) == true && tileEntity.getWorld()
+                    .getBlockState(tileEntity.getPos()).get(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER
+                    && tileEntity.hasItem()) {
+                ItemStack itemStack = tileEntity.getItem();
+                matrixStack.push();
+                matrixStack.translate(0.5D, 0.6D, 0.5D);
+                matrixStack.scale(0.5F, 0.5F, 0.5F);
+                Direction facing = tileEntity.getBlockState().get(MarkerSwitchBlock.HORIZONTAL_FACING);
+                float rotation = facing == Direction.EAST || facing == Direction.WEST
+                        ? facing.getHorizontalAngle() + 45.0F
+                        : facing.getHorizontalAngle() - 135.0F;
+                matrixStack.rotate(Vector3f.YP.rotationDegrees(rotation));
+                int lightAbove = WorldRenderer.getCombinedLight(tileEntity.getWorld(), tileEntity.getPos().up());
+                this.itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED, lightAbove,
+                        OverlayTexture.NO_OVERLAY, matrixStack, buffer);
+                matrixStack.pop();
+            }
         }
     }
 
