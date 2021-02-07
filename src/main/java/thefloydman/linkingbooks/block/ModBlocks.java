@@ -21,8 +21,10 @@ package thefloydman.linkingbooks.block;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraftforge.common.ToolType;
@@ -56,6 +58,10 @@ public final class ModBlocks {
                     .hardnessAndResistance(-1.0F, -1.0F).sound(SoundType.GLASS).notSolid().setLightLevel((state) -> {
                         return 11;
                     })));
+
+    public static final RegistryObject<Block> BOOKSHELF_STAIRS = BLOCKS.register(BlockNames.BOOKSHELF_STAIRS,
+            () -> new StairsBlock(() -> Blocks.SPRUCE_PLANKS.getDefaultState(),
+                    AbstractBlock.Properties.from(Blocks.SPRUCE_PLANKS)));
 
     public static final RegistryObject<Block> MARKER_SWITCH = BLOCKS.register(BlockNames.MARKER_SWITCH,
             () -> new MarkerSwitchBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)

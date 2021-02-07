@@ -54,6 +54,7 @@ public class Reference {
         public static final String NARA = "nara";
         public static final String LINK_TRANSLATOR = "link_translator";
         public static final String LINKING_PORTAL = "linking_portal";
+        public static final String BOOKSHELF_STAIRS = "bookshelf_stairs";
     }
 
     public static class ItemNames {

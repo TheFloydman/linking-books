@@ -55,6 +55,10 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.MARKER_SWITCH.get(),
                     new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
+    public static final RegistryObject<Item> BOOKSHELF_STAIRS = ITEMS.register(Reference.BlockNames.BOOKSHELF_STAIRS,
+            () -> new BlockItem(ModBlocks.BOOKSHELF_STAIRS.get(),
+                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+
     public static final RegistryObject<Item> LINKING_PANEL = ITEMS.register(Reference.ItemNames.LINKING_PANEL,
             () -> new LinkingPanelItem(new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
 
