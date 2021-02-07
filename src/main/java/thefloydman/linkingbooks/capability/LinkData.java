@@ -42,6 +42,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.LazyOptional;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
+import thefloydman.linkingbooks.util.Reference;
 
 public class LinkData {
 
@@ -55,7 +56,7 @@ public class LinkData {
     public static class Default implements ILinkData {
 
         private ResourceLocation dimension = new ResourceLocation("minecraft:overworld");
-        private BlockPos position = new BlockPos(0, 0, 0);
+        private BlockPos position = Reference.server.func_241755_D_().getSpawnPoint();
         private float rotation = 0.0F;
         private UUID uuid = UUID.randomUUID();
         private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();

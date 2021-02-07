@@ -38,6 +38,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.block.LinkTranslatorBlock;
@@ -212,6 +213,11 @@ public class ForgeEventHandler {
         if (optional.isPresent()) {
             optional.get().erasePortal();
         }
+    }
+
+    @SubscribeEvent
+    public static void onServerStarted(FMLServerStartedEvent event) {
+        Reference.server = event.getServer();
     }
 
 }

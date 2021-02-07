@@ -19,12 +19,14 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.util;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
 public class Reference {
 
     public static final String MOD_ID = "linkingbooks";
+    public static MinecraftServer server = null;
 
     /**
      * Convenience method to make a ResourceLocation under this mod's domain.
