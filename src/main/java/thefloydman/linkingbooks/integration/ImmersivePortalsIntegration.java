@@ -22,6 +22,7 @@ package thefloydman.linkingbooks.integration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -31,6 +32,7 @@ import com.qouteall.immersive_portals.chunk_loading.ChunkVisibilityManager.Chunk
 import com.qouteall.immersive_portals.chunk_loading.DimensionalChunkPos;
 import com.qouteall.immersive_portals.chunk_loading.NewChunkTrackingGraph;
 import com.qouteall.immersive_portals.portal.PortalManipulation;
+import com.qouteall.immersive_portals.portal.nether_portal.BlockPortalShape;
 import com.qouteall.immersive_portals.render.GuiPortalRendering;
 import com.qouteall.immersive_portals.render.MyRenderHelper;
 import com.qouteall.immersive_portals.render.PortalEntityRenderer;
@@ -107,10 +109,12 @@ public class ImmersivePortalsIntegration {
                 (y + height) * (float) client.getMainWindow().getGuiScaleFactor());
     }
 
-    public static UUID[] addImmersivePortal(World world, double[] pos, double width, double height, Axis axis,
-            ILinkData linkData, LinkTranslatorTileEntity tileEntity) {
-        if (axis == Axis.Y) {
-            return null;
+    public static UUID[] addImmersivePortal(World world, double[] pos, double width, double height,
+            Set<BlockPos> coveredBlocks, Axis axis, ILinkData linkData, LinkTranslatorTileEntity tileEntity) {
+        if (axis == Axis.X) {
+            axis = Axis.Z;
+        } else if (axis == Axis.Z) {
+            axis = Axis.X;
         }
         ItemStack stack = ModItems.WRITTEN_LINKING_BOOK.get().getDefaultInstance();
         ILinkData itemData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
@@ -122,21 +126,20 @@ public class ImmersivePortalsIntegration {
         LinkingPortalEntity portal = new LinkingPortalEntity(linkingPortalEntityType, world, stack,
                 tileEntity.getPos());
         portal.setPosition(pos[0], pos[1], pos[2]);
-        portal.setSquareShape(axis == Axis.X ? new Vector3d(1, 0, 0) : new Vector3d(0, 0, 1), new Vector3d(0, 1, 0),
-                width, height);
+        BlockPortalShape shape = new BlockPortalShape(coveredBlocks, axis);
+        shape.initPortalPosAxisShape(portal, false);
         PortalManipulation.setPortalTransformation(portal,
                 RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()),
-                new Vector3d(linkData.getPosition().getX() + 0.5D, linkData.getPosition().getY() + (height / 2.0D),
+                new Vector3d(linkData.getPosition().getX() + 0.5D,
+                        linkData.getPosition().getY() + height + (axis == Axis.Y ? 2.0D : 0.0D),
                         linkData.getPosition().getZ() + 0.5D),
-                Vector3f.YP.rotationDegrees(linkData.getRotation() + (axis == Axis.X ? 180.0F : -90.0F)), 1.0D);
+                null, 1.0D);
         PortalManipulation.removeOverlappedPortals(world, portal.func_242274_V(), portal.getNormal(), (p) -> {
             return p instanceof LinkingPortalEntity;
         }, (p) -> {
         });
         world.addEntity(portal);
         LinkingPortalEntity reversePortal = PortalManipulation.createFlippedPortal(portal, linkingPortalEntityType);
-        reversePortal.setRotationTransformation(
-                Vector3f.YP.rotationDegrees(linkData.getRotation() + (axis == Axis.X ? 0.0F : 90.0F)));
         reversePortal.setTileEntityPos(portal.getTileEntityPos());
         PortalManipulation.removeOverlappedPortals(world, reversePortal.func_242274_V(), reversePortal.getNormal(),
                 (p) -> {

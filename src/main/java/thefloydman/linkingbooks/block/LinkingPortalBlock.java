@@ -28,7 +28,6 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -40,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import thefloydman.linkingbooks.util.LinkingPortalUtils;
 import thefloydman.linkingbooks.util.LinkingUtils;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
@@ -54,6 +52,7 @@ public class LinkingPortalBlock extends Block {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     protected static final VoxelShape X_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 6.0D, 16.0D, 16.0D, 10.0D);
+    protected static final VoxelShape Y_SHAPE = Block.makeCuboidShape(0.0D, 6.0D, 0.0D, 16.0D, 10.0D, 16.0D);
     protected static final VoxelShape Z_SHAPE = Block.makeCuboidShape(6.0D, 0.0D, 0.0D, 10.0D, 16.0D, 16.0D);
 
     public LinkingPortalBlock(Properties settings) {
@@ -67,24 +66,6 @@ public class LinkingPortalBlock extends Block {
     }
 
     @Override
-    public BlockState rotate(BlockState blockState, Rotation blockRotation) {
-        switch (blockRotation) {
-            case COUNTERCLOCKWISE_90:
-            case CLOCKWISE_90:
-                switch (blockState.get(AXIS)) {
-                    case Z:
-                        return blockState.with(AXIS, Direction.Axis.X);
-                    case X:
-                        return blockState.with(AXIS, Direction.Axis.Z);
-                    default:
-                        return blockState;
-                }
-            default:
-                return blockState;
-        }
-    }
-
-    @Override
     @OnlyIn(Dist.CLIENT)
     public ItemStack getItem(IBlockReader blockView, BlockPos blockPos, BlockState blockState) {
         return ItemStack.EMPTY;
@@ -93,14 +74,8 @@ public class LinkingPortalBlock extends Block {
     @Override
     public BlockState updatePostPlacement(BlockState blockState, Direction direction, BlockState blockState2,
             IWorld worldAccess, BlockPos blockPos, BlockPos blockPos2) {
-        Direction.Axis axis = direction.getAxis();
-        Direction.Axis axis2 = blockState.get(AXIS);
-        boolean bl = axis2 != axis && axis.isHorizontal();
-        return !bl && !blockState2.isIn(this)
-                && !(new LinkingPortalUtils(worldAccess, blockPos, axis2)).wasAlreadyValid()
-                        ? Blocks.AIR.getDefaultState()
-                        : super.updatePostPlacement(blockState, direction, blockState2, worldAccess, blockPos,
-                                blockPos2);
+        return !blockState2.isIn(this) ? Blocks.AIR.getDefaultState()
+                : super.updatePostPlacement(blockState, direction, blockState2, worldAccess, blockPos, blockPos2);
     }
 
     @Override
@@ -109,6 +84,8 @@ public class LinkingPortalBlock extends Block {
         switch (blockState.get(AXIS)) {
             case Z:
                 return Z_SHAPE;
+            case Y:
+                return Y_SHAPE;
             case X:
             default:
                 return X_SHAPE;

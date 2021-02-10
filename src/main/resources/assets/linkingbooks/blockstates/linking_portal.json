@@ -5,6 +5,9 @@
     },
     "axis=z": {
       "model": "linkingbooks:block/linking_portal_ew"
+    },
+    "axis=y": {
+      "model": "linkingbooks:block/linking_portal_ud"
     }
   }
 }

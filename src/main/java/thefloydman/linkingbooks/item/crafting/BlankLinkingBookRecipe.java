@@ -32,7 +32,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.NonNullList;
@@ -56,7 +55,6 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
 
     @Override
     public boolean matches(CraftingInventory inventory, World world) {
-        RecipeItemHelper recipeItemHelper = new RecipeItemHelper();
         List<ItemStack> inputs = new ArrayList<>();
         int i = 0;
         // Determines how many non-empty stacks are in the crafting grid. Also places

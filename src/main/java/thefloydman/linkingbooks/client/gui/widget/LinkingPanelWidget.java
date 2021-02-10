@@ -27,7 +27,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -45,7 +44,6 @@ public class LinkingPanelWidget extends NestedWidget {
     public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
     public boolean canLink = false;
     DynamicTexture linkingPanelImage = null;
-    private Framebuffer frameBuffer = new Framebuffer(64, 42, true, true);
     Minecraft client = Minecraft.getInstance();
 
     public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
