@@ -132,8 +132,8 @@ public class LinkingPortalArea {
         double width = 0;
         double height = 0;
         if (deltaY != 0) {
-            width = deltaY;
-            height = deltaX != 0 ? deltaX : deltaZ;
+            width = deltaX != 0 ? deltaX : deltaZ;
+            height = deltaY;
         } else {
             width = deltaZ;
             height = deltaX;

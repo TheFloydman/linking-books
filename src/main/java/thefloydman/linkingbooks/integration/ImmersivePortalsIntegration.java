@@ -131,7 +131,7 @@ public class ImmersivePortalsIntegration {
         PortalManipulation.setPortalTransformation(portal,
                 RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()),
                 new Vector3d(linkData.getPosition().getX() + 0.5D,
-                        linkData.getPosition().getY() + height + (axis == Axis.Y ? 2.0D : 0.0D),
+                        linkData.getPosition().getY() + (height / 2.0D) + (axis == Axis.Y ? 2.0D : 0.0D) + 0.5D,
                         linkData.getPosition().getZ() + 0.5D),
                 null, 1.0D);
         PortalManipulation.removeOverlappedPortals(world, portal.func_242274_V(), portal.getNormal(), (p) -> {
