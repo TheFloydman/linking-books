@@ -102,7 +102,7 @@ public class LinkingUtils {
             LOGGER.info("ILinkInfo::getPosition returned null. Link failed.");
         } else if (!linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())
                 && world.getDimensionKey().getLocation().equals(linkData.getDimension())) {
-            if (entity instanceof PlayerEntity) {
+            if (entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 player.closeScreen();
                 player.closeContainer();
@@ -134,8 +134,8 @@ public class LinkingUtils {
              * world.
              */
 
-            ServerPlayerEntity player = (ServerPlayerEntity) entity;
             if (entity instanceof ServerPlayerEntity) {
+                ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 if (holdingBook) {
                     LinkingBookEntity book = new LinkingBookEntity(world, player.getHeldItemMainhand().copy());
                     Vector3d lookVec = player.getLookVec();
