@@ -1,19 +1,18 @@
 /*******************************************************************************
- * Linking Books
- * Copyright (C) 2021  TheFloydman
+ * Linking Books Copyright (C) 2021 TheFloydman
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
@@ -112,8 +111,8 @@ public class LinkingPortalEntity extends Portal {
     }
 
     @Override
-    protected void func_70037_a(CompoundNBT compound) {
-        super.func_70037_a(compound);
+    protected void readAdditional(CompoundNBT compound) {
+        super.readAdditional(compound);
         if (compound.contains("book", NBT.TAG_COMPOUND)) {
             ItemStack book = ItemStack.read(compound.getCompound("book"));
             if (book.getItem() instanceof WrittenLinkingBookItem) {
@@ -128,8 +127,8 @@ public class LinkingPortalEntity extends Portal {
     }
 
     @Override
-    protected void func_213281_b(CompoundNBT compound) {
-        super.func_213281_b(compound);
+    protected void writeAdditional(CompoundNBT compound) {
+        super.writeAdditional(compound);
         ItemStack item = this.dataManager.get(ITEM);
         if (!item.isEmpty()) {
             compound.put("book", item.write(new CompoundNBT()));
