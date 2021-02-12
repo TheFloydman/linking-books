@@ -8,7 +8,7 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:bookshelf"
+      "tag": "forge:bookshelves"
     }
   },
   "result": {
