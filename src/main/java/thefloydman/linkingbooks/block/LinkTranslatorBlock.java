@@ -19,15 +19,8 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.block;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.google.common.collect.Sets;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,7 +35,6 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -55,11 +47,9 @@ import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
-import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
 import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
@@ -116,24 +106,7 @@ public class LinkTranslatorBlock extends HorizontalBlock {
                         LinkTranslatorTileEntity translator = (LinkTranslatorTileEntity) blockEntity;
                         if (translator.hasBook()) {
                             ILinkData linkData = translator.getBook().getCapability(LinkData.LINK_DATA).orElse(null);
-                            tryMakePortalWithConstantAxis(world, currentPos.north(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.north(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.north(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.south(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.south(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.south(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.east(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.east(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.east(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.west(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.west(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.west(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.up(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.up(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.up(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.down(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.down(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.down(), Axis.Z, linkData, translator);
+                            LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }
                     }
                 }
@@ -212,24 +185,7 @@ public class LinkTranslatorBlock extends HorizontalBlock {
                         }
                         if (translator.hasBook()) {
                             ILinkData linkData = translator.getBook().getCapability(LinkData.LINK_DATA).orElse(null);
-                            tryMakePortalWithConstantAxis(world, currentPos.north(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.north(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.north(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.south(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.south(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.south(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.east(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.east(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.east(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.west(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.west(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.west(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.up(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.up(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.up(), Axis.Z, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.down(), Axis.X, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.down(), Axis.Y, linkData, translator);
-                            tryMakePortalWithConstantAxis(world, currentPos.down(), Axis.Z, linkData, translator);
+                            LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }
                     }
                 }
@@ -249,37 +205,6 @@ public class LinkTranslatorBlock extends HorizontalBlock {
                 return WEST_SHAPE;
             default:
                 return NORTH_SHAPE;
-        }
-    }
-
-    private static void tryMakePortalWithConstantAxis(World world, BlockPos pos, Axis constantAxis, ILinkData linkData,
-            LinkTranslatorTileEntity blockEntity) {
-        if (world.getDimensionKey().getLocation().equals(linkData.getDimension())
-                && !linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())) {
-            return;
-        }
-        Set<BlockPos> portalPositions = LinkingPortalArea
-                .getPortalArea(
-                        world, pos, constantAxis, Sets
-                                .newHashSet(Stream
-                                        .concat(ModBlocks.NARA.get().getStateContainer().getValidStates().stream(),
-                                                ModBlocks.LINK_TRANSLATOR.get().getStateContainer().getValidStates()
-                                                        .stream())
-                                        .collect(Collectors.toList()).toArray(new BlockState[] {})),
-                        Sets.newHashSet(Blocks.AIR.getStateContainer().getValidStates().toArray(new BlockState[] {})),
-                        1, 32 * 32);
-        if (!portalPositions.isEmpty()) {
-            if (Reference.isImmersivePortalsLoaded()
-                    && ModConfig.COMMON.useImmersivePortalsForLinkingPortals.get() == true) {
-                double[] posAndDimensions = LinkingPortalArea.getPortalPositionAndWidthAndHeight(portalPositions);
-                ImmersivePortalsIntegration.addImmersivePortal(world,
-                        new double[] { posAndDimensions[0], posAndDimensions[1], posAndDimensions[2] },
-                        posAndDimensions[3], posAndDimensions[4], portalPositions, constantAxis, linkData, blockEntity);
-            } else {
-                LinkingPortalArea.createPortal(world, portalPositions,
-                        ModBlocks.LINKING_PORTAL.get().getDefaultState().with(LinkingPortalBlock.AXIS, constantAxis),
-                        linkData);
-            }
         }
     }
 
