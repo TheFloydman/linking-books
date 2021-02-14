@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
@@ -160,8 +161,16 @@ public class LinkingUtils {
                     player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get());
                 }
             } else {
-                entity.setWorld(serverWorld);
-                entity.teleportKeepLoaded(x, y, z);
+                CompoundNBT nbt = new CompoundNBT();
+                entity.writeUnlessRemoved(nbt);
+                entity.remove();
+                Entity entityCopy = EntityType.loadEntityUnchecked(nbt, serverWorld).orElse(null);
+                if (entityCopy == null) {
+                    return false;
+                }
+                entityCopy.setPosition(x, y, z);
+                serverWorld.addEntity(entityCopy);
+                serverWorld.addFromAnotherDimension(entityCopy);
             }
             for (LinkEffect effect : linkData.getLinkEffects()) {
                 effect.onLinkEnd(entity, linkData);
