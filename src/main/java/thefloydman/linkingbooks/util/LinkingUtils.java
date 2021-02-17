@@ -137,7 +137,7 @@ public class LinkingUtils {
 
             if (entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
-                if (holdingBook) {
+                if (holdingBook && linkData.getLinkEffects().contains(LinkEffects.TETHERED.get())) {
                     LinkingBookEntity book = new LinkingBookEntity(world, player.getHeldItemMainhand().copy());
                     Vector3d lookVec = player.getLookVec();
                     book.setPosition(player.getPosX() + (lookVec.getX() / 4.0D), player.getPosY() + 1.0D,

@@ -90,11 +90,13 @@ public class Reference {
 
     public static class RecipeSerializerNames {
         public static final String BLANK_LINKING_BOOK = "blank_linking_book";
+        public static final String LINK_EFFECT = "link_effect";
     }
 
     public static class LinkEffectNames {
         public static final String POISON_EFFECT = "poison_effect";
         public static final String INTRAAGE_LINKING = "intraage_linking";
+        public static final String TETHERED = "tethered";
     }
 
     public static class Resources {

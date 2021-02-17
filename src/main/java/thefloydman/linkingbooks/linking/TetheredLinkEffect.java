@@ -17,22 +17,13 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.item.crafting;
+package thefloydman.linkingbooks.linking;
 
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.api.linking.LinkEffect;
 
-public class ModRecipeSerializers {
+public class TetheredLinkEffect extends LinkEffect {
 
-    public static final DeferredRegister<IRecipeSerializer<?>> RECIPES = DeferredRegister
-            .create(ForgeRegistries.RECIPE_SERIALIZERS, Reference.MOD_ID);
+    public TetheredLinkEffect() {
+    }
 
-    public static final RegistryObject<BlankLinkingBookRecipe.Serializer> BLANK_LINKING_BOOK = RECIPES
-            .register(Reference.RecipeSerializerNames.BLANK_LINKING_BOOK, BlankLinkingBookRecipe.Serializer::new);
-
-    public static final RegistryObject<LinkEffectRecipe.Serializer> LINK_EFFECT = RECIPES
-            .register(Reference.RecipeSerializerNames.LINK_EFFECT, LinkEffectRecipe.Serializer::new);
 }

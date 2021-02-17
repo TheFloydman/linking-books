@@ -19,15 +19,23 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.item;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
@@ -65,6 +73,24 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     @Override
     public boolean hasCustomEntity(ItemStack stack) {
         return true;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        super.addInformation(stack, world, tooltip, flag);
+        ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
+        if (linkData != null) {
+            tooltip.add(new StringTextComponent("§eAge: §9§o" + linkData.getDimension().toString()));
+            tooltip.add(new StringTextComponent("§ePosition: §9§o(" + linkData.getPosition().getX() + ", "
+                    + linkData.getPosition().getY() + ", " + linkData.getPosition().getZ() + ")"));
+            Set<LinkEffect> linkEffects = new HashSet<LinkEffect>(linkData.getLinkEffects());
+            if (!linkEffects.isEmpty()) {
+                tooltip.add(new StringTextComponent("§eLink Effects:"));
+                for (LinkEffect effect : linkEffects) {
+                    tooltip.add(new StringTextComponent("    §9§o" + effect.getRegistryName().toString()));
+                }
+            }
+        }
     }
 
 }

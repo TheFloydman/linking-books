@@ -37,4 +37,7 @@ public class LinkEffects {
     public static final RegistryObject<IntraAgeLinkingLinkEffect> INTRAAGE_LINKING = LINK_EFFECTS
             .register(LinkEffectNames.INTRAAGE_LINKING, () -> new IntraAgeLinkingLinkEffect());
 
+    public static final RegistryObject<TetheredLinkEffect> TETHERED = LINK_EFFECTS.register(LinkEffectNames.TETHERED,
+            () -> new TetheredLinkEffect());
+
 }
