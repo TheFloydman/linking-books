@@ -32,6 +32,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.api.capability.ILinkData;
@@ -87,7 +88,9 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
             if (!linkEffects.isEmpty()) {
                 tooltip.add(new StringTextComponent("§eLink Effects:"));
                 for (LinkEffect effect : linkEffects) {
-                    tooltip.add(new StringTextComponent("    §9§o" + effect.getRegistryName().toString()));
+                    tooltip.add(new StringTextComponent("    §9§o"
+                            + new TranslationTextComponent("linkEffect." + effect.getRegistryName().getNamespace() + "."
+                                    + effect.getRegistryName().getPath()).getString()));
                 }
             }
         }

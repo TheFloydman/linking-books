@@ -42,7 +42,7 @@ public abstract class LinkEffect extends ForgeRegistryEntry<LinkEffect> {
     /**
      * Convenience method that retrieves a LinkEffect from the appropriate registry.
      */
-    public static LinkEffect getFromResourceLocation(ResourceLocation resource) {
+    public static LinkEffect get(ResourceLocation resource) {
         IForgeRegistry<LinkEffect> registry = GameRegistry.findRegistry(LinkEffect.class);
         if (registry == null) {
             LOGGER.info("Cannot find LinkEffect registry. Returning null LinkEffect.");

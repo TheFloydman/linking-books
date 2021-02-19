@@ -71,7 +71,7 @@ public class LinkEffectRecipe implements ICraftingRecipe {
                 Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
                 JsonArray jsonArray = JSONUtils.getJsonArray(json, "link_effects");
                 for (JsonElement element : jsonArray) {
-                    linkEffects.add(LinkEffect.getFromResourceLocation(new ResourceLocation(element.getAsString())));
+                    linkEffects.add(LinkEffect.get(new ResourceLocation(element.getAsString())));
                 }
                 return new LinkEffectRecipe(id, ingredients, linkEffects);
             }
@@ -89,7 +89,7 @@ public class LinkEffectRecipe implements ICraftingRecipe {
             Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
             int quantity = buffer.readInt();
             for (int j = 0; j < quantity; j++) {
-                linkEffects.add(LinkEffect.getFromResourceLocation(new ResourceLocation(buffer.readString())));
+                linkEffects.add(LinkEffect.get(new ResourceLocation(buffer.readString())));
             }
 
             return new LinkEffectRecipe(id, ingredients, linkEffects);

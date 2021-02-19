@@ -174,7 +174,7 @@ public class LinkData {
                 if (compound.contains("effects", NBT.TAG_LIST)) {
                     for (INBT item : compound.getList("effects", NBT.TAG_STRING)) {
                         instance.addLinkEffect(LinkEffect
-                                .getFromResourceLocation(new ResourceLocation(((StringNBT) item).getString())));
+                                .get(new ResourceLocation(((StringNBT) item).getString())));
                     }
                 }
             }
