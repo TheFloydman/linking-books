@@ -203,6 +203,6 @@ public class LinkEffectRecipe implements ICraftingRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return ModRecipeSerializers.BLANK_LINKING_BOOK.get();
+        return ModRecipeSerializers.LINK_EFFECT.get();
     }
 }
