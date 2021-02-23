@@ -121,14 +121,30 @@ public class LinkingUtils {
             }
 
             for (LinkEffect effect : linkData.getLinkEffects()) {
+                if (!effect.canStartLink(entity, linkData)) {
+                    if (entity instanceof ServerPlayerEntity) {
+                        ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                        player.closeScreen();
+                        player.closeContainer();
+                        player.sendStatusMessage(new TranslationTextComponent("message.linkingbooks.link_failed_start"),
+                                true);
+                    }
+                    return false;
+                }
+            }
+
+            for (LinkEffect effect : linkData.getLinkEffects()) {
                 effect.onLinkStart(entity, linkData);
             }
 
+            Vector3d originalPos = entity.getPositionVec();
+            float originalRot = entity.rotationYaw;
             BlockPos pos = linkData.getPosition();
             double x = pos.getX() + 0.5D;
             double y = pos.getY();
             double z = pos.getZ() + 0.5D;
             float rotation = linkData.getRotation();
+            boolean tookExperience = false;
 
             /*
              * TODO: Find a way to teleport without client moving entity model through
@@ -137,6 +153,18 @@ public class LinkingUtils {
 
             if (entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                // Deduct experience levels if a cost has been set in config.
+                if (!player.isCreative()) {
+                    if (player.experienceLevel < ModConfig.COMMON.linkingCostExperienceLevels.get()) {
+                        player.closeScreen();
+                        player.closeContainer();
+                        player.sendStatusMessage(
+                                new TranslationTextComponent("message.linkingbooks.insufficient_experience"), true);
+                        return false;
+                    }
+                    player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
+                    tookExperience = true;
+                }
                 if (holdingBook && linkData.getLinkEffects().contains(LinkEffects.TETHERED.get())) {
                     LinkingBookEntity book = new LinkingBookEntity(world, player.getHeldItemMainhand().copy());
                     Vector3d lookVec = player.getLookVec();
@@ -149,17 +177,6 @@ public class LinkingUtils {
                 player.closeContainer();
                 player.closeScreen();
                 player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
-                // Deduct experience levels if a cost has been set in config.
-                if (!player.isCreative()) {
-                    if (player.experienceLevel < ModConfig.COMMON.linkingCostExperienceLevels.get()) {
-                        player.closeScreen();
-                        player.closeContainer();
-                        player.sendStatusMessage(
-                                new TranslationTextComponent("message.linkingbooks.insufficient_experience"), true);
-                        return false;
-                    }
-                    player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get());
-                }
             } else {
                 CompoundNBT nbt = new CompoundNBT();
                 entity.writeUnlessRemoved(nbt);
@@ -171,6 +188,35 @@ public class LinkingUtils {
                 entityCopy.setPosition(x, y, z);
                 serverWorld.addEntity(entityCopy);
                 serverWorld.addFromAnotherDimension(entityCopy);
+            }
+            for (LinkEffect effect : linkData.getLinkEffects()) {
+                if (!effect.canFinishLink(entity, linkData)) {
+                    if (entity instanceof ServerPlayerEntity) {
+                        ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                        if (tookExperience) {
+                            player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get());
+                        }
+                        serverWorld.getServer().execute(() -> {
+                            player.teleport((ServerWorld) world, originalPos.x, originalPos.y, originalPos.z,
+                                    originalRot, player.rotationPitch);
+                            player.sendStatusMessage(
+                                    new TranslationTextComponent("message.linkingbooks.link_failed_end"), true);
+                        });
+                    } else {
+                        serverWorld.getServer().execute(() -> {
+                            CompoundNBT tag = new CompoundNBT();
+                            entity.writeUnlessRemoved(tag);
+                            entity.remove();
+                            Entity entityCopy = EntityType.loadEntityUnchecked(tag, world).orElse(null);
+                            if (entityCopy != null) {
+                                entityCopy.setPosition(originalPos.x, originalPos.y, originalPos.z);
+                                world.addEntity(entityCopy);
+                                ((ServerWorld) world).addFromAnotherDimension(entityCopy);
+                            }
+                        });
+                    }
+                    return false;
+                }
             }
             for (LinkEffect effect : linkData.getLinkEffects()) {
                 effect.onLinkEnd(entity, linkData);

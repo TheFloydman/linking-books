@@ -106,6 +106,12 @@ public class LinkingPortalEntity extends Portal {
                 lb = player.isCreative()
                         || player.experienceLevel >= ModConfig.COMMON.linkingCostExperienceLevels.get();
             }
+            for (LinkEffect effect : linkData.getLinkEffects()) {
+                if (!effect.canStartLink(entity, linkData) || !effect.canFinishLink(entity, linkData)) {
+                    lb = false;
+                    break;
+                }
+            }
         }
         return ip && lb;
     }

@@ -33,9 +33,46 @@ public abstract class LinkEffect extends ForgeRegistryEntry<LinkEffect> {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * Fires before entity changes dimensions and before onLinkStart has been called
+     * for any LinkEffect.
+     * 
+     * @param entity The Entity that is linking.
+     * @param linkData The LinkDataComponent for the link.
+     * @return Whether the link should proceed. If false, entity will not link.
+     */
+    public boolean canStartLink(Entity entity, ILinkData linkData) {
+        return true;
+    }
+
+    /**
+     * Fires after entity changes dimensions and onLinkStart has been called for
+     * every LinkEffect but before onLinkEnd has been called for any LinkEffect.
+     * 
+     * @param entity The Entity that is linking.
+     * @param linkData The LinkDataComponent for the link.
+     * @return Whether the link should proceed successfully. If false, entity will
+     *         be returned to origin.
+     */
+    public boolean canFinishLink(Entity entity, ILinkData linkData) {
+        return true;
+    }
+
+    /**
+     * Fires before entity changes dimensions.
+     * 
+     * @param entity The Entity that is linking.
+     * @param linkData The LinkDataComponent for the link.
+     */
     public void onLinkStart(Entity entity, ILinkData linkData) {
     }
 
+    /**
+     * Fires after entity changes dimensions.
+     * 
+     * @param entity The Entity that is linking.
+     * @param linkData The LinkDataComponent for the link.
+     */
     public void onLinkEnd(Entity entity, ILinkData linkData) {
     }
 
