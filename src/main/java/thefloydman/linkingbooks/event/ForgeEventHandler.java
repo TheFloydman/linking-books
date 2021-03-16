@@ -68,14 +68,14 @@ public class ForgeEventHandler {
         if (stack.getItem() instanceof WrittenLinkingBookItem) {
             event.setCanceled(true);
             PlayerEntity player = event.getPlayer();
-            World world = event.getEntity().getEntityWorld();
+            World world = event.getEntity().getCommandSenderWorld();
             LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
-            Vector3d lookVec = player.getLookVec();
-            entity.setPosition(player.getPosX() + lookVec.getX(), player.getPosY() + 1.75D + lookVec.getY(),
-                    player.getPosZ() + lookVec.getZ());
-            entity.rotationYaw = player.rotationYawHead;
-            entity.addVelocity(lookVec.x / 4, lookVec.y / 4, lookVec.z / 4);
-            world.addEntity(entity);
+            Vector3d lookVec = player.getLookAngle();
+            entity.setPos(player.getX() + lookVec.x(), player.getY() + 1.75D + lookVec.y(),
+                    player.getZ() + lookVec.z());
+            entity.yRot = player.yHeadRot;
+            entity.push(lookVec.x / 4, lookVec.y / 4, lookVec.z / 4);
+            world.addFreshEntity(entity);
         }
     }
 
@@ -106,7 +106,7 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public static void serverStarting(FMLServerStartingEvent event) {
         // Register commands.
-        LinkCommand.register(event.getServer().getCommandManager().getDispatcher());
+        LinkCommand.register(event.getServer().getCommands().getDispatcher());
     }
 
     @SubscribeEvent
@@ -114,31 +114,31 @@ public class ForgeEventHandler {
         World world = event.getWorld();
         PlayerEntity player = event.getPlayer();
         Hand hand = event.getHand();
-        if (world.isRemote() || hand.equals(Hand.OFF_HAND) || !player.isSneaking()) {
+        if (world.isClientSide() || hand.equals(Hand.OFF_HAND) || !player.isShiftKeyDown()) {
             return;
         }
         BlockPos pos = event.getPos();
         if (world.getBlockState(pos).getBlock() instanceof LinkingLecternBlock
                 || world.getBlockState(pos).getBlock() instanceof LinkTranslatorBlock) {
-            TileEntity generic = world.getTileEntity(pos);
+            TileEntity generic = world.getBlockEntity(pos);
             if (!(generic instanceof LinkingBookHolderTileEntity)) {
                 return;
             }
             LinkingBookHolderTileEntity tileEntity = (LinkingBookHolderTileEntity) generic;
-            ItemStack stack = player.getHeldItem(hand);
+            ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
                 ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
                 tileEntity.setBook(stack);
-                player.container.detectAndSendChanges();
-                if (world.getTileEntity(pos) instanceof LinkTranslatorTileEntity) {
+                player.inventoryMenu.broadcastChanges();
+                if (world.getBlockEntity(pos) instanceof LinkTranslatorTileEntity) {
                     LinkTranslatorTileEntity linkTranslatorTileEntity = (LinkTranslatorTileEntity) tileEntity;
                     LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, pos, linkData, linkTranslatorTileEntity);
                 }
             } else if (stack.isEmpty() && tileEntity.hasBook()) {
-                player.addItemStackToInventory(tileEntity.getBook());
-                player.container.detectAndSendChanges();
+                player.addItem(tileEntity.getBook());
+                player.inventoryMenu.broadcastChanges();
                 tileEntity.setBook(ItemStack.EMPTY);
-                if (world.getTileEntity(pos) instanceof LinkTranslatorTileEntity) {
+                if (world.getBlockEntity(pos) instanceof LinkTranslatorTileEntity) {
                     LinkTranslatorTileEntity linkTranslatorBlockEntity = (LinkTranslatorTileEntity) tileEntity;
                     if (Reference.isImmersivePortalsLoaded()) {
                         ImmersivePortalsIntegration.deleteLinkingPortals(linkTranslatorBlockEntity);
@@ -148,22 +148,22 @@ public class ForgeEventHandler {
             }
         } else if (world.getBlockState(pos).getBlock() instanceof MarkerSwitchBlock) {
             BlockState state = world.getBlockState(pos);
-            if (state.get(MarkerSwitchBlock.OPEN) == true) {
-                TileEntity generic = world.getTileEntity(pos);
+            if (state.getValue(MarkerSwitchBlock.OPEN) == true) {
+                TileEntity generic = world.getBlockEntity(pos);
                 if (generic instanceof MarkerSwitchTileEntity) {
                     MarkerSwitchTileEntity tileEntity = (MarkerSwitchTileEntity) generic;
                     MarkerSwitchTileEntity twinEntity = (MarkerSwitchTileEntity) (state
-                            .get(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER ? world.getTileEntity(pos.up())
-                                    : world.getTileEntity(pos.down()));
-                    ItemStack stack = player.getHeldItem(hand);
+                            .getValue(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER ? world.getBlockEntity(pos.above())
+                                    : world.getBlockEntity(pos.below()));
+                    ItemStack stack = player.getItemInHand(hand);
                     if (tileEntity.isEmpty()) {
                         tileEntity.setItem(stack);
                         twinEntity.setItem(stack);
                         stack.setCount(0);
-                        player.container.detectAndSendChanges();
+                        player.inventoryMenu.broadcastChanges();
                     } else if (tileEntity.hasItem()) {
-                        player.addItemStackToInventory(tileEntity.getItem());
-                        player.container.detectAndSendChanges();
+                        player.addItem(tileEntity.getItem());
+                        player.inventoryMenu.broadcastChanges();
                         tileEntity.setItem(ItemStack.EMPTY);
                         twinEntity.setItem(ItemStack.EMPTY);
                     }

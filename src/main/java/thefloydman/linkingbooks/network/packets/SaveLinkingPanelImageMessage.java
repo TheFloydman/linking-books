@@ -44,22 +44,22 @@ public class SaveLinkingPanelImageMessage implements IMessage {
 
     @Override
     public PacketBuffer toData(PacketBuffer buffer) {
-        buffer.writeUniqueId(this.uuid);
-        buffer.writeCompoundTag(this.image);
+        buffer.writeUUID(this.uuid);
+        buffer.writeNbt(this.image);
         return buffer;
     }
 
     @Override
     public void fromData(PacketBuffer buffer) {
-        this.uuid = buffer.readUniqueId();
-        this.image = buffer.readCompoundTag();
+        this.uuid = buffer.readUUID();
+        this.image = buffer.readNbt();
     }
 
     @Override
     public void handle(Context ctx) {
         ctx.enqueueWork(() -> {
-            LinkingBooksSavedData worldData = ctx.getSender().getServer().getWorld(World.OVERWORLD).getSavedData()
-                    .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
+            LinkingBooksSavedData worldData = ctx.getSender().getServer().getLevel(World.OVERWORLD).getDataStorage()
+                    .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
             worldData.addLinkingPanelImage(this.uuid, this.image);
             ctx.setPacketHandled(true);
         });

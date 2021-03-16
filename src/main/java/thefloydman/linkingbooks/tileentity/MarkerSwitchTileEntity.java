@@ -47,7 +47,7 @@ public class MarkerSwitchTileEntity extends TileEntity implements IInventory {
 
     public boolean setItem(ItemStack stack) {
         this.item = stack.copy();
-        this.markDirty();
+        this.setChanged();
         return true;
     }
 
@@ -56,58 +56,58 @@ public class MarkerSwitchTileEntity extends TileEntity implements IInventory {
     }
 
     @Override
-    public void markDirty() {
-        super.markDirty();
-        this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
+    public void setChanged() {
+        super.setChanged();
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
         if (nbt.contains("item", NBT.TAG_COMPOUND)) {
-            this.item = ItemStack.read(nbt.getCompound("item"));
+            this.item = ItemStack.of(nbt.getCompound("item"));
         }
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT nbt) {
-        super.write(nbt);
-        nbt.put("item", this.item.write(new CompoundNBT()));
+    public CompoundNBT save(CompoundNBT nbt) {
+        super.save(nbt);
+        nbt.put("item", this.item.save(new CompoundNBT()));
         return nbt;
     }
 
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbt = new CompoundNBT();
-        this.write(nbt);
-        return new SUpdateTileEntityPacket(this.getPos(), 462, nbt);
+        this.save(nbt);
+        return new SUpdateTileEntityPacket(this.getBlockPos(), 462, nbt);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT nbt = super.getUpdateTag();
-        return this.write(nbt);
+        return this.save(nbt);
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT nbt) {
         super.handleUpdateTag(state, nbt);
-        this.read(state, nbt);
+        this.load(state, nbt);
     }
 
     @Override
     public void onDataPacket(NetworkManager manager, SUpdateTileEntityPacket packet) {
-        this.read(Blocks.AIR.getDefaultState(), packet.getNbtCompound());
+        this.load(Blocks.AIR.defaultBlockState(), packet.getTag());
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         this.item = ItemStack.EMPTY;
-        this.markDirty();
+        this.setChanged();
     }
 
     @Override
-    public int getSizeInventory() {
+    public int getContainerSize() {
         return 1;
     }
 
@@ -117,33 +117,33 @@ public class MarkerSwitchTileEntity extends TileEntity implements IInventory {
     }
 
     @Override
-    public ItemStack getStackInSlot(int index) {
+    public ItemStack getItem(int index) {
         return this.item;
     }
 
     @Override
-    public ItemStack decrStackSize(int index, int count) {
+    public ItemStack removeItem(int index, int count) {
         ItemStack stack = this.item.split(count);
-        this.markDirty();
+        this.setChanged();
         return stack;
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int index) {
+    public ItemStack removeItemNoUpdate(int index) {
         ItemStack stack = this.item.copy();
         this.item = ItemStack.EMPTY;
-        this.markDirty();
+        this.setChanged();
         return stack;
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
+    public void setItem(int index, ItemStack stack) {
         this.item = stack;
-        this.markDirty();
+        this.setChanged();
     }
 
     @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
+    public boolean stillValid(PlayerEntity player) {
         return true;
     }
 

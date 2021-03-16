@@ -53,7 +53,7 @@ public class LinkingBooksSavedData extends WorldSavedData {
             return false;
         }
         this.linkingPanelImages.put(uuid, image);
-        this.markDirty();
+        this.setDirty();
         return true;
     }
 
@@ -62,7 +62,7 @@ public class LinkingBooksSavedData extends WorldSavedData {
             return false;
         }
         this.linkingPanelImages.remove(uuid);
-        this.markDirty();
+        this.setDirty();
         return true;
     }
 
@@ -72,7 +72,7 @@ public class LinkingBooksSavedData extends WorldSavedData {
 
     public boolean addLinkingPortalData(BlockPos pos, ILinkData linkData) {
         this.linkingPortals.put(new BlockPos(pos), linkData);
-        this.markDirty();
+        this.setDirty();
         return true;
     }
 
@@ -81,7 +81,7 @@ public class LinkingBooksSavedData extends WorldSavedData {
             return false;
         }
         this.linkingPortals.remove(pos);
-        this.markDirty();
+        this.setDirty();
         return true;
     }
 
@@ -90,13 +90,13 @@ public class LinkingBooksSavedData extends WorldSavedData {
     }
 
     @Override
-    public void read(CompoundNBT nbt) {
+    public void load(CompoundNBT nbt) {
         if (nbt.contains("linkingPanelImages", NBT.TAG_LIST)) {
             ListNBT list = nbt.getList("linkingPanelImages", NBT.TAG_COMPOUND);
             for (INBT item : list) {
                 CompoundNBT compound = (CompoundNBT) item;
                 if (compound.contains("uuid", NBT.TAG_INT_ARRAY)) {
-                    UUID uuid = compound.getUniqueId("uuid");
+                    UUID uuid = compound.getUUID("uuid");
                     linkingPanelImages.put(uuid, compound);
                 }
             }
@@ -115,10 +115,10 @@ public class LinkingBooksSavedData extends WorldSavedData {
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT nbt) {
+    public CompoundNBT save(CompoundNBT nbt) {
         ListNBT imageList = new ListNBT();
         linkingPanelImages.forEach((uuid, image) -> {
-            image.putUniqueId("uuid", uuid);
+            image.putUUID("uuid", uuid);
             imageList.add(image);
         });
         nbt.put("linkingPanelImages", imageList);

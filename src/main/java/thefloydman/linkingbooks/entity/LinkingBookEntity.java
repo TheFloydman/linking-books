@@ -37,15 +37,15 @@ public class LinkingBookEntity extends ObjectEntity {
 
     protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, World world) {
         super(type, world, WrittenLinkingBookItem.class, 10.0F);
-        if (world.isRemote()) {
-            setRenderDistanceWeight(2.0D);
+        if (world.isClientSide()) {
+            setViewScale(2.0D);
         }
     }
 
     protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, World world, ItemStack item) {
         super(type, world, WrittenLinkingBookItem.class, 10.0F, item);
-        if (world.isRemote()) {
-            setRenderDistanceWeight(2.0D);
+        if (world.isClientSide()) {
+            setViewScale(2.0D);
         }
     }
 
@@ -58,15 +58,15 @@ public class LinkingBookEntity extends ObjectEntity {
     }
 
     @Override
-    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
-        if (!player.getEntityWorld().isRemote()) {
+    public ActionResultType interact(PlayerEntity player, Hand hand) {
+        if (!player.getCommandSenderWorld().isClientSide()) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
             if (hand == Hand.MAIN_HAND) {
                 ItemStack bookStack = this.getItem();
                 if (!bookStack.isEmpty()) {
-                    if (serverPlayer.isSneaking()) {
-                        serverPlayer.addItemStackToInventory(bookStack);
-                        serverPlayer.container.detectAndSendChanges();
+                    if (serverPlayer.isShiftKeyDown()) {
+                        serverPlayer.addItem(bookStack);
+                        serverPlayer.inventoryMenu.broadcastChanges();
                         this.remove();
                         return ActionResultType.SUCCESS;
                     } else {
@@ -74,7 +74,7 @@ public class LinkingBookEntity extends ObjectEntity {
                         IColorCapability color = bookStack.getCapability(ColorCapability.COLOR).orElse(null);
                         if (linkData != null && color != null) {
                             LinkingUtils.openLinkingBookGui(serverPlayer, false, color.getColor(), linkData,
-                                    serverPlayer.getEntityWorld().getDimensionKey().getLocation());
+                                    serverPlayer.getCommandSenderWorld().dimension().location());
                             return ActionResultType.CONSUME;
                         }
                     }

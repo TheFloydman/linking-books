@@ -65,23 +65,23 @@ public class LinkingBookWidget extends NestedWidget {
         if (!this.visible) {
             return;
         }
-        matrixStack.push();
+        matrixStack.pushPose();
         RenderSystem.pushMatrix();
 
         RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                 DestFactor.ZERO);
-        Minecraft.getInstance().getTextureManager().bindTexture(COVER_TEXTURE);
+        Minecraft.getInstance().getTextureManager().bind(COVER_TEXTURE);
         float[] color = new Color(this.color).getRGBColorComponents(null);
         RenderSystem.color4f(MathHelper.clamp(color[0], 0.1F, 1.0F), MathHelper.clamp(color[1], 0.1F, 1.0F),
                 MathHelper.clamp(color[2], 0.1F, 1.0F), 1.0F);
         this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getInstance().getTextureManager().bindTexture(PAPER_TEXTURE);
+        Minecraft.getInstance().getTextureManager().bind(PAPER_TEXTURE);
         this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
 
         RenderSystem.popMatrix();
-        matrixStack.pop();
+        matrixStack.popPose();
 
         this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }

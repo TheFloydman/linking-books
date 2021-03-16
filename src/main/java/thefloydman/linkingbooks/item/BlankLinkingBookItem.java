@@ -26,6 +26,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
+import net.minecraft.item.Item.Properties;
+
 public class BlankLinkingBookItem extends LinkingBookItem {
 
     public BlankLinkingBookItem(Properties properties) {
@@ -33,13 +35,13 @@ public class BlankLinkingBookItem extends LinkingBookItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack heldStack = player.getHeldItem(hand);
-        if (!world.isRemote() || heldStack.getCount() > 1) {
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack heldStack = player.getItemInHand(hand);
+        if (!world.isClientSide() || heldStack.getCount() > 1) {
             ItemStack writtenBook = LinkingUtils.createWrittenLinkingBook(player, heldStack);
-            return ActionResult.resultPass(writtenBook);
+            return ActionResult.pass(writtenBook);
         }
-        return ActionResult.resultPass(heldStack);
+        return ActionResult.pass(heldStack);
     }
 
 }

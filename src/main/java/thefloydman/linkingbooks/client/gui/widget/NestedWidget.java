@@ -91,7 +91,7 @@ public abstract class NestedWidget extends Widget {
     }
 
     /**
-     * A z-level-dependent version of AbstractGui::func_238467_a_.
+     * A z-level-dependent version of AbstractGui::fill.
      */
     /**
      * Z-sensitive fill method.
@@ -115,18 +115,18 @@ public abstract class NestedWidget extends Widget {
         final float blue = (color & 0xFF) / 255.0f;
         final float alpha = (color >> 24 & 0xFF) / 255.0f;
 
-        final BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        final BufferBuilder bufferBuilder = Tessellator.getInstance().getBuilder();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
-        Matrix4f matrix = matrixStack.getLast().getMatrix();
+        Matrix4f matrix = matrixStack.last().pose();
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        bufferBuilder.pos(matrix, xStart, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(matrix, xEnd, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(matrix, xEnd, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(matrix, xStart, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.finishDrawing();
-        WorldVertexBufferUploader.draw(bufferBuilder);
+        bufferBuilder.vertex(matrix, xStart, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
+        bufferBuilder.vertex(matrix, xEnd, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
+        bufferBuilder.vertex(matrix, xEnd, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
+        bufferBuilder.vertex(matrix, xStart, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
+        bufferBuilder.end();
+        WorldVertexBufferUploader.end(bufferBuilder);
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
@@ -141,7 +141,7 @@ public abstract class NestedWidget extends Widget {
      */
     public static float zDifference(MatrixStack matrixStack, float zLevel) {
         FloatBuffer floatBuffer = FloatBuffer.allocate(16);
-        matrixStack.getLast().getMatrix().write(floatBuffer);
+        matrixStack.last().pose().store(floatBuffer);
         float currentZ = floatBuffer.get(10);
         return zLevel - currentZ < 0 ? zLevel - MathHelper.abs(currentZ) : zLevel + MathHelper.abs(currentZ);
     }

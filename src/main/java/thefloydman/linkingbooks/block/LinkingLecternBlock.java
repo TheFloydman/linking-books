@@ -42,6 +42,8 @@ import thefloydman.linkingbooks.tileentity.LinkingLecternTileEntity;
 import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class LinkingLecternBlock extends LecternBlock {
 
     public LinkingLecternBlock(Properties properties) {
@@ -59,12 +61,12 @@ public class LinkingLecternBlock extends LecternBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player,
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
             Hand hand, BlockRayTraceResult result) {
-        TileEntity generic = world.getTileEntity(pos);
+        TileEntity generic = world.getBlockEntity(pos);
         if (generic instanceof LinkingLecternTileEntity) {
             LinkingLecternTileEntity tileEntity = (LinkingLecternTileEntity) generic;
-            if (!world.isRemote() && hand.equals(Hand.MAIN_HAND) && tileEntity.hasBook() && !player.isSneaking()) {
+            if (!world.isClientSide() && hand.equals(Hand.MAIN_HAND) && tileEntity.hasBook() && !player.isShiftKeyDown()) {
                 ItemStack stack = tileEntity.getBook();
                 Item item = stack.getItem();
                 if (item instanceof WrittenLinkingBookItem) {
@@ -72,7 +74,7 @@ public class LinkingLecternBlock extends LecternBlock {
                     IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
                     if (linkData != null && color != null) {
                         LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, false, color.getColor(), linkData,
-                                world.getDimensionKey().getLocation());
+                                world.dimension().location());
                     }
                 }
             }
@@ -81,21 +83,21 @@ public class LinkingLecternBlock extends LecternBlock {
     }
 
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity tileEntity = world.getTileEntity(pos);
+            TileEntity tileEntity = world.getBlockEntity(pos);
             if (tileEntity instanceof LinkingLecternTileEntity) {
                 LinkingLecternTileEntity lecternTE = (LinkingLecternTileEntity) tileEntity;
                 if (lecternTE.hasBook()) {
                     ItemStack stack = lecternTE.getBook();
                     if (stack.getItem() instanceof WrittenLinkingBookItem) {
                         LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
-                        entity.setPosition(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
-                        entity.rotationYaw = state.get(FACING).getHorizontalAngle() + 180.0F;
-                        world.addEntity(entity);
+                        entity.setPos(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
+                        entity.yRot = state.getValue(FACING).toYRot() + 180.0F;
+                        world.addFreshEntity(entity);
                     }
                 }
-                super.onReplaced(state, world, pos, newState, isMoving);
+                super.onRemove(state, world, pos, newState, isMoving);
             }
         }
     }

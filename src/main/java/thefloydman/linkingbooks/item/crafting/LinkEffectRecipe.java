@@ -61,15 +61,15 @@ public class LinkEffectRecipe implements ICraftingRecipe {
             implements IRecipeSerializer<LinkEffectRecipe> {
 
         @Override
-        public LinkEffectRecipe read(ResourceLocation id, JsonObject json) {
+        public LinkEffectRecipe fromJson(ResourceLocation id, JsonObject json) {
             NonNullList<Ingredient> ingredients = readIngredients(
-                    JSONUtils.getJsonArray(json, "additional_ingredients"));
+                    JSONUtils.getAsJsonArray(json, "additional_ingredients"));
             if (ingredients.size() > 8) {
                 throw new JsonParseException(
                         "Too many additional ingredients for written linking book recipe. The max is 8");
             } else {
                 Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
-                JsonArray jsonArray = JSONUtils.getJsonArray(json, "link_effects");
+                JsonArray jsonArray = JSONUtils.getAsJsonArray(json, "link_effects");
                 for (JsonElement element : jsonArray) {
                     linkEffects.add(LinkEffect.get(new ResourceLocation(element.getAsString())));
                 }
@@ -78,34 +78,34 @@ public class LinkEffectRecipe implements ICraftingRecipe {
         }
 
         @Override
-        public LinkEffectRecipe read(ResourceLocation id, PacketBuffer buffer) {
+        public LinkEffectRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) {
             int i = buffer.readVarInt();
             NonNullList<Ingredient> ingredients = NonNullList.withSize(i, Ingredient.EMPTY);
 
             for (int j = 0; j < ingredients.size(); ++j) {
-                ingredients.set(j, Ingredient.read(buffer));
+                ingredients.set(j, Ingredient.fromNetwork(buffer));
             }
 
             Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
             int quantity = buffer.readInt();
             for (int j = 0; j < quantity; j++) {
-                linkEffects.add(LinkEffect.get(new ResourceLocation(buffer.readString())));
+                linkEffects.add(LinkEffect.get(new ResourceLocation(buffer.readUtf())));
             }
 
             return new LinkEffectRecipe(id, ingredients, linkEffects);
         }
 
         @Override
-        public void write(PacketBuffer buffer, LinkEffectRecipe recipe) {
+        public void toNetwork(PacketBuffer buffer, LinkEffectRecipe recipe) {
             buffer.writeVarInt(recipe.recipeInputs.size());
 
             for (Ingredient ingredient : recipe.recipeInputs) {
-                ingredient.write(buffer);
+                ingredient.toNetwork(buffer);
             }
 
             buffer.writeInt(recipe.linkEffects.size());
             for (LinkEffect effect : recipe.linkEffects) {
-                buffer.writeString(effect.getRegistryName().toString());
+                buffer.writeUtf(effect.getRegistryName().toString());
             }
         }
     }
@@ -114,8 +114,8 @@ public class LinkEffectRecipe implements ICraftingRecipe {
         NonNullList<Ingredient> ingredients = NonNullList.create();
 
         for (int i = 0; i < array.size(); ++i) {
-            Ingredient ingredient = Ingredient.deserialize(array.get(i));
-            if (!ingredient.hasNoMatchingItems()) {
+            Ingredient ingredient = Ingredient.fromJson(array.get(i));
+            if (!ingredient.isEmpty()) {
                 ingredients.add(ingredient);
             }
         }
@@ -130,12 +130,12 @@ public class LinkEffectRecipe implements ICraftingRecipe {
         // Determines how many non-empty stacks are in the crafting grid. Also places
         // non-empty stacks into a DefaultedList.
         NonNullList<Ingredient> craftingInputs = NonNullList.create();
-        for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-            ItemStack stack = inventory.getStackInSlot(j);
+        for (int j = 0; j < inventory.getContainerSize(); ++j) {
+            ItemStack stack = inventory.getItem(j);
             if (!stack.isEmpty()) {
                 ++i;
                 inputs.add(stack);
-                craftingInputs.add(Ingredient.fromStacks(inventory.getStackInSlot(j)));
+                craftingInputs.add(Ingredient.of(inventory.getItem(j)));
             }
         }
 
@@ -145,10 +145,10 @@ public class LinkEffectRecipe implements ICraftingRecipe {
         for (int j = 0; j < craftingInputs.size(); j++) {
             boolean foundMatch = false;
             for (int k = 0; k < this.recipeInputs.size(); k++) {
-                ItemStack[] stacks = this.recipeInputs.get(k).getMatchingStacks();
+                ItemStack[] stacks = this.recipeInputs.get(k).getItems();
                 for (ItemStack stack : stacks) {
-                    if (stack.getItem() == craftingInputs.get(j).getMatchingStacks()[0].getItem()
-                            || craftingInputs.get(j).getMatchingStacks()[0]
+                    if (stack.getItem() == craftingInputs.get(j).getItems()[0].getItem()
+                            || craftingInputs.get(j).getItems()[0]
                                     .getItem() instanceof WrittenLinkingBookItem) {
                         foundMatch = true;
                         break;
@@ -165,11 +165,11 @@ public class LinkEffectRecipe implements ICraftingRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         ItemStack writtenBook = ItemStack.EMPTY;
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            if (inv.getStackInSlot(i).getItem() instanceof WrittenLinkingBookItem) {
-                writtenBook = inv.getStackInSlot(i).copy();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            if (inv.getItem(i).getItem() instanceof WrittenLinkingBookItem) {
+                writtenBook = inv.getItem(i).copy();
                 break;
             }
         }
@@ -187,12 +187,12 @@ public class LinkEffectRecipe implements ICraftingRecipe {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height >= this.recipeInputs.size();
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return ModItems.WRITTEN_LINKING_BOOK.get().getDefaultInstance();
     }
 

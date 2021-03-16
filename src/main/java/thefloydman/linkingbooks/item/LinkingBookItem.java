@@ -28,6 +28,8 @@ import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkingBookCapabilityProvider;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class LinkingBookItem extends Item {
 
     public LinkingBookItem(Properties properties) {

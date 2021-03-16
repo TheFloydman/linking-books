@@ -56,31 +56,33 @@ import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.LinkingUtils;
 import thefloydman.linkingbooks.util.Reference;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class LinkTranslatorBlock extends HorizontalBlock {
 
     public static final BooleanProperty HAS_BOOK = BlockStateProperties.HAS_BOOK;
-    public static final VoxelShape NORTH_SHAPE = VoxelShapes.or(Block.makeCuboidShape(0, 0, 2, 16, 16, 16),
-            Block.makeCuboidShape(0, 0, 0, 16, 5, 1), Block.makeCuboidShape(0, 0, 1, 16, 4, 2),
-            Block.makeCuboidShape(0, 11, 0, 16, 16, 1), Block.makeCuboidShape(0, 12, 1, 16, 16, 2));
-    public static final VoxelShape EAST_SHAPE = VoxelShapes.or(Block.makeCuboidShape(0, 0, 0, 14, 16, 16),
-            Block.makeCuboidShape(15, 0, 0, 16, 5, 16), Block.makeCuboidShape(14, 0, 0, 15, 4, 16),
-            Block.makeCuboidShape(15, 11, 0, 16, 16, 16), Block.makeCuboidShape(14, 12, 0, 15, 16, 16));
-    public static final VoxelShape SOUTH_SHAPE = VoxelShapes.or(Block.makeCuboidShape(0, 0, 0, 16, 16, 14),
-            Block.makeCuboidShape(0, 0, 15, 16, 5, 16), Block.makeCuboidShape(0, 0, 14, 16, 4, 15),
-            Block.makeCuboidShape(0, 11, 15, 16, 16, 16), Block.makeCuboidShape(0, 12, 14, 16, 16, 15));
-    public static final VoxelShape WEST_SHAPE = VoxelShapes.or(Block.makeCuboidShape(2, 0, 0, 16, 16, 16),
-            Block.makeCuboidShape(0, 0, 0, 1, 5, 16), Block.makeCuboidShape(1, 0, 0, 2, 4, 16),
-            Block.makeCuboidShape(0, 11, 0, 1, 16, 16), Block.makeCuboidShape(1, 12, 0, 2, 16, 16));
+    public static final VoxelShape NORTH_SHAPE = VoxelShapes.or(Block.box(0, 0, 2, 16, 16, 16),
+            Block.box(0, 0, 0, 16, 5, 1), Block.box(0, 0, 1, 16, 4, 2),
+            Block.box(0, 11, 0, 16, 16, 1), Block.box(0, 12, 1, 16, 16, 2));
+    public static final VoxelShape EAST_SHAPE = VoxelShapes.or(Block.box(0, 0, 0, 14, 16, 16),
+            Block.box(15, 0, 0, 16, 5, 16), Block.box(14, 0, 0, 15, 4, 16),
+            Block.box(15, 11, 0, 16, 16, 16), Block.box(14, 12, 0, 15, 16, 16));
+    public static final VoxelShape SOUTH_SHAPE = VoxelShapes.or(Block.box(0, 0, 0, 16, 16, 14),
+            Block.box(0, 0, 15, 16, 5, 16), Block.box(0, 0, 14, 16, 4, 15),
+            Block.box(0, 11, 15, 16, 16, 16), Block.box(0, 12, 14, 16, 16, 15));
+    public static final VoxelShape WEST_SHAPE = VoxelShapes.or(Block.box(2, 0, 0, 16, 16, 16),
+            Block.box(0, 0, 0, 1, 5, 16), Block.box(1, 0, 0, 2, 4, 16),
+            Block.box(0, 11, 0, 1, 16, 16), Block.box(1, 12, 0, 2, 16, 16));
 
     protected LinkTranslatorBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(
-                this.stateContainer.getBaseState().with(HORIZONTAL_FACING, Direction.NORTH).with(HAS_BOOK, false));
+        this.registerDefaultState(
+                this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HAS_BOOK, false));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING, HAS_BOOK);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING, HAS_BOOK);
     }
 
     @Override
@@ -94,14 +96,14 @@ public class LinkTranslatorBlock extends HorizontalBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState blockState, LivingEntity livingEntity,
+    public void setPlacedBy(World world, BlockPos blockPos, BlockState blockState, LivingEntity livingEntity,
             ItemStack itemStack) {
-        super.onBlockPlacedBy(world, blockPos, blockState, livingEntity, itemStack);
+        super.setPlacedBy(world, blockPos, blockState, livingEntity, itemStack);
         for (int x = blockPos.getX() - 32; x < blockPos.getX() + 32; x++) {
             for (int y = blockPos.getY() - 32; y < blockPos.getY() + 32; y++) {
                 for (int z = blockPos.getZ() - 32; z < blockPos.getZ() + 32; z++) {
                     BlockPos currentPos = new BlockPos(x, y, z);
-                    TileEntity blockEntity = world.getTileEntity(currentPos);
+                    TileEntity blockEntity = world.getBlockEntity(currentPos);
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorTileEntity) {
                         LinkTranslatorTileEntity translator = (LinkTranslatorTileEntity) blockEntity;
                         if (translator.hasBook()) {
@@ -115,12 +117,12 @@ public class LinkTranslatorBlock extends HorizontalBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player,
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
             Hand hand, BlockRayTraceResult hit) {
-        TileEntity generic = world.getTileEntity(pos);
+        TileEntity generic = world.getBlockEntity(pos);
         if (generic instanceof LinkTranslatorTileEntity) {
             LinkTranslatorTileEntity blockEntity = (LinkTranslatorTileEntity) generic;
-            if (!world.isRemote() && hand.equals(Hand.MAIN_HAND) && blockEntity.hasBook() && !player.isSneaking()) {
+            if (!world.isClientSide() && hand.equals(Hand.MAIN_HAND) && blockEntity.hasBook() && !player.isShiftKeyDown()) {
                 ItemStack stack = blockEntity.getBook();
                 Item item = stack.getItem();
                 if (item instanceof WrittenLinkingBookItem) {
@@ -128,7 +130,7 @@ public class LinkTranslatorBlock extends HorizontalBlock {
                     IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
                     if (linkData != null && color != null) {
                         LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, false, color.getColor(), linkData,
-                                world.getDimensionKey().getLocation());
+                                world.dimension().location());
 
                     }
                 }
@@ -139,24 +141,24 @@ public class LinkTranslatorBlock extends HorizontalBlock {
     }
 
     @Override
-    public boolean isTransparent(BlockState state) {
+    public boolean useShapeForLightOcclusion(BlockState state) {
         return true;
     }
 
     @Override
-    public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+    public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
         return false;
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock() && !world.isRemote()) {
-            TileEntity tileEntity = world.getTileEntity(pos);
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock() && !world.isClientSide()) {
+            TileEntity tileEntity = world.getBlockEntity(pos);
             if (tileEntity instanceof LinkTranslatorTileEntity) {
                 LinkTranslatorTileEntity translatorTE = (LinkTranslatorTileEntity) tileEntity;
                 if (Reference.isImmersivePortalsLoaded()) {
@@ -166,9 +168,9 @@ public class LinkTranslatorBlock extends HorizontalBlock {
                     ItemStack stack = translatorTE.getBook();
                     if (stack.getItem() instanceof WrittenLinkingBookItem) {
                         LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
-                        entity.setPositionAndRotation(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
-                                state.get(HORIZONTAL_FACING).getHorizontalAngle() + 180.0F, 0.0F);
-                        world.addEntity(entity);
+                        entity.absMoveTo(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
+                                state.getValue(FACING).toYRot() + 180.0F, 0.0F);
+                        world.addFreshEntity(entity);
                     }
                 }
             }
@@ -177,7 +179,7 @@ public class LinkTranslatorBlock extends HorizontalBlock {
             for (int y = pos.getY() - 32; y < pos.getY() + 32; y++) {
                 for (int z = pos.getZ() - 32; z < pos.getZ() + 32; z++) {
                     BlockPos currentPos = new BlockPos(x, y, z);
-                    TileEntity blockEntity = world.getTileEntity(currentPos);
+                    TileEntity blockEntity = world.getBlockEntity(currentPos);
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorTileEntity) {
                         LinkTranslatorTileEntity translator = (LinkTranslatorTileEntity) blockEntity;
                         if (Reference.isImmersivePortalsLoaded()) {
@@ -191,12 +193,12 @@ public class LinkTranslatorBlock extends HorizontalBlock {
                 }
             }
         }
-        super.onReplaced(state, world, pos, newState, isMoving);
+        super.onRemove(state, world, pos, newState, isMoving);
     }
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        switch (state.get(HORIZONTAL_FACING)) {
+        switch (state.getValue(FACING)) {
             case EAST:
                 return EAST_SHAPE;
             case SOUTH:

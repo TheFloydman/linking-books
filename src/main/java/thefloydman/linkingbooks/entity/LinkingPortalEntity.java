@@ -45,15 +45,15 @@ import thefloydman.linkingbooks.linking.LinkEffects;
  */
 public class LinkingPortalEntity extends Portal {
 
-    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(LinkingPortalEntity.class,
-            DataSerializers.ITEMSTACK);
-    private static final DataParameter<BlockPos> TILEENTITY_POS = EntityDataManager.createKey(LinkingPortalEntity.class,
+    private static final DataParameter<ItemStack> ITEM = EntityDataManager.defineId(LinkingPortalEntity.class,
+            DataSerializers.ITEM_STACK);
+    private static final DataParameter<BlockPos> TILEENTITY_POS = EntityDataManager.defineId(LinkingPortalEntity.class,
             DataSerializers.BLOCK_POS);
 
     public LinkingPortalEntity(EntityType<?> entityType, World world, ItemStack book, BlockPos tileEntityPos) {
         super(entityType, world);
-        this.dataManager.set(ITEM, book == null ? ItemStack.EMPTY : book);
-        this.dataManager.set(TILEENTITY_POS, tileEntityPos == null ? BlockPos.ZERO : tileEntityPos);
+        this.entityData.set(ITEM, book == null ? ItemStack.EMPTY : book);
+        this.entityData.set(TILEENTITY_POS, tileEntityPos == null ? BlockPos.ZERO : tileEntityPos);
     }
 
     public LinkingPortalEntity(EntityType<?> entityType, World world) {
@@ -61,24 +61,24 @@ public class LinkingPortalEntity extends Portal {
     }
 
     @Override
-    protected void registerData() {
-        this.dataManager.register(ITEM, ItemStack.EMPTY);
-        this.dataManager.register(TILEENTITY_POS, BlockPos.ZERO);
+    protected void defineSynchedData() {
+        this.entityData.define(ITEM, ItemStack.EMPTY);
+        this.entityData.define(TILEENTITY_POS, BlockPos.ZERO);
     }
 
     public BlockPos getTileEntityPos() {
-        return this.dataManager.get(TILEENTITY_POS);
+        return this.entityData.get(TILEENTITY_POS);
     }
 
     public void setTileEntityPos(BlockPos pos) {
-        this.dataManager.set(TILEENTITY_POS, pos);
+        this.entityData.set(TILEENTITY_POS, pos);
     }
 
     @Override
     public void onEntityTeleportedOnServer(Entity entity) {
         super.onEntityTeleportedOnServer(entity);
-        if (!this.dataManager.get(ITEM).isEmpty()) {
-            ILinkData linkData = this.dataManager.get(ITEM).getCapability(LinkData.LINK_DATA).orElse(null);
+        if (!this.entityData.get(ITEM).isEmpty()) {
+            ILinkData linkData = this.entityData.get(ITEM).getCapability(LinkData.LINK_DATA).orElse(null);
             for (LinkEffect effect : linkData.getLinkEffects()) {
                 effect.onLinkStart(entity, linkData);
                 effect.onLinkEnd(entity, linkData);
@@ -87,7 +87,7 @@ public class LinkingPortalEntity extends Portal {
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
             if (!player.isCreative()) {
-                player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
+                player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
             }
         }
     }
@@ -96,8 +96,8 @@ public class LinkingPortalEntity extends Portal {
     public boolean canTeleportEntity(Entity entity) {
         boolean ip = super.canTeleportEntity(entity);
         boolean lb = true;
-        if (!this.dataManager.get(ITEM).isEmpty()) {
-            ILinkData linkData = this.dataManager.get(ITEM).getCapability(LinkData.LINK_DATA).orElse(null);
+        if (!this.entityData.get(ITEM).isEmpty()) {
+            ILinkData linkData = this.entityData.get(ITEM).getCapability(LinkData.LINK_DATA).orElse(null);
             if ((this.getDestWorld() == this.getOriginWorld())
                     && !linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())) {
                 lb = false;
@@ -117,14 +117,14 @@ public class LinkingPortalEntity extends Portal {
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
-        super.readAdditional(compound);
+    protected void readAdditionalSaveData(CompoundNBT compound) {
+        super.readAdditionalSaveData(compound);
         if (compound.contains("book", NBT.TAG_COMPOUND)) {
-            ItemStack book = ItemStack.read(compound.getCompound("book"));
+            ItemStack book = ItemStack.of(compound.getCompound("book"));
             if (book.getItem() instanceof WrittenLinkingBookItem) {
-                this.dataManager.set(ITEM, book);
+                this.entityData.set(ITEM, book);
             } else {
-                this.dataManager.set(ITEM, ItemStack.EMPTY);
+                this.entityData.set(ITEM, ItemStack.EMPTY);
             }
         }
         if (compound.contains("tileentity_pos", NBT.TAG_COMPOUND)) {
@@ -133,11 +133,11 @@ public class LinkingPortalEntity extends Portal {
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
-        ItemStack item = this.dataManager.get(ITEM);
+    protected void addAdditionalSaveData(CompoundNBT compound) {
+        super.addAdditionalSaveData(compound);
+        ItemStack item = this.entityData.get(ITEM);
         if (!item.isEmpty()) {
-            compound.put("book", item.write(new CompoundNBT()));
+            compound.put("book", item.save(new CompoundNBT()));
         }
         compound.put("tileentity_pos", NBTUtil.writeBlockPos(this.getTileEntityPos()));
     }

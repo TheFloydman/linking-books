@@ -71,14 +71,14 @@ public class LinkingPortalArea {
                         addPosIfAbsent(unvisited, currentPos.west(), frame, filler);
                         break;
                     case Z:
-                        addPosIfAbsent(unvisited, currentPos.up(), frame, filler);
-                        addPosIfAbsent(unvisited, currentPos.down(), frame, filler);
+                        addPosIfAbsent(unvisited, currentPos.above(), frame, filler);
+                        addPosIfAbsent(unvisited, currentPos.below(), frame, filler);
                         addPosIfAbsent(unvisited, currentPos.north(), frame, filler);
                         addPosIfAbsent(unvisited, currentPos.south(), frame, filler);
                         break;
                     default:
-                        addPosIfAbsent(unvisited, currentPos.up(), frame, filler);
-                        addPosIfAbsent(unvisited, currentPos.down(), frame, filler);
+                        addPosIfAbsent(unvisited, currentPos.above(), frame, filler);
+                        addPosIfAbsent(unvisited, currentPos.below(), frame, filler);
                         addPosIfAbsent(unvisited, currentPos.east(), frame, filler);
                         addPosIfAbsent(unvisited, currentPos.west(), frame, filler);
                         break;
@@ -102,23 +102,23 @@ public class LinkingPortalArea {
 
     public static void createPortal(World world, Set<BlockPos> positions, BlockState portalState, ILinkData linkData) {
         for (BlockPos pos : positions) {
-            world.setBlockState(pos, portalState, 18);
+            world.setBlock(pos, portalState, 18);
             if (world instanceof ServerWorld && linkData != null) {
-                LinkingBooksSavedData savedData = ((ServerWorld) world).getSavedData()
-                        .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
+                LinkingBooksSavedData savedData = ((ServerWorld) world).getDataStorage()
+                        .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
                 savedData.addLinkingPortalData(pos, linkData);
             }
         }
     }
 
     public static void erasePortal(World world, Set<BlockPos> positions) {
-        BlockState blockState = Blocks.AIR.getDefaultState();
+        BlockState blockState = Blocks.AIR.defaultBlockState();
         for (BlockPos pos : positions) {
-            world.setBlockState(pos, blockState, 18);
-            world.setBlockState(pos, blockState, 18);
+            world.setBlock(pos, blockState, 18);
+            world.setBlock(pos, blockState, 18);
             if (world instanceof ServerWorld) {
-                LinkingBooksSavedData savedData = ((ServerWorld) world).getSavedData()
-                        .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
+                LinkingBooksSavedData savedData = ((ServerWorld) world).getDataStorage()
+                        .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
                 savedData.removeLinkingPortalData(pos);
             }
         }
@@ -164,17 +164,17 @@ public class LinkingPortalArea {
         tryMakeLinkingPortalWithConstantAxis(world, pos.west(), Axis.X, linkData, blockEntity);
         tryMakeLinkingPortalWithConstantAxis(world, pos.west(), Axis.Y, linkData, blockEntity);
         tryMakeLinkingPortalWithConstantAxis(world, pos.west(), Axis.Z, linkData, blockEntity);
-        tryMakeLinkingPortalWithConstantAxis(world, pos.up(), Axis.X, linkData, blockEntity);
-        tryMakeLinkingPortalWithConstantAxis(world, pos.up(), Axis.Y, linkData, blockEntity);
-        tryMakeLinkingPortalWithConstantAxis(world, pos.up(), Axis.Z, linkData, blockEntity);
-        tryMakeLinkingPortalWithConstantAxis(world, pos.down(), Axis.X, linkData, blockEntity);
-        tryMakeLinkingPortalWithConstantAxis(world, pos.down(), Axis.Y, linkData, blockEntity);
-        tryMakeLinkingPortalWithConstantAxis(world, pos.down(), Axis.Z, linkData, blockEntity);
+        tryMakeLinkingPortalWithConstantAxis(world, pos.above(), Axis.X, linkData, blockEntity);
+        tryMakeLinkingPortalWithConstantAxis(world, pos.above(), Axis.Y, linkData, blockEntity);
+        tryMakeLinkingPortalWithConstantAxis(world, pos.above(), Axis.Z, linkData, blockEntity);
+        tryMakeLinkingPortalWithConstantAxis(world, pos.below(), Axis.X, linkData, blockEntity);
+        tryMakeLinkingPortalWithConstantAxis(world, pos.below(), Axis.Y, linkData, blockEntity);
+        tryMakeLinkingPortalWithConstantAxis(world, pos.below(), Axis.Z, linkData, blockEntity);
     }
 
     public static void tryMakeLinkingPortalWithConstantAxis(World world, BlockPos pos, Axis constantAxis,
             ILinkData linkData, LinkTranslatorTileEntity blockEntity) {
-        if (world.getDimensionKey().getLocation().equals(linkData.getDimension())
+        if (world.dimension().location().equals(linkData.getDimension())
                 && !linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())) {
             return;
         }
@@ -182,11 +182,11 @@ public class LinkingPortalArea {
                 .getPortalArea(
                         world, pos, constantAxis, Sets
                                 .newHashSet(Stream
-                                        .concat(ModBlocks.NARA.get().getStateContainer().getValidStates().stream(),
-                                                ModBlocks.LINK_TRANSLATOR.get().getStateContainer().getValidStates()
+                                        .concat(ModBlocks.NARA.get().getStateDefinition().getPossibleStates().stream(),
+                                                ModBlocks.LINK_TRANSLATOR.get().getStateDefinition().getPossibleStates()
                                                         .stream())
                                         .collect(Collectors.toList()).toArray(new BlockState[] {})),
-                        Sets.newHashSet(Blocks.AIR.getStateContainer().getValidStates().toArray(new BlockState[] {})),
+                        Sets.newHashSet(Blocks.AIR.getStateDefinition().getPossibleStates().toArray(new BlockState[] {})),
                         1, 32 * 32);
         if (!portalPositions.isEmpty()) {
             if (Reference.isImmersivePortalsLoaded()
@@ -197,7 +197,7 @@ public class LinkingPortalArea {
                         posAndDimensions[3], posAndDimensions[4], portalPositions, constantAxis, linkData, blockEntity);
             } else {
                 LinkingPortalArea.createPortal(world, portalPositions,
-                        ModBlocks.LINKING_PORTAL.get().getDefaultState().with(LinkingPortalBlock.AXIS, constantAxis),
+                        ModBlocks.LINKING_PORTAL.get().defaultBlockState().setValue(LinkingPortalBlock.AXIS, constantAxis),
                         linkData);
             }
         }
@@ -208,20 +208,20 @@ public class LinkingPortalArea {
         tryEraseLinkingPortalWithConstantAxis(world, pos.east(), Axis.X);
         tryEraseLinkingPortalWithConstantAxis(world, pos.west(), Axis.X);
         tryEraseLinkingPortalWithConstantAxis(world, pos.south(), Axis.X);
-        tryEraseLinkingPortalWithConstantAxis(world, pos.up(), Axis.X);
-        tryEraseLinkingPortalWithConstantAxis(world, pos.down(), Axis.X);
+        tryEraseLinkingPortalWithConstantAxis(world, pos.above(), Axis.X);
+        tryEraseLinkingPortalWithConstantAxis(world, pos.below(), Axis.X);
         tryEraseLinkingPortalWithConstantAxis(world, pos.north(), Axis.Y);
         tryEraseLinkingPortalWithConstantAxis(world, pos.east(), Axis.Y);
         tryEraseLinkingPortalWithConstantAxis(world, pos.west(), Axis.Y);
         tryEraseLinkingPortalWithConstantAxis(world, pos.south(), Axis.Y);
-        tryEraseLinkingPortalWithConstantAxis(world, pos.up(), Axis.Y);
-        tryEraseLinkingPortalWithConstantAxis(world, pos.down(), Axis.Y);
+        tryEraseLinkingPortalWithConstantAxis(world, pos.above(), Axis.Y);
+        tryEraseLinkingPortalWithConstantAxis(world, pos.below(), Axis.Y);
         tryEraseLinkingPortalWithConstantAxis(world, pos.north(), Axis.Z);
         tryEraseLinkingPortalWithConstantAxis(world, pos.east(), Axis.Z);
         tryEraseLinkingPortalWithConstantAxis(world, pos.west(), Axis.Z);
         tryEraseLinkingPortalWithConstantAxis(world, pos.south(), Axis.Z);
-        tryEraseLinkingPortalWithConstantAxis(world, pos.up(), Axis.Z);
-        tryEraseLinkingPortalWithConstantAxis(world, pos.down(), Axis.Z);
+        tryEraseLinkingPortalWithConstantAxis(world, pos.above(), Axis.Z);
+        tryEraseLinkingPortalWithConstantAxis(world, pos.below(), Axis.Z);
     }
 
     public static void tryEraseLinkingPortalWithConstantAxis(World world, BlockPos pos, Axis constantAxis) {
@@ -229,11 +229,11 @@ public class LinkingPortalArea {
                 .getPortalArea(
                         world, pos, constantAxis, Sets
                                 .newHashSet(Stream
-                                        .concat(ModBlocks.NARA.get().getStateContainer().getValidStates().stream(),
-                                                ModBlocks.LINK_TRANSLATOR.get().getStateContainer().getValidStates()
+                                        .concat(ModBlocks.NARA.get().getStateDefinition().getPossibleStates().stream(),
+                                                ModBlocks.LINK_TRANSLATOR.get().getStateDefinition().getPossibleStates()
                                                         .stream())
                                         .collect(Collectors.toList()).toArray(new BlockState[] {})),
-                        Sets.newHashSet(ModBlocks.LINKING_PORTAL.get().getStateContainer().getValidStates()
+                        Sets.newHashSet(ModBlocks.LINKING_PORTAL.get().getStateDefinition().getPossibleStates()
                                 .toArray(new BlockState[] {})),
                         1, 32 * 32);
         if (!portalPositions.isEmpty()) {

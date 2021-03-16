@@ -34,13 +34,13 @@ public class ModItemGroups {
     public static final ItemGroup LINKING_BOOKS = new ItemGroup(Reference.MOD_ID) {
         @Override
         @OnlyIn(Dist.CLIENT)
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(ModItems.WRITTEN_LINKING_BOOK.get());
         }
 
         @Override
-        public void fill(NonNullList<ItemStack> items) {
-            super.fill(items);
+        public void fillItemList(NonNullList<ItemStack> items) {
+            super.fillItemList(items);
             /*
              * Adds a blank linking book to the Linking Books creative tab for each of the
              * 16 standard dye colors.

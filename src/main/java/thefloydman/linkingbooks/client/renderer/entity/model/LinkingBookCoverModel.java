@@ -42,13 +42,13 @@ public class LinkingBookCoverModel extends EntityModel<LinkingBookEntity> {
     private final List<ModelRenderer> allModels = Arrays.asList(this.coverRight, this.coverLeft, this.bookSpine);
 
     public LinkingBookCoverModel() {
-        super(RenderType::getEntitySolid);
-        this.coverRight.setRotationPoint(0.0F, 0.0F, -1.0F);
-        this.coverLeft.setRotationPoint(0.0F, 0.0F, 1.0F);
-        this.bookSpine.rotateAngleY = ((float) Math.PI / 2F);
+        super(RenderType::entitySolid);
+        this.coverRight.setPos(0.0F, 0.0F, -1.0F);
+        this.coverLeft.setPos(0.0F, 0.0F, 1.0F);
+        this.bookSpine.yRot = ((float) Math.PI / 2F);
     }
 
-    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn,
+    public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn,
             float red, float green, float blue, float alpha) {
         this.allModels.forEach((model) -> {
             model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
@@ -57,12 +57,12 @@ public class LinkingBookCoverModel extends EntityModel<LinkingBookEntity> {
 
     public void setBookState(float openAmount) {
         float radians = MathHelper.clamp((float) Math.PI / 2.0F * openAmount, 0.0F, (float) Math.PI / 2.0F);
-        this.coverRight.rotateAngleY = (float) Math.PI + radians;
-        this.coverLeft.rotateAngleY = -radians;
+        this.coverRight.yRot = (float) Math.PI + radians;
+        this.coverLeft.yRot = -radians;
     }
 
     @Override
-    public void setRotationAngles(LinkingBookEntity arg0, float arg1, float arg2, float arg3, float arg4, float arg5) {
+    public void setupAnim(LinkingBookEntity arg0, float arg1, float arg2, float arg3, float arg4, float arg5) {
     }
 
 }

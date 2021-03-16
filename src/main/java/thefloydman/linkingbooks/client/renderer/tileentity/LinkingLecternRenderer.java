@@ -67,11 +67,11 @@ public class LinkingLecternRenderer extends TileEntityRenderer<LinkingLecternTil
                 }
             }
 
-            matrixStack.push();
+            matrixStack.pushPose();
 
             float rotation = 0.0F;
             double[] translate = { 0.0D, 0.0D, 0.0D };
-            switch (tileEntity.getBlockState().get(LinkingLecternBlock.FACING)) {
+            switch (tileEntity.getBlockState().getValue(LinkingLecternBlock.FACING)) {
                 case NORTH:
                     rotation = 1.0F;
                     translate[0] = 0.5D;
@@ -103,17 +103,17 @@ public class LinkingLecternRenderer extends TileEntityRenderer<LinkingLecternTil
                     translate[2] = 0.4D;
             }
             matrixStack.translate(translate[0], translate[1], translate[2]);
-            matrixStack.rotate(Vector3f.YP.rotation((float) Math.PI * rotation / 2.0F));
-            matrixStack.rotate(Vector3f.XP.rotation((float) Math.PI));
-            matrixStack.rotate(Vector3f.ZP.rotation((float) -Math.PI / 2.67F));
+            matrixStack.mulPose(Vector3f.YP.rotation((float) Math.PI * rotation / 2.0F));
+            matrixStack.mulPose(Vector3f.XP.rotation((float) Math.PI));
+            matrixStack.mulPose(Vector3f.ZP.rotation((float) -Math.PI / 2.67F));
             matrixStack.scale(0.75F, 0.75F, 0.75F);
             IVertexBuilder vertexBuilder = buffer
-                    .getBuffer(this.coverModel.getRenderType(Resources.LINKING_BOOK_TEXTURE));
-            this.coverModel.render(matrixStack, vertexBuilder, arg4, arg5, this.color[0], this.color[1], this.color[2],
+                    .getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
+            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, arg4, arg5, this.color[0], this.color[1], this.color[2],
                     1.0F);
-            this.pagesModel.render(matrixStack, vertexBuilder, arg4, arg5, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, arg4, arg5, 1.0F, 1.0F, 1.0F, 1.0F);
 
-            matrixStack.pop();
+            matrixStack.popPose();
 
         }
     }

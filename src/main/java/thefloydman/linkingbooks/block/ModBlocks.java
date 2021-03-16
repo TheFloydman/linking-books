@@ -42,33 +42,33 @@ public final class ModBlocks {
             Reference.MOD_ID);
 
     public static final RegistryObject<Block> LINKING_LECTERN = BLOCKS.register(BlockNames.LINKING_LECTERN,
-            () -> new LinkingLecternBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
+            () -> new LinkingLecternBlock(AbstractBlock.Properties.of(Material.WOOD).strength(5)
                     .harvestLevel(2).harvestTool(ToolType.AXE)));
 
     public static final RegistryObject<Block> NARA = BLOCKS.register(BlockNames.NARA,
-            () -> new NaraBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.BROWN)
-                    .hardnessAndResistance(100.0F, 2400.0F).harvestTool(ToolType.PICKAXE)));
+            () -> new NaraBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
+                    .strength(100.0F, 2400.0F).harvestTool(ToolType.PICKAXE)));
 
     public static final RegistryObject<Block> LINK_TRANSLATOR = BLOCKS.register(BlockNames.LINK_TRANSLATOR,
-            () -> new LinkTranslatorBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.BROWN)
-                    .hardnessAndResistance(25.0F, 600.0F).harvestTool(ToolType.PICKAXE)));
+            () -> new LinkTranslatorBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
+                    .strength(25.0F, 600.0F).harvestTool(ToolType.PICKAXE)));
 
     public static final RegistryObject<Block> LINKING_PORTAL = BLOCKS.register(BlockNames.LINKING_PORTAL,
-            () -> new LinkingPortalBlock(AbstractBlock.Properties.create(Material.PORTAL).doesNotBlockMovement()
-                    .hardnessAndResistance(-1.0F, -1.0F).sound(SoundType.GLASS).notSolid().setLightLevel((state) -> {
+            () -> new LinkingPortalBlock(AbstractBlock.Properties.of(Material.PORTAL).noCollission()
+                    .strength(-1.0F, -1.0F).sound(SoundType.GLASS).noOcclusion().lightLevel((state) -> {
                         return 11;
                     })));
 
     public static final RegistryObject<Block> BOOKSHELF_STAIRS = BLOCKS.register(BlockNames.BOOKSHELF_STAIRS,
-            () -> new StairsBlock(() -> Blocks.SPRUCE_PLANKS.getDefaultState(),
-                    AbstractBlock.Properties.from(Blocks.SPRUCE_PLANKS)));
+            () -> new StairsBlock(() -> Blocks.SPRUCE_PLANKS.defaultBlockState(),
+                    AbstractBlock.Properties.copy(Blocks.SPRUCE_PLANKS)));
 
     public static final RegistryObject<Block> MARKER_SWITCH = BLOCKS.register(BlockNames.MARKER_SWITCH,
-            () -> new MarkerSwitchBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(5)
+            () -> new MarkerSwitchBlock(AbstractBlock.Properties.of(Material.WOOD).strength(5)
                     .harvestLevel(2).harvestTool(ToolType.AXE)));
 
     public static final RegistryObject<FlowingFluidBlock> INK = BLOCKS.register(BlockNames.INK,
-            () -> new FlowingFluidBlock(ModFluids.INK, AbstractBlock.Properties.create(ModMaterials.INK)
-                    .doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops()));
+            () -> new FlowingFluidBlock(ModFluids.INK, AbstractBlock.Properties.of(ModMaterials.INK)
+                    .noCollission().strength(100.0F).noDrops()));
 
 }

@@ -68,39 +68,39 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
             }
         }
 
-        matrixStack.push();
+        matrixStack.pushPose();
 
         matrixStack.scale(0.75F, 0.75F, 0.75F);
-        matrixStack.rotate(Vector3f.XP.rotation((float) Math.PI));
-        matrixStack.rotate(Vector3f.YP.rotation((yaw / 360.0F * (float) Math.PI * 2.0F) - ((float) Math.PI / 2.0F)));
-        matrixStack.rotate(Vector3f.ZP.rotation((float) Math.PI / 2 * 3));
+        matrixStack.mulPose(Vector3f.XP.rotation((float) Math.PI));
+        matrixStack.mulPose(Vector3f.YP.rotation((yaw / 360.0F * (float) Math.PI * 2.0F) - ((float) Math.PI / 2.0F)));
+        matrixStack.mulPose(Vector3f.ZP.rotation((float) Math.PI / 2 * 3));
 
-        IVertexBuilder vertexBuilder = buffer.getBuffer(this.coverModel.getRenderType(Resources.LINKING_BOOK_TEXTURE));
+        IVertexBuilder vertexBuilder = buffer.getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
 
         if (entity.hurtTime > 0) {
-            this.coverModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
+            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
                     0.4F);
-            this.pagesModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
+            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F, 0.0F, 0.0F,
                     0.4F);
         } else {
-            this.coverModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, this.color[0],
+            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, this.color[0],
                     this.color[1], this.color[2], 1.0F);
-            this.pagesModel.render(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
+            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
                     1.0F);
         }
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     @Override
-    public ResourceLocation getEntityTexture(LinkingBookEntity entity) {
+    public ResourceLocation getTextureLocation(LinkingBookEntity entity) {
         return Reference.getAsResourceLocation("textures/entity/linking_book.png");
     }
 
     @Override
-    protected boolean canRenderName(LinkingBookEntity entity) {
-        return super.canRenderName(entity) && (entity.getAlwaysRenderNameTagForRender()
-                || entity.hasCustomName() && entity == this.renderManager.pointedEntity);
+    protected boolean shouldShowName(LinkingBookEntity entity) {
+        return super.shouldShowName(entity) && (entity.shouldShowName()
+                || entity.hasCustomName() && entity == this.entityRenderDispatcher.crosshairPickEntity);
     }
 
 }

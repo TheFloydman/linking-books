@@ -33,6 +33,8 @@ import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.Reference;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class NaraBlock extends Block {
 
     public NaraBlock(Properties properties) {
@@ -40,14 +42,14 @@ public class NaraBlock extends Block {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos blockPos, BlockState blockState, LivingEntity livingEntity,
+    public void setPlacedBy(World world, BlockPos blockPos, BlockState blockState, LivingEntity livingEntity,
             ItemStack itemStack) {
-        super.onBlockPlacedBy(world, blockPos, blockState, livingEntity, itemStack);
+        super.setPlacedBy(world, blockPos, blockState, livingEntity, itemStack);
         for (int x = blockPos.getX() - 32; x < blockPos.getX() + 32; x++) {
             for (int y = blockPos.getY() - 32; y < blockPos.getY() + 32; y++) {
                 for (int z = blockPos.getZ() - 32; z < blockPos.getZ() + 32; z++) {
                     BlockPos currentPos = new BlockPos(x, y, z);
-                    TileEntity blockEntity = world.getTileEntity(currentPos);
+                    TileEntity blockEntity = world.getBlockEntity(currentPos);
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorTileEntity) {
                         LinkTranslatorTileEntity translator = (LinkTranslatorTileEntity) blockEntity;
                         if (translator.hasBook()) {
@@ -61,13 +63,13 @@ public class NaraBlock extends Block {
     }
 
     @Override
-    public void onReplaced(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean bl) {
-        if (!blockState.isIn(blockState2.getBlock())) {
+    public void onRemove(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean bl) {
+        if (!blockState.is(blockState2.getBlock())) {
             for (int x = blockPos.getX() - 32; x < blockPos.getX() + 32; x++) {
                 for (int y = blockPos.getY() - 32; y < blockPos.getY() + 32; y++) {
                     for (int z = blockPos.getZ() - 32; z < blockPos.getZ() + 32; z++) {
                         BlockPos currentPos = new BlockPos(x, y, z);
-                        TileEntity blockEntity = world.getTileEntity(currentPos);
+                        TileEntity blockEntity = world.getBlockEntity(currentPos);
                         if (blockEntity != null && blockEntity instanceof LinkTranslatorTileEntity) {
                             LinkTranslatorTileEntity translator = (LinkTranslatorTileEntity) blockEntity;
                             if (Reference.isImmersivePortalsLoaded()) {
@@ -84,7 +86,7 @@ public class NaraBlock extends Block {
                 }
             }
         }
-        super.onReplaced(blockState, world, blockPos, blockState2, bl);
+        super.onRemove(blockState, world, blockPos, blockState2, bl);
     }
 
 }

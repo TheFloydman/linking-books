@@ -86,7 +86,7 @@ public class ColorCapability {
         public void readNBT(Capability<IColorCapability> capability, IColorCapability instance, Direction side,
                 INBT nbt) {
             if (nbt instanceof IntNBT) {
-                instance.setColor(((IntNBT) nbt).getInt());
+                instance.setColor(((IntNBT) nbt).getAsInt());
             }
         }
     }

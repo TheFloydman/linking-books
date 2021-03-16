@@ -34,35 +34,35 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Reference.MOD_ID);
 
     public static final RegistryObject<Item> BLANK_LINKING_BOOK = ITEMS.register(Reference.ItemNames.BLANK_LINKNG_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().maxStackSize(16)));
+            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
 
     public static final RegistryObject<Item> WRITTEN_LINKING_BOOK = ITEMS.register(
             Reference.ItemNames.WRITTEN_LINKNG_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().maxStackSize(1)));
+            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> LINKING_LECTERN = ITEMS.register(Reference.BlockNames.LINKING_LECTERN,
             () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(),
-                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> NARA = ITEMS.register(Reference.BlockNames.NARA,
-            () -> new BlockItem(ModBlocks.NARA.get(), new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+            () -> new BlockItem(ModBlocks.NARA.get(), new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> LINK_TRANSLATOR = ITEMS.register(Reference.BlockNames.LINK_TRANSLATOR,
             () -> new BlockItem(ModBlocks.LINK_TRANSLATOR.get(),
-                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> MARKER_SWITCH = ITEMS.register(Reference.BlockNames.MARKER_SWITCH,
             () -> new BlockItem(ModBlocks.MARKER_SWITCH.get(),
-                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> BOOKSHELF_STAIRS = ITEMS.register(Reference.BlockNames.BOOKSHELF_STAIRS,
             () -> new BlockItem(ModBlocks.BOOKSHELF_STAIRS.get(),
-                    new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> LINKING_PANEL = ITEMS.register(Reference.ItemNames.LINKING_PANEL,
-            () -> new LinkingPanelItem(new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+            () -> new LinkingPanelItem(new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> INK_BUCKET = ITEMS.register(Reference.ItemNames.INK_BUCKET,
-            () -> new BucketItem(ModFluids.INK, new Item.Properties().group(ModItemGroups.LINKING_BOOKS)));
+            () -> new BucketItem(ModFluids.INK, new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
 }

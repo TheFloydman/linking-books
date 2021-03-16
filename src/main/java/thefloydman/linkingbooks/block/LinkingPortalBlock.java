@@ -43,6 +43,8 @@ import thefloydman.linkingbooks.util.LinkingUtils;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Much of this code is copied from
  * {@link net.minecraft.block.NetherPortalBlock}.
@@ -51,37 +53,37 @@ import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 public class LinkingPortalBlock extends Block {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
-    protected static final VoxelShape X_SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 6.0D, 16.0D, 16.0D, 10.0D);
-    protected static final VoxelShape Y_SHAPE = Block.makeCuboidShape(0.0D, 6.0D, 0.0D, 16.0D, 10.0D, 16.0D);
-    protected static final VoxelShape Z_SHAPE = Block.makeCuboidShape(6.0D, 0.0D, 0.0D, 10.0D, 16.0D, 16.0D);
+    protected static final VoxelShape X_SHAPE = Block.box(0.0D, 0.0D, 6.0D, 16.0D, 16.0D, 10.0D);
+    protected static final VoxelShape Y_SHAPE = Block.box(0.0D, 6.0D, 0.0D, 16.0D, 10.0D, 16.0D);
+    protected static final VoxelShape Z_SHAPE = Block.box(6.0D, 0.0D, 0.0D, 10.0D, 16.0D, 16.0D);
 
     public LinkingPortalBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(this.stateContainer.getBaseState().with(AXIS, Direction.Axis.X));
+        this.registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.X));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(AXIS);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public ItemStack getItem(IBlockReader blockView, BlockPos blockPos, BlockState blockState) {
+    public ItemStack getCloneItemStack(IBlockReader blockView, BlockPos blockPos, BlockState blockState) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState blockState, Direction direction, BlockState blockState2,
+    public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2,
             IWorld worldAccess, BlockPos blockPos, BlockPos blockPos2) {
-        return !blockState2.isIn(this) ? Blocks.AIR.getDefaultState()
-                : super.updatePostPlacement(blockState, direction, blockState2, worldAccess, blockPos, blockPos2);
+        return !blockState2.is(this) ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(blockState, direction, blockState2, worldAccess, blockPos, blockPos2);
     }
 
     @Override
     public VoxelShape getShape(BlockState blockState, IBlockReader blockView, BlockPos blockPos,
             ISelectionContext shapeContext) {
-        switch (blockState.get(AXIS)) {
+        switch (blockState.getValue(AXIS)) {
             case Z:
                 return Z_SHAPE;
             case Y:
@@ -97,13 +99,13 @@ public class LinkingPortalBlock extends Block {
      *
      */
     @Override
-    public void onEntityCollision(BlockState blockState, World world, BlockPos blockPos, Entity entity) {
-        if (world instanceof ServerWorld && !entity.isPassenger() && !entity.isBeingRidden() && entity.isNonBoss()
-                && VoxelShapes.compare(VoxelShapes.create(
-                        entity.getBoundingBox().offset((-blockPos.getX()), (-blockPos.getY()), (-blockPos.getZ()))),
+    public void entityInside(BlockState blockState, World world, BlockPos blockPos, Entity entity) {
+        if (world instanceof ServerWorld && !entity.isPassenger() && !entity.isVehicle() && entity.canChangeDimensions()
+                && VoxelShapes.joinIsNotEmpty(VoxelShapes.create(
+                        entity.getBoundingBox().move((-blockPos.getX()), (-blockPos.getY()), (-blockPos.getZ()))),
                         blockState.getShape(world, blockPos), IBooleanFunction.AND)) {
-            LinkingBooksSavedData savedData = ((ServerWorld) world).getSavedData()
-                    .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
+            LinkingBooksSavedData savedData = ((ServerWorld) world).getDataStorage()
+                    .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
 
             LinkingUtils.linkEntity(entity, savedData.getLinkingPortalData(blockPos), false);
         }
@@ -111,13 +113,13 @@ public class LinkingPortalBlock extends Block {
     }
 
     @Override
-    public void onReplaced(BlockState blockState, World world, BlockPos pos, BlockState blockState2, boolean bl) {
-        if (blockState.getBlock() != blockState2.getBlock() && !world.isRemote()) {
-            LinkingBooksSavedData savedData = ((ServerWorld) world).getSavedData()
-                    .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
+    public void onRemove(BlockState blockState, World world, BlockPos pos, BlockState blockState2, boolean bl) {
+        if (blockState.getBlock() != blockState2.getBlock() && !world.isClientSide()) {
+            LinkingBooksSavedData savedData = ((ServerWorld) world).getDataStorage()
+                    .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
             savedData.removeLinkingPortalData(pos);
         }
-        super.onReplaced(blockState, world, pos, blockState2, bl);
+        super.onRemove(blockState, world, pos, blockState2, bl);
     }
 
 }

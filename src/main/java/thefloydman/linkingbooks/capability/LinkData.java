@@ -57,7 +57,7 @@ public class LinkData {
 
         private ResourceLocation dimension = new ResourceLocation("minecraft:overworld");
         private BlockPos position = Reference.server == null ? BlockPos.ZERO
-                : Reference.server.func_241755_D_().getSpawnPoint();
+                : Reference.server.overworld().getSharedSpawnPos();
         private float rotation = 0.0F;
         private UUID uuid = UUID.randomUUID();
         private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
@@ -125,13 +125,13 @@ public class LinkData {
         @Override
         public PacketBuffer write(PacketBuffer buffer) {
             CompoundNBT compound = (CompoundNBT) LINK_DATA.getStorage().writeNBT(LINK_DATA, this, null);
-            buffer.writeCompoundTag(compound);
+            buffer.writeNbt(compound);
             return buffer;
         }
 
         @Override
         public void read(PacketBuffer buffer) {
-            LINK_DATA.getStorage().readNBT(LINK_DATA, this, null, buffer.readCompoundTag());
+            LINK_DATA.getStorage().readNBT(LINK_DATA, this, null, buffer.readNbt());
         }
 
     }
@@ -150,7 +150,7 @@ public class LinkData {
             for (LinkEffect effect : instance.getLinkEffects()) {
                 effectsList.add(StringNBT.valueOf(effect.getRegistryName().toString()));
             }
-            nbt.putUniqueId("uuid", instance.getUUID());
+            nbt.putUUID("uuid", instance.getUUID());
             nbt.put("effects", effectsList);
             return nbt;
         }
@@ -169,12 +169,12 @@ public class LinkData {
                     instance.setRotation(compound.getFloat("rotation"));
                 }
                 if (compound.contains("uuid", NBT.TAG_INT_ARRAY)) {
-                    instance.setUUID(compound.getUniqueId("uuid"));
+                    instance.setUUID(compound.getUUID("uuid"));
                 }
                 if (compound.contains("effects", NBT.TAG_LIST)) {
                     for (INBT item : compound.getList("effects", NBT.TAG_STRING)) {
                         instance.addLinkEffect(LinkEffect
-                                .get(new ResourceLocation(((StringNBT) item).getString())));
+                                .get(new ResourceLocation(((StringNBT) item).getAsString())));
                     }
                 }
             }

@@ -46,7 +46,7 @@ public class LinkingBookContainer extends Container {
         this.bookColor = extraData.readInt();
         this.linkData.read(extraData);
         this.canLink = extraData.readBoolean();
-        this.linkingPanelImage = extraData.readCompoundTag();
+        this.linkingPanelImage = extraData.readNbt();
 
         /*
          * if (Reference.isModLoaded("immersive_portals") &&
@@ -58,12 +58,12 @@ public class LinkingBookContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
+    public void removed(PlayerEntity player) {
 
         /*
          * if (Reference.isModLoaded("immersive_portals") &&
@@ -72,7 +72,7 @@ public class LinkingBookContainer extends Container {
          * (ServerPlayerEntity) player); }
          */
 
-        super.onContainerClosed(player);
+        super.removed(player);
     }
 
 }

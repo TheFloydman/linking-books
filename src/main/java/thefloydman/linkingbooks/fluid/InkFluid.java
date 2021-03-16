@@ -24,6 +24,8 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.state.StateContainer;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 
+import net.minecraftforge.fluids.ForgeFlowingFluid.Properties;
+
 public abstract class InkFluid extends ForgeFlowingFluid {
 
     protected InkFluid(Properties properties) {
@@ -37,14 +39,14 @@ public abstract class InkFluid extends ForgeFlowingFluid {
         }
 
         @Override
-        protected void fillStateContainer(StateContainer.Builder<Fluid, FluidState> builder) {
-            super.fillStateContainer(builder);
-            builder.add(LEVEL_1_8);
+        protected void createFluidStateDefinition(StateContainer.Builder<Fluid, FluidState> builder) {
+            super.createFluidStateDefinition(builder);
+            builder.add(LEVEL);
         }
 
         @Override
-        public int getLevel(FluidState state) {
-            return state.get(LEVEL_1_8);
+        public int getAmount(FluidState state) {
+            return state.getValue(LEVEL);
         }
 
         @Override
@@ -59,7 +61,7 @@ public abstract class InkFluid extends ForgeFlowingFluid {
         }
 
         @Override
-        public int getLevel(FluidState state) {
+        public int getAmount(FluidState state) {
             return 8;
         }
 

@@ -67,9 +67,9 @@ public class LinkingUtils {
         if (linkData == null) {
             return ItemStack.EMPTY;
         }
-        linkData.setDimension(player.getEntityWorld().getDimensionKey().getLocation());
-        linkData.setPosition(player.getPosition());
-        linkData.setRotation(player.rotationYaw);
+        linkData.setDimension(player.getCommandSenderWorld().dimension().location());
+        linkData.setPosition(player.blockPosition());
+        linkData.setRotation(player.yRot);
 
         IColorCapability originColor = originItem.getCapability(ColorCapability.COLOR).orElse(null);
         IColorCapability resultColor = resultItem.getCapability(ColorCapability.COLOR).orElse(null);
@@ -90,9 +90,9 @@ public class LinkingUtils {
      */
     public static boolean linkEntity(Entity entity, ILinkData linkData, boolean holdingBook) {
 
-        World world = entity.getEntityWorld();
+        World world = entity.getCommandSenderWorld();
 
-        if (world.isRemote()) {
+        if (world.isClientSide()) {
             LOGGER.info(
                     "An attempt has been made to directly link an entity from the client. Only do this from the server.");
         } else if (linkData == null) {
@@ -102,18 +102,18 @@ public class LinkingUtils {
         } else if (linkData.getPosition() == null) {
             LOGGER.info("ILinkInfo::getPosition returned null. Link failed.");
         } else if (!linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())
-                && world.getDimensionKey().getLocation().equals(linkData.getDimension())) {
+                && world.dimension().location().equals(linkData.getDimension())) {
             if (entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
-                player.closeScreen();
                 player.closeContainer();
-                player.sendStatusMessage(new TranslationTextComponent("message.linkingbooks.no_intraage_linking"),
+                player.doCloseContainer();
+                player.displayClientMessage(new TranslationTextComponent("message.linkingbooks.no_intraage_linking"),
                         true);
             }
         } else {
 
             ServerWorld serverWorld = world.getServer()
-                    .getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()));
+                    .getLevel(RegistryKey.create(Registry.DIMENSION_REGISTRY, linkData.getDimension()));
 
             if (serverWorld == null) {
                 LOGGER.info("Cannot find dimension \"" + linkData.getDimension().toString() + "\". Link failed.");
@@ -124,9 +124,9 @@ public class LinkingUtils {
                 if (!effect.canStartLink(entity, linkData)) {
                     if (entity instanceof ServerPlayerEntity) {
                         ServerPlayerEntity player = (ServerPlayerEntity) entity;
-                        player.closeScreen();
                         player.closeContainer();
-                        player.sendStatusMessage(new TranslationTextComponent("message.linkingbooks.link_failed_start"),
+                        player.doCloseContainer();
+                        player.displayClientMessage(new TranslationTextComponent("message.linkingbooks.link_failed_start"),
                                 true);
                     }
                     return false;
@@ -137,8 +137,8 @@ public class LinkingUtils {
                 effect.onLinkStart(entity, linkData);
             }
 
-            Vector3d originalPos = entity.getPositionVec();
-            float originalRot = entity.rotationYaw;
+            Vector3d originalPos = entity.position();
+            float originalRot = entity.yRot;
             BlockPos pos = linkData.getPosition();
             double x = pos.getX() + 0.5D;
             double y = pos.getY();
@@ -156,37 +156,37 @@ public class LinkingUtils {
                 // Deduct experience levels if a cost has been set in config.
                 if (!player.isCreative()) {
                     if (player.experienceLevel < ModConfig.COMMON.linkingCostExperienceLevels.get()) {
-                        player.closeScreen();
                         player.closeContainer();
-                        player.sendStatusMessage(
+                        player.doCloseContainer();
+                        player.displayClientMessage(
                                 new TranslationTextComponent("message.linkingbooks.insufficient_experience"), true);
                         return false;
                     }
-                    player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
+                    player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
                     tookExperience = true;
                 }
                 if (holdingBook && linkData.getLinkEffects().contains(LinkEffects.TETHERED.get())) {
-                    LinkingBookEntity book = new LinkingBookEntity(world, player.getHeldItemMainhand().copy());
-                    Vector3d lookVec = player.getLookVec();
-                    book.setPosition(player.getPosX() + (lookVec.getX() / 4.0D), player.getPosY() + 1.0D,
-                            player.getPosZ() + (lookVec.getZ() / 4.0D));
-                    book.rotationYaw = player.rotationYawHead;
-                    world.addEntity(book);
-                    player.getHeldItemMainhand().shrink(1);
+                    LinkingBookEntity book = new LinkingBookEntity(world, player.getMainHandItem().copy());
+                    Vector3d lookVec = player.getLookAngle();
+                    book.setPos(player.getX() + (lookVec.x() / 4.0D), player.getY() + 1.0D,
+                            player.getZ() + (lookVec.z() / 4.0D));
+                    book.yRot = player.yHeadRot;
+                    world.addFreshEntity(book);
+                    player.getMainHandItem().shrink(1);
                 }
+                player.doCloseContainer();
                 player.closeContainer();
-                player.closeScreen();
-                player.teleport(serverWorld, x, y, z, rotation, player.rotationPitch);
+                player.teleportTo(serverWorld, x, y, z, rotation, player.xRot);
             } else {
                 CompoundNBT nbt = new CompoundNBT();
-                entity.writeUnlessRemoved(nbt);
+                entity.saveAsPassenger(nbt);
                 entity.remove();
-                Entity entityCopy = EntityType.loadEntityUnchecked(nbt, serverWorld).orElse(null);
+                Entity entityCopy = EntityType.create(nbt, serverWorld).orElse(null);
                 if (entityCopy == null) {
                     return false;
                 }
-                entityCopy.setPosition(x, y, z);
-                serverWorld.addEntity(entityCopy);
+                entityCopy.setPos(x, y, z);
+                serverWorld.addFreshEntity(entityCopy);
                 serverWorld.addFromAnotherDimension(entityCopy);
             }
             for (LinkEffect effect : linkData.getLinkEffects()) {
@@ -194,23 +194,23 @@ public class LinkingUtils {
                     if (entity instanceof ServerPlayerEntity) {
                         ServerPlayerEntity player = (ServerPlayerEntity) entity;
                         if (tookExperience) {
-                            player.addExperienceLevel(ModConfig.COMMON.linkingCostExperienceLevels.get());
+                            player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get());
                         }
                         serverWorld.getServer().execute(() -> {
-                            player.teleport((ServerWorld) world, originalPos.x, originalPos.y, originalPos.z,
-                                    originalRot, player.rotationPitch);
-                            player.sendStatusMessage(
+                            player.teleportTo((ServerWorld) world, originalPos.x, originalPos.y, originalPos.z,
+                                    originalRot, player.xRot);
+                            player.displayClientMessage(
                                     new TranslationTextComponent("message.linkingbooks.link_failed_end"), true);
                         });
                     } else {
                         serverWorld.getServer().execute(() -> {
                             CompoundNBT tag = new CompoundNBT();
-                            entity.writeUnlessRemoved(tag);
+                            entity.saveAsPassenger(tag);
                             entity.remove();
-                            Entity entityCopy = EntityType.loadEntityUnchecked(tag, world).orElse(null);
+                            Entity entityCopy = EntityType.create(tag, world).orElse(null);
                             if (entityCopy != null) {
-                                entityCopy.setPosition(originalPos.x, originalPos.y, originalPos.z);
-                                world.addEntity(entityCopy);
+                                entityCopy.setPos(originalPos.x, originalPos.y, originalPos.z);
+                                world.addFreshEntity(entityCopy);
                                 ((ServerWorld) world).addFromAnotherDimension(entityCopy);
                             }
                         });
@@ -253,10 +253,10 @@ public class LinkingUtils {
             boolean canLink = !currentDimension.equals(linkData.getDimension())
                     || linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get());
             extraData.writeBoolean(canLink);
-            LinkingBooksSavedData savedData = player.getServer().getWorld(World.OVERWORLD).getSavedData()
-                    .getOrCreate(LinkingBooksSavedData::new, Reference.MOD_ID);
+            LinkingBooksSavedData savedData = player.getServer().getLevel(World.OVERWORLD).getDataStorage()
+                    .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
             CompoundNBT image = savedData.getLinkingPanelImage(linkData.getUUID());
-            extraData.writeCompoundTag(image);
+            extraData.writeNbt(image);
         });
     }
 

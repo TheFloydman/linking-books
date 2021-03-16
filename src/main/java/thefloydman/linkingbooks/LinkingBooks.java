@@ -107,7 +107,7 @@ public class LinkingBooks {
         ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.MARKER_SWITCH.get(), MarkerSwitchRenderer::new);
 
         // Register containers.
-        ScreenManager.registerFactory(ModContainerTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
+        ScreenManager.register(ModContainerTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
 
         // Register ItemColors.
         ItemColors itemColors = Minecraft.getInstance().getItemColors();
@@ -117,7 +117,7 @@ public class LinkingBooks {
                 ModItems.WRITTEN_LINKING_BOOK.get());
 
         // Register block layer renderers.
-        RenderTypeLookup.setRenderLayer(ModBlocks.LINKING_PORTAL.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ModBlocks.LINKING_PORTAL.get(), RenderType.translucent());
 
     }
 

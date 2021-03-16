@@ -39,7 +39,7 @@ public class PotionLinkEffect extends LinkEffect {
     @Override
     public void onLinkEnd(Entity entity, ILinkData linkData) {
         if (entity instanceof LivingEntity) {
-            ((LivingEntity) entity).addPotionEffect(new EffectInstance(this.effect, ticks));
+            ((LivingEntity) entity).addEffect(new EffectInstance(this.effect, ticks));
         }
     }
 

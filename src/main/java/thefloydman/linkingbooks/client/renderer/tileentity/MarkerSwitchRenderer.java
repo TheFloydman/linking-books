@@ -49,24 +49,24 @@ public class MarkerSwitchRenderer extends TileEntityRenderer<MarkerSwitchTileEnt
     @Override
     public void render(MarkerSwitchTileEntity tileEntity, float arg1, MatrixStack matrixStack, IRenderTypeBuffer buffer,
             int arg4, int arg5) {
-        BlockState blockState = tileEntity.getWorld().getBlockState(tileEntity.getPos());
+        BlockState blockState = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
         if (blockState.getBlock() instanceof MarkerSwitchBlock) {
-            if (blockState.get(MarkerSwitchBlock.OPEN) == true && tileEntity.getWorld()
-                    .getBlockState(tileEntity.getPos()).get(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER
+            if (blockState.getValue(MarkerSwitchBlock.OPEN) == true && tileEntity.getLevel()
+                    .getBlockState(tileEntity.getBlockPos()).getValue(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER
                     && tileEntity.hasItem()) {
                 ItemStack itemStack = tileEntity.getItem();
-                matrixStack.push();
+                matrixStack.pushPose();
                 matrixStack.translate(0.5D, 0.6D, 0.5D);
                 matrixStack.scale(0.5F, 0.5F, 0.5F);
-                Direction facing = tileEntity.getBlockState().get(MarkerSwitchBlock.HORIZONTAL_FACING);
+                Direction facing = tileEntity.getBlockState().getValue(MarkerSwitchBlock.FACING);
                 float rotation = facing == Direction.EAST || facing == Direction.WEST
-                        ? facing.getHorizontalAngle() + 45.0F
-                        : facing.getHorizontalAngle() - 135.0F;
-                matrixStack.rotate(Vector3f.YP.rotationDegrees(rotation));
-                int lightAbove = WorldRenderer.getCombinedLight(tileEntity.getWorld(), tileEntity.getPos().up());
-                this.itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED, lightAbove,
+                        ? facing.toYRot() + 45.0F
+                        : facing.toYRot() - 135.0F;
+                matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotation));
+                int lightAbove = WorldRenderer.getLightColor(tileEntity.getLevel(), tileEntity.getBlockPos().above());
+                this.itemRenderer.renderStatic(itemStack, ItemCameraTransforms.TransformType.FIXED, lightAbove,
                         OverlayTexture.NO_OVERLAY, matrixStack, buffer);
-                matrixStack.pop();
+                matrixStack.popPose();
             }
         }
     }

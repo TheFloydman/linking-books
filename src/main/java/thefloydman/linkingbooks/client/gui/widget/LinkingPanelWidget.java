@@ -80,9 +80,9 @@ public class LinkingPanelWidget extends NestedWidget {
              * this.client, matrixStack, this.x, this.y, this.width, this.height); } else
              */if (this.linkingPanelImage != null) {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                this.linkingPanelImage.bindTexture();
-                this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getTextureData().getWidth(),
-                        this.linkingPanelImage.getTextureData().getHeight());
+                this.linkingPanelImage.bind();
+                this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
+                        this.linkingPanelImage.getPixels().getHeight());
             }
         }
 

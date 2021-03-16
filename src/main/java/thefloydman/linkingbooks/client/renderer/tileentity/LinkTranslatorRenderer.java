@@ -67,11 +67,11 @@ public class LinkTranslatorRenderer extends TileEntityRenderer<LinkTranslatorTil
                 }
             }
 
-            matrixStack.push();
+            matrixStack.pushPose();
 
             float rotation = 0.0F;
             double[] translate = { 0.0D, 0.0D, 0.0D };
-            switch (tileEntity.getBlockState().get(LinkTranslatorBlock.HORIZONTAL_FACING)) {
+            switch (tileEntity.getBlockState().getValue(LinkTranslatorBlock.FACING)) {
                 case NORTH:
                     rotation = 1.0F;
                     translate[0] = 0.5D;
@@ -103,16 +103,16 @@ public class LinkTranslatorRenderer extends TileEntityRenderer<LinkTranslatorTil
                     translate[2] = 0.4D;
             }
             matrixStack.translate(translate[0], translate[1], translate[2]);
-            matrixStack.rotate(Vector3f.YP.rotation((float) Math.PI * rotation / 2.0F));
-            matrixStack.rotate(Vector3f.XP.rotation((float) Math.PI));
+            matrixStack.mulPose(Vector3f.YP.rotation((float) Math.PI * rotation / 2.0F));
+            matrixStack.mulPose(Vector3f.XP.rotation((float) Math.PI));
             matrixStack.scale(0.75F, 0.75F, 0.75F);
             IVertexBuilder vertexBuilder = buffer
-                    .getBuffer(this.coverModel.getRenderType(Resources.LINKING_BOOK_TEXTURE));
-            this.coverModel.render(matrixStack, vertexBuilder, 32767, arg5, this.color[0], this.color[1], this.color[2],
+                    .getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
+            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, 32767, arg5, this.color[0], this.color[1], this.color[2],
                     1.0F);
-            this.pagesModel.render(matrixStack, vertexBuilder, 32767, arg5, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, 32767, arg5, 1.0F, 1.0F, 1.0F, 1.0F);
 
-            matrixStack.pop();
+            matrixStack.popPose();
 
         }
     }

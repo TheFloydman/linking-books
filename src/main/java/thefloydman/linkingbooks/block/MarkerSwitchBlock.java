@@ -51,6 +51,8 @@ import net.minecraft.world.World;
 import thefloydman.linkingbooks.tileentity.MarkerSwitchTileEntity;
 import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class MarkerSwitchBlock extends HorizontalBlock {
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -60,29 +62,29 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     static {
-        VoxelShape bottom = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
-        VoxelShape top = Block.makeCuboidShape(2.0D, 1.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+        VoxelShape bottom = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
+        VoxelShape top = Block.box(2.0D, 1.0D, 2.0D, 14.0D, 16.0D, 14.0D);
         SHAPE_BOTTOM = VoxelShapes.or(bottom, top);
-        SHAPE_TOP = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+        SHAPE_TOP = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
     }
 
     protected MarkerSwitchBlock(Properties properties) {
         super(properties);
-        this.setDefaultState(this.stateContainer.getBaseState().with(HORIZONTAL_FACING, Direction.NORTH)
-                .with(POWERED, false).with(HALF, DoubleBlockHalf.LOWER).with(OPEN, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
+                .setValue(POWERED, false).setValue(HALF, DoubleBlockHalf.LOWER).setValue(OPEN, false));
     }
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return SHAPE_BOTTOM;
         }
         return SHAPE_TOP;
     }
 
     @Override
-    public VoxelShape getRaytraceShape(BlockState state, IBlockReader world, BlockPos pos) {
-        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+    public VoxelShape getInteractionShape(BlockState state, IBlockReader world, BlockPos pos) {
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return SHAPE_BOTTOM;
         }
         return SHAPE_TOP;
@@ -90,43 +92,43 @@ public class MarkerSwitchBlock extends HorizontalBlock {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return SHAPE_BOTTOM;
         }
         return SHAPE_TOP;
     }
 
     @Override
-    protected void fillStateContainer(Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING, POWERED, HALF, OPEN);
+    protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+        builder.add(FACING, POWERED, HALF, OPEN);
     }
 
     @Override
-    public boolean isTransparent(BlockState state) {
+    public boolean useShapeForLightOcclusion(BlockState state) {
         return true;
     }
 
     @Override
-    public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+    public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
         return false;
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player,
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
             Hand handIn, BlockRayTraceResult hit) {
-        if (!world.isRemote() && !player.isSneaking()) {
-            state = state.func_235896_a_(POWERED);
-            world.setBlockState(pos, state, 10);
-            world.notifyNeighborsOfStateChange(pos, this);
-            world.notifyNeighborsOfStateChange(pos.offset(state.get(HORIZONTAL_FACING).getOpposite()), this);
-            world.notifyNeighborsOfStateChange(pos.offset(state.get(HORIZONTAL_FACING).rotateYCCW().getOpposite()),
+        if (!world.isClientSide() && !player.isShiftKeyDown()) {
+            state = state.cycle(POWERED);
+            world.setBlock(pos, state, 10);
+            world.updateNeighborsAt(pos, this);
+            world.updateNeighborsAt(pos.relative(state.getValue(FACING).getOpposite()), this);
+            world.updateNeighborsAt(pos.relative(state.getValue(FACING).getCounterClockWise().getOpposite()),
                     this);
-            BlockPos otherPos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos.up();
-            world.notifyNeighborsOfStateChange(otherPos, this);
-            world.notifyNeighborsOfStateChange(otherPos.offset(state.get(HORIZONTAL_FACING).getOpposite()), this);
-            world.notifyNeighborsOfStateChange(otherPos.offset(state.get(HORIZONTAL_FACING).rotateYCCW().getOpposite()),
+            BlockPos otherPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos.above();
+            world.updateNeighborsAt(otherPos, this);
+            world.updateNeighborsAt(otherPos.relative(state.getValue(FACING).getOpposite()), this);
+            world.updateNeighborsAt(otherPos.relative(state.getValue(FACING).getCounterClockWise().getOpposite()),
                     this);
-            world.playSound(null, pos, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5F, 0.5F);
+            world.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundCategory.BLOCKS, 0.5F, 0.5F);
             return ActionResultType.CONSUME;
         }
 
@@ -134,13 +136,13 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        world.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), 3);
+    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        world.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     /**
@@ -149,26 +151,26 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     @Override
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos,
             boolean notify) {
-        BlockPos otherPos = state.get(HALF) == DoubleBlockHalf.UPPER ? pos.down() : pos.up();
+        BlockPos otherPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos.above();
         BlockState otherState = world.getBlockState(otherPos);
         if (otherState.getBlock() == this) {
-            world.setBlockState(pos, state.with(POWERED, otherState.get(POWERED)));
-            if ((state.get(HALF) == DoubleBlockHalf.LOWER && world.getRedstonePower(pos.down(), Direction.DOWN) > 0)
-                    || (state.get(HALF) == DoubleBlockHalf.UPPER
-                            && world.getRedstonePower(otherPos.down(), Direction.DOWN) > 0)) {
-                boolean changed = state.get(OPEN) == false;
-                world.setBlockState(pos, state.with(OPEN, true), 10);
-                world.setBlockState(otherPos, otherState.with(OPEN, true), 10);
-                if (state.get(HALF) == DoubleBlockHalf.LOWER && changed) {
-                    world.playSound(null, pos, SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 0.5F,
+            world.setBlockAndUpdate(pos, state.setValue(POWERED, otherState.getValue(POWERED)));
+            if ((state.getValue(HALF) == DoubleBlockHalf.LOWER && world.getSignal(pos.below(), Direction.DOWN) > 0)
+                    || (state.getValue(HALF) == DoubleBlockHalf.UPPER
+                            && world.getSignal(otherPos.below(), Direction.DOWN) > 0)) {
+                boolean changed = state.getValue(OPEN) == false;
+                world.setBlock(pos, state.setValue(OPEN, true), 10);
+                world.setBlock(otherPos, otherState.setValue(OPEN, true), 10);
+                if (state.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
+                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 0.5F,
                             0.5F);
                 }
             } else {
-                boolean changed = state.get(OPEN) == true;
-                world.setBlockState(pos, state.with(OPEN, false), 10);
-                world.setBlockState(otherPos, otherState.with(OPEN, false), 10);
-                if (state.get(HALF) == DoubleBlockHalf.LOWER && changed) {
-                    world.playSound(null, pos, SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 0.5F,
+                boolean changed = state.getValue(OPEN) == true;
+                world.setBlock(pos, state.setValue(OPEN, false), 10);
+                world.setBlock(otherPos, otherState.setValue(OPEN, false), 10);
+                if (state.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
+                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 0.5F,
                             0.5F);
                 }
             }
@@ -180,57 +182,57 @@ public class MarkerSwitchBlock extends HorizontalBlock {
      * See DoorBlock.updatePostPlacement().
      */
     @Override
-    public BlockState updatePostPlacement(BlockState state, Direction direction, BlockState newState, IWorld world,
+    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, IWorld world,
             BlockPos pos, BlockPos posFrom) {
-        DoubleBlockHalf doubleBlockHalf = state.get(HALF);
+        DoubleBlockHalf doubleBlockHalf = state.getValue(HALF);
         if (direction.getAxis() == Direction.Axis.Y
                 && doubleBlockHalf == DoubleBlockHalf.LOWER == (direction == Direction.UP)) {
-            return newState.isIn(this) && newState.get(HALF) != doubleBlockHalf ? (state
-                    .with(HORIZONTAL_FACING, newState.get(HORIZONTAL_FACING)).with(POWERED, newState.get(POWERED)))
-                    : Blocks.AIR.getDefaultState();
+            return newState.is(this) && newState.getValue(HALF) != doubleBlockHalf ? (state
+                    .setValue(FACING, newState.getValue(FACING)).setValue(POWERED, newState.getValue(POWERED)))
+                    : Blocks.AIR.defaultBlockState();
         } else {
             return doubleBlockHalf == DoubleBlockHalf.LOWER && direction == Direction.DOWN
-                    && !state.isValidPosition(world, pos) ? Blocks.AIR.getDefaultState()
-                            : super.updatePostPlacement(state, direction, newState, world, pos, posFrom);
+                    && !state.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState()
+                            : super.updateShape(state, direction, newState, world, pos, posFrom);
         }
     }
 
     @Override
-    public int getWeakPower(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction direction) {
+    public int getSignal(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction direction) {
         return direction != Direction.UP && direction != Direction.DOWN
-                && (direction == state.get(HORIZONTAL_FACING) || direction == state.get(HORIZONTAL_FACING).rotateYCCW())
-                && state.get(POWERED) ? 15 : 0;
+                && (direction == state.getValue(FACING) || direction == state.getValue(FACING).getCounterClockWise())
+                && state.getValue(POWERED) ? 15 : 0;
     }
 
     @Override
-    public int getStrongPower(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction direction) {
-        return state.get(POWERED)
-                && (direction == state.get(HORIZONTAL_FACING) || direction == state.get(HORIZONTAL_FACING).rotateYCCW())
+    public int getDirectSignal(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction direction) {
+        return state.getValue(POWERED)
+                && (direction == state.getValue(FACING) || direction == state.getValue(FACING).getCounterClockWise())
                         ? 15
                         : 0;
     }
 
     @Override
-    public boolean canProvidePower(BlockState state) {
+    public boolean isSignalSource(BlockState state) {
         return true;
     }
 
     @Override
-    public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (!world.isRemote() && player.isCreative()) {
+    public void playerWillDestroy(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (!world.isClientSide() && player.isCreative()) {
             /* Start copy from DoublePlantBlock.removeBottomHalf() */
-            DoubleBlockHalf doubleblockhalf = state.get(HALF);
+            DoubleBlockHalf doubleblockhalf = state.getValue(HALF);
             if (doubleblockhalf == DoubleBlockHalf.UPPER) {
-                BlockPos blockpos = pos.down();
+                BlockPos blockpos = pos.below();
                 BlockState blockstate = world.getBlockState(blockpos);
-                if (blockstate.getBlock() == state.getBlock() && blockstate.get(HALF) == DoubleBlockHalf.LOWER) {
-                    world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-                    world.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
+                if (blockstate.getBlock() == state.getBlock() && blockstate.getValue(HALF) == DoubleBlockHalf.LOWER) {
+                    world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
+                    world.levelEvent(player, 2001, blockpos, Block.getId(blockstate));
                 }
             }
             /* End copy from DoublePlantBlock.removeBottomHalf() */
         }
-        super.onBlockHarvested(world, pos, state, player);
+        super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override
@@ -244,16 +246,16 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock() && state.get(HALF) == DoubleBlockHalf.LOWER && !world.isRemote()) {
-            TileEntity tileEntity = world.getTileEntity(pos);
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock() && state.getValue(HALF) == DoubleBlockHalf.LOWER && !world.isClientSide()) {
+            TileEntity tileEntity = world.getBlockEntity(pos);
             if (tileEntity instanceof MarkerSwitchTileEntity) {
                 MarkerSwitchTileEntity markerTE = (MarkerSwitchTileEntity) tileEntity;
                 if (markerTE.hasItem()) {
-                    InventoryHelper.dropInventoryItems(world, pos, markerTE);
-                    world.updateComparatorOutputLevel(pos, this);
+                    InventoryHelper.dropContents(world, pos, markerTE);
+                    world.updateNeighbourForOutputSignal(pos, this);
                 }
-                super.onReplaced(state, world, pos, newState, isMoving);
+                super.onRemove(state, world, pos, newState, isMoving);
             }
         }
     }

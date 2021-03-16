@@ -47,13 +47,13 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
 
     @Override
     public PacketBuffer toData(PacketBuffer buffer) {
-        buffer.writeUniqueId(this.uuid);
+        buffer.writeUUID(this.uuid);
         return buffer;
     }
 
     @Override
     public void fromData(PacketBuffer buffer) {
-        this.uuid = buffer.readUniqueId();
+        this.uuid = buffer.readUUID();
     }
 
     @Override
@@ -75,9 +75,9 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
     private void getScreenshot() {
 
         Minecraft mc = Minecraft.getInstance();
-        Framebuffer buffer = mc.getFramebuffer();
-        float largeWidth = buffer.framebufferWidth;
-        float largeHeight = buffer.framebufferHeight;
+        Framebuffer buffer = mc.getMainRenderTarget();
+        float largeWidth = buffer.viewWidth;
+        float largeHeight = buffer.viewHeight;
         float smallWidth = 64.0F;
         float smallHeight = 42.0F;
         if (largeWidth / largeHeight > smallWidth / smallHeight) {
@@ -96,19 +96,19 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
             }
         }
 
-        NativeImage fullImage = new NativeImage(buffer.framebufferTextureWidth, buffer.framebufferTextureHeight, false);
-        mc.getFramebuffer().bindFramebuffer(true);
-        boolean hide = mc.gameSettings.hideGUI;
-        mc.gameSettings.hideGUI = true;
-        mc.gameRenderer.renderWorld(mc.getRenderPartialTicks(), Util.nanoTime(), new MatrixStack());
-        mc.gameSettings.hideGUI = hide;
-        buffer.bindFramebufferTexture();
-        fullImage.downloadFromTexture(0, true);
-        mc.getFramebuffer().unbindFramebuffer();
-        fullImage.flip();
+        NativeImage fullImage = new NativeImage(buffer.width, buffer.height, false);
+        mc.getMainRenderTarget().bindWrite(true);
+        boolean hide = mc.options.hideGui;
+        mc.options.hideGui = true;
+        mc.gameRenderer.renderLevel(mc.getFrameTime(), Util.getNanos(), new MatrixStack());
+        mc.options.hideGui = hide;
+        buffer.bindRead();
+        fullImage.downloadTexture(0, true);
+        mc.getMainRenderTarget().unbindWrite();
+        fullImage.flipY();
         NativeImage largeImage = new NativeImage((int) largeWidth, (int) largeHeight, false);
-        int initialX = (int) ((buffer.framebufferWidth - largeWidth) / 2);
-        int initialY = (int) ((buffer.framebufferHeight - largeHeight) / 2);
+        int initialX = (int) ((buffer.viewWidth - largeWidth) / 2);
+        int initialY = (int) ((buffer.viewHeight - largeHeight) / 2);
         for (int largeY = 0, fullY = initialY; largeY < largeHeight; largeY++, fullY++) {
             for (int largeX = 0, fullX = initialX; largeX < largeWidth; largeX++, fullX++) {
                 largeImage.setPixelRGBA(largeX, largeY, fullImage.getPixelRGBA(fullX, fullY));

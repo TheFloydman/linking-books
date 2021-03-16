@@ -21,6 +21,8 @@ package thefloydman.linkingbooks.item;
 
 import net.minecraft.item.Item;
 
+import net.minecraft.item.Item.Properties;
+
 public class LinkingPanelItem extends Item {
 
     public LinkingPanelItem(Properties properties) {

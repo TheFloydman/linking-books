@@ -76,7 +76,7 @@ public class ImmersivePortalsIntegration {
     public static void addChunkLoader(ILinkData linkData, ServerPlayerEntity player) {
         removeChunkLoader(linkData, player);
         ChunkLoader chunkLoader = new ChunkVisibilityManager.ChunkLoader(
-                new DimensionalChunkPos(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()),
+                new DimensionalChunkPos(RegistryKey.create(Registry.DIMENSION_REGISTRY, linkData.getDimension()),
                         new ChunkPos(linkData.getPosition())),
                 ModConfig.COMMON.linkingPanelChunkLoadRadius.get());
         chunkLoaders.put(linkData.getUUID(), chunkLoader);
@@ -95,18 +95,18 @@ public class ImmersivePortalsIntegration {
             MatrixStack matrixStack, int x, int y, int width, int height) {
         Matrix4f cameraTransformation = new Matrix4f();
         cameraTransformation.setIdentity();
-        cameraTransformation.mul(Vector3f.YP.rotationDegrees(linkData.getRotation() + 180.0F));
+        cameraTransformation.multiply(Vector3f.YP.rotationDegrees(linkData.getRotation() + 180.0F));
         WorldRenderInfo worldRenderInfo = new WorldRenderInfo(
-                ClientWorldLoader.getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension())),
+                ClientWorldLoader.getWorld(RegistryKey.create(Registry.DIMENSION_REGISTRY, linkData.getDimension())),
                 new Vector3d(linkData.getPosition().getX() + 0.5D, linkData.getPosition().getY() + 1.5D,
                         linkData.getPosition().getZ() + 0.5D),
                 cameraTransformation, null, ModConfig.COMMON.linkingPanelChunkRenderDistance.get(), true);
         GuiPortalRendering.submitNextFrameRendering(worldRenderInfo, frameBuffer);
         MyRenderHelper.drawFramebuffer(frameBuffer, false, false,
-                x * (float) client.getMainWindow().getGuiScaleFactor(),
-                (x + width) * (float) client.getMainWindow().getGuiScaleFactor(),
-                y * (float) client.getMainWindow().getGuiScaleFactor(),
-                (y + height) * (float) client.getMainWindow().getGuiScaleFactor());
+                x * (float) client.getWindow().getGuiScale(),
+                (x + width) * (float) client.getWindow().getGuiScale(),
+                y * (float) client.getWindow().getGuiScale(),
+                (y + height) * (float) client.getWindow().getGuiScale());
     }
 
     public static UUID[] addImmersivePortal(World world, double[] pos, double width, double height,
@@ -124,37 +124,37 @@ public class ImmersivePortalsIntegration {
         itemData.setRotation(linkData.getRotation());
         itemData.setUUID(linkData.getUUID());
         LinkingPortalEntity portal = new LinkingPortalEntity(linkingPortalEntityType, world, stack,
-                tileEntity.getPos());
-        portal.setPosition(pos[0], pos[1], pos[2]);
+                tileEntity.getBlockPos());
+        portal.setPos(pos[0], pos[1], pos[2]);
         BlockPortalShape shape = new BlockPortalShape(coveredBlocks, axis);
         shape.initPortalPosAxisShape(portal, false);
         PortalManipulation.setPortalTransformation(portal,
-                RegistryKey.getOrCreateKey(Registry.WORLD_KEY, linkData.getDimension()),
+                RegistryKey.create(Registry.DIMENSION_REGISTRY, linkData.getDimension()),
                 new Vector3d(linkData.getPosition().getX() + 0.5D,
                         linkData.getPosition().getY() + (height / 2.0D) + (axis == Axis.Y ? 2.0D : 0.0D) + 0.5D,
                         linkData.getPosition().getZ() + 0.5D),
                 null, 1.0D);
-        PortalManipulation.removeOverlappedPortals(world, portal.func_242274_V(), portal.getNormal(), (p) -> {
+        PortalManipulation.removeOverlappedPortals(world, portal.getPacketCoordinates(), portal.getNormal(), (p) -> {
             return p instanceof LinkingPortalEntity;
         }, (p) -> {
         });
-        world.addEntity(portal);
+        world.addFreshEntity(portal);
         LinkingPortalEntity reversePortal = PortalManipulation.createFlippedPortal(portal, linkingPortalEntityType);
         reversePortal.setTileEntityPos(portal.getTileEntityPos());
-        PortalManipulation.removeOverlappedPortals(world, reversePortal.func_242274_V(), reversePortal.getNormal(),
+        PortalManipulation.removeOverlappedPortals(world, reversePortal.getPacketCoordinates(), reversePortal.getNormal(),
                 (p) -> {
                     return p instanceof LinkingPortalEntity;
                 }, (p) -> {
                 });
-        world.addEntity(reversePortal);
-        return new UUID[] { portal.getUniqueID(), reversePortal.getUniqueID() };
+        world.addFreshEntity(reversePortal);
+        return new UUID[] { portal.getUUID(), reversePortal.getUUID() };
     }
 
     @SubscribeEvent
     public static void registerImmersivePortalsEntities(RegistryEvent.Register<EntityType<?>> event) {
         linkingPortalEntityType = EntityType.Builder
-                .<LinkingPortalEntity>create(LinkingPortalEntity::new, EntityClassification.MISC).size(1.0F, 1.0F)
-                .setTrackingRange(96).immuneToFire()
+                .<LinkingPortalEntity>of(LinkingPortalEntity::new, EntityClassification.MISC).sized(1.0F, 1.0F)
+                .setTrackingRange(96).fireImmune()
                 .setCustomClientFactory((a, b) -> new LinkingPortalEntity(linkingPortalEntityType, b))
                 .build(Reference.MOD_ID + ":" + EntityNames.LINKING_PORTAL);
         linkingPortalEntityType.setRegistryName(Reference.getAsResourceLocation(EntityNames.LINKING_PORTAL));
@@ -166,14 +166,14 @@ public class ImmersivePortalsIntegration {
     }
 
     public static List<LinkingPortalEntity> getNearbyLinkingPortals(BlockPos pos, World world) {
-        return world.getEntitiesWithinAABB(LinkingPortalEntity.class,
-                new AxisAlignedBB(pos.down(64).south(64).west(64), pos.up(64).north(64).east(64)), null);
+        return world.getEntitiesOfClass(LinkingPortalEntity.class,
+                new AxisAlignedBB(pos.below(64).south(64).west(64), pos.above(64).north(64).east(64)), null);
     }
 
     public static void deleteLinkingPortals(LinkTranslatorTileEntity blockEntity) {
-        List<LinkingPortalEntity> nearbyPortals = getNearbyLinkingPortals(blockEntity.getPos(), blockEntity.getWorld());
+        List<LinkingPortalEntity> nearbyPortals = getNearbyLinkingPortals(blockEntity.getBlockPos(), blockEntity.getLevel());
         for (LinkingPortalEntity portal : nearbyPortals) {
-            if (portal.getTileEntityPos().equals(blockEntity.getPos())) {
+            if (portal.getTileEntityPos().equals(blockEntity.getBlockPos())) {
                 portal.remove();
             }
         }

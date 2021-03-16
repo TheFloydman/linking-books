@@ -60,12 +60,12 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
         // Determines how many non-empty stacks are in the crafting grid. Also places
         // non-empty stacks into a DefaultedList.
         NonNullList<Ingredient> craftingInputs = NonNullList.create();
-        for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-            ItemStack stack = inventory.getStackInSlot(j);
+        for (int j = 0; j < inventory.getContainerSize(); ++j) {
+            ItemStack stack = inventory.getItem(j);
             if (!stack.isEmpty()) {
                 ++i;
                 inputs.add(stack);
-                craftingInputs.add(Ingredient.fromStacks(inventory.getStackInSlot(j)));
+                craftingInputs.add(Ingredient.of(inventory.getItem(j)));
             }
         }
 
@@ -75,9 +75,9 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
         for (int j = 0; j < craftingInputs.size(); j++) {
             boolean foundMatch = false;
             for (int k = 0; k < this.recipeInputs.size(); k++) {
-                ItemStack[] stacks = this.recipeInputs.get(k).getMatchingStacks();
+                ItemStack[] stacks = this.recipeInputs.get(k).getItems();
                 for (ItemStack stack : stacks) {
-                    if (stack.getItem() == craftingInputs.get(j).getMatchingStacks()[0].getItem()) {
+                    if (stack.getItem() == craftingInputs.get(j).getItems()[0].getItem()) {
                         foundMatch = true;
                         break;
                     }
@@ -93,12 +93,12 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         return this.recipeOutput.copy();
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height >= this.recipeInputs.size();
     }
 
@@ -108,7 +108,7 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return this.recipeOutput;
     }
 
@@ -126,8 +126,8 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
             implements IRecipeSerializer<BlankLinkingBookRecipe> {
 
         @Override
-        public BlankLinkingBookRecipe read(ResourceLocation id, JsonObject json) {
-            NonNullList<Ingredient> nonnulllist = readIngredients(JSONUtils.getJsonArray(json, "ingredients"));
+        public BlankLinkingBookRecipe fromJson(ResourceLocation id, JsonObject json) {
+            NonNullList<Ingredient> nonnulllist = readIngredients(JSONUtils.getAsJsonArray(json, "ingredients"));
             if (nonnulllist.isEmpty()) {
                 throw new JsonParseException("No ingredients for blank linking book recipe");
             } else if (nonnulllist.size() > 3 * 3) {
@@ -159,27 +159,27 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
         }
 
         @Override
-        public BlankLinkingBookRecipe read(ResourceLocation id, PacketBuffer buffer) {
+        public BlankLinkingBookRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) {
             int i = buffer.readVarInt();
             NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i, Ingredient.EMPTY);
 
             for (int j = 0; j < nonnulllist.size(); ++j) {
-                nonnulllist.set(j, Ingredient.read(buffer));
+                nonnulllist.set(j, Ingredient.fromNetwork(buffer));
             }
 
-            ItemStack itemstack = buffer.readItemStack();
+            ItemStack itemstack = buffer.readItem();
             return new BlankLinkingBookRecipe(id, itemstack, nonnulllist);
         }
 
         @Override
-        public void write(PacketBuffer buffer, BlankLinkingBookRecipe recipe) {
+        public void toNetwork(PacketBuffer buffer, BlankLinkingBookRecipe recipe) {
             buffer.writeVarInt(recipe.recipeInputs.size());
 
             for (Ingredient ingredient : recipe.recipeInputs) {
-                ingredient.write(buffer);
+                ingredient.toNetwork(buffer);
             }
 
-            buffer.writeItemStack(recipe.recipeOutput);
+            buffer.writeItem(recipe.recipeOutput);
         }
     }
 
@@ -187,8 +187,8 @@ public class BlankLinkingBookRecipe implements ICraftingRecipe {
         NonNullList<Ingredient> nonnulllist = NonNullList.create();
 
         for (int i = 0; i < array.size(); ++i) {
-            Ingredient ingredient = Ingredient.deserialize(array.get(i));
-            if (!ingredient.hasNoMatchingItems()) {
+            Ingredient ingredient = Ingredient.fromJson(array.get(i));
+            if (!ingredient.isEmpty()) {
                 nonnulllist.add(ingredient);
             }
         }

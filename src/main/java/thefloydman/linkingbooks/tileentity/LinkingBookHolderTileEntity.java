@@ -47,7 +47,7 @@ public class LinkingBookHolderTileEntity extends TileEntity {
 
     public boolean setBook(ItemStack stack) {
         this.book = stack.split(1);
-        this.markDirty();
+        this.setChanged();
         return true;
     }
 
@@ -56,48 +56,48 @@ public class LinkingBookHolderTileEntity extends TileEntity {
     }
 
     @Override
-    public void markDirty() {
-        super.markDirty();
-        this.getWorld().notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 3);
+    public void setChanged() {
+        super.setChanged();
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
         if (nbt.contains("book", NBT.TAG_COMPOUND)) {
-            this.book = ItemStack.read(nbt.getCompound("book"));
+            this.book = ItemStack.of(nbt.getCompound("book"));
         }
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT nbt) {
-        super.write(nbt);
-        nbt.put("book", this.book.write(new CompoundNBT()));
+    public CompoundNBT save(CompoundNBT nbt) {
+        super.save(nbt);
+        nbt.put("book", this.book.save(new CompoundNBT()));
         return nbt;
     }
 
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbt = new CompoundNBT();
-        this.write(nbt);
-        return new SUpdateTileEntityPacket(this.getPos(), 462, nbt);
+        this.save(nbt);
+        return new SUpdateTileEntityPacket(this.getBlockPos(), 462, nbt);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT nbt = super.getUpdateTag();
-        return this.write(nbt);
+        return this.save(nbt);
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT nbt) {
         super.handleUpdateTag(state, nbt);
-        this.read(state, nbt);
+        this.load(state, nbt);
     }
 
     @Override
     public void onDataPacket(NetworkManager manager, SUpdateTileEntityPacket packet) {
-        this.read(Blocks.AIR.getDefaultState(), packet.getNbtCompound());
+        this.load(Blocks.AIR.defaultBlockState(), packet.getTag());
     }
 
 }

@@ -45,69 +45,69 @@ public class LinkCommand {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
 
         dispatcher.register(Commands.literal("link").requires((context) -> {
-            return context.hasPermissionLevel(2);
+            return context.hasPermission(2);
         })
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
                         .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
                             ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
                             linkData.setDimension(
-                                    context.getSource().asPlayer().getEntityWorld().getDimensionKey().getLocation());
-                            linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
-                            linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                                    context.getSource().getPlayerOrException().getCommandSenderWorld().dimension().location());
+                            linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                            linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                             linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             return LinkingUtils.linkEntities(
                                     new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData, false);
                         })))
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
-                        .then(Commands.argument(DIMENSION, DimensionArgument.getDimension())
+                        .then(Commands.argument(DIMENSION, DimensionArgument.dimension())
                                 .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
                                     ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
-                                    linkData.setDimension(DimensionArgument.getDimensionArgument(context, DIMENSION)
-                                            .getDimensionKey().getLocation());
-                                    linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
-                                    linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                                    linkData.setDimension(DimensionArgument.getDimension(context, DIMENSION)
+                                            .dimension().location());
+                                    linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                                    linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                                     linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                                     return LinkingUtils.linkEntities(
                                             new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData,
                                             false);
                                 }))))
 
-                .then(Commands.argument(DIMENSION, DimensionArgument.getDimension())
+                .then(Commands.argument(DIMENSION, DimensionArgument.dimension())
                         .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
                             ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
-                            linkData.setDimension(DimensionArgument.getDimensionArgument(context, DIMENSION)
-                                    .getDimensionKey().getLocation());
-                            linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
-                            linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                            linkData.setDimension(DimensionArgument.getDimension(context, DIMENSION)
+                                    .dimension().location());
+                            linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                            linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                             linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             return LinkingUtils.linkEntities(
-                                    new ArrayList<>(Lists.newArrayList(context.getSource().asPlayer())), linkData,
+                                    new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())), linkData,
                                     false);
                         })))
 
                 .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
                     ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
                     linkData.setDimension(
-                            context.getSource().asPlayer().getEntityWorld().getDimensionKey().getLocation());
-                    linkData.setPosition(BlockPosArgument.getBlockPos(context, POSITION));
-                    linkData.setRotation(context.getSource().asPlayer().rotationYaw);
+                            context.getSource().getPlayerOrException().getCommandSenderWorld().dimension().location());
+                    linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                    linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                     linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                     return LinkingUtils.linkEntities(
-                            new ArrayList<>(Lists.newArrayList(context.getSource().asPlayer())), linkData, false);
+                            new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())), linkData, false);
                 }))
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
                         .then(Commands.argument(ENTITY, EntityArgument.entity()).executes((context) -> {
                             ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
-                            linkData.setDimension(EntityArgument.getEntity(context, ENTITY).getEntityWorld()
-                                    .getDimensionKey().getLocation());
-                            linkData.setPosition(EntityArgument.getEntity(context, ENTITY).getPosition());
+                            linkData.setDimension(EntityArgument.getEntity(context, ENTITY).getCommandSenderWorld()
+                                    .dimension().location());
+                            linkData.setPosition(EntityArgument.getEntity(context, ENTITY).blockPosition());
                             linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             int i = 0;
                             for (Entity entity : EntityArgument.getEntities(context, ENTITIES)) {
-                                linkData.setRotation(entity.rotationYaw);
+                                linkData.setRotation(entity.yRot);
                                 i += LinkingUtils.linkEntities(new ArrayList<>(Lists.newArrayList(entity)), linkData,
                                         false);
                             }

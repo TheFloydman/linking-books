@@ -42,6 +42,8 @@ import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
+import net.minecraft.item.Item.Properties;
+
 public class WrittenLinkingBookItem extends LinkingBookItem {
 
     public WrittenLinkingBookItem(Properties properties) {
@@ -49,25 +51,25 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack heldStack = player.getHeldItem(hand);
-        if (!world.isRemote() && !player.isSneaking()) {
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack heldStack = player.getItemInHand(hand);
+        if (!world.isClientSide() && !player.isShiftKeyDown()) {
             ILinkData linkData = heldStack.getCapability(LinkData.LINK_DATA).orElse(null);
             IColorCapability color = heldStack.getCapability(ColorCapability.COLOR).orElse(null);
             if (linkData != null && color != null) {
                 LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, true, color.getColor(), linkData,
-                        world.getDimensionKey().getLocation());
+                        world.dimension().location());
             }
         }
-        return ActionResult.resultPass(heldStack);
+        return ActionResult.pass(heldStack);
     }
 
     @Override
     public Entity createEntity(World world, Entity itemEntity, ItemStack stack) {
         LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
-        entity.setPosition(itemEntity.getPosX(), itemEntity.getPosY(), itemEntity.getPosZ());
-        entity.rotationYaw = itemEntity.rotationYaw;
-        entity.setMotion(itemEntity.getMotion());
+        entity.setPos(itemEntity.getX(), itemEntity.getY(), itemEntity.getZ());
+        entity.yRot = itemEntity.yRot;
+        entity.setDeltaMovement(itemEntity.getDeltaMovement());
         return entity;
     }
 
@@ -77,18 +79,18 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        super.addInformation(stack, world, tooltip, flag);
+    public void appendHoverText(ItemStack stack, World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        super.appendHoverText(stack, world, tooltip, flag);
         ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
         if (linkData != null) {
-            tooltip.add(new StringTextComponent("§eAge: §9§o" + linkData.getDimension().toString()));
-            tooltip.add(new StringTextComponent("§ePosition: §9§o(" + linkData.getPosition().getX() + ", "
+            tooltip.add(new StringTextComponent("ï¿½eAge: ï¿½9ï¿½o" + linkData.getDimension().toString()));
+            tooltip.add(new StringTextComponent("ï¿½ePosition: ï¿½9ï¿½o(" + linkData.getPosition().getX() + ", "
                     + linkData.getPosition().getY() + ", " + linkData.getPosition().getZ() + ")"));
             Set<LinkEffect> linkEffects = new HashSet<LinkEffect>(linkData.getLinkEffects());
             if (!linkEffects.isEmpty()) {
-                tooltip.add(new StringTextComponent("§eLink Effects:"));
+                tooltip.add(new StringTextComponent("ï¿½eLink Effects:"));
                 for (LinkEffect effect : linkEffects) {
-                    tooltip.add(new StringTextComponent("    §9§o"
+                    tooltip.add(new StringTextComponent("    ï¿½9ï¿½o"
                             + new TranslationTextComponent("linkEffect." + effect.getRegistryName().getNamespace() + "."
                                     + effect.getRegistryName().getPath()).getString()));
                 }

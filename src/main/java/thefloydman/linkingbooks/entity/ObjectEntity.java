@@ -41,10 +41,10 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 public class ObjectEntity extends Entity {
 
-    private static final DataParameter<Float> DURABILITY = EntityDataManager.createKey(ObjectEntity.class,
+    private static final DataParameter<Float> DURABILITY = EntityDataManager.defineId(ObjectEntity.class,
             DataSerializers.FLOAT);
-    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(ObjectEntity.class,
-            DataSerializers.ITEMSTACK);
+    private static final DataParameter<ItemStack> ITEM = EntityDataManager.defineId(ObjectEntity.class,
+            DataSerializers.ITEM_STACK);
 
     private static final String LABEL_DURABILITY = "Durability";
     private static final String LABEL_ITEM = "Item";
@@ -70,18 +70,18 @@ public class ObjectEntity extends Entity {
     }
 
     @Override
-    protected void registerData() {
-        this.dataManager.register(DURABILITY, 1.0F);
-        this.dataManager.register(ITEM, ItemStack.EMPTY);
+    protected void defineSynchedData() {
+        this.entityData.define(DURABILITY, 1.0F);
+        this.entityData.define(ITEM, ItemStack.EMPTY);
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
+    protected void readAdditionalSaveData(CompoundNBT compound) {
         if (compound.contains(LABEL_DURABILITY, NBT.TAG_ANY_NUMERIC)) {
             this.setDurability(compound.getFloat(LABEL_DURABILITY));
         }
         if (compound.contains(LABEL_ITEM, NBT.TAG_COMPOUND)) {
-            ItemStack stack = ItemStack.read(compound.getCompound(LABEL_ITEM));
+            ItemStack stack = ItemStack.of(compound.getCompound(LABEL_ITEM));
             if (itemClass.isInstance(stack.getItem())) {
                 this.setItem(stack);
             } else {
@@ -93,7 +93,7 @@ public class ObjectEntity extends Entity {
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
+    protected void addAdditionalSaveData(CompoundNBT compound) {
         compound.putFloat(LABEL_DURABILITY, this.getDurability());
         compound.put(LABEL_ITEM, this.getItem().serializeNBT());
         compound.putShort(LABEL_HURTTIME, (short) this.hurtTime);
@@ -103,7 +103,7 @@ public class ObjectEntity extends Entity {
      * Makes sure the entity spawns correctly client-side.
      */
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
@@ -112,26 +112,26 @@ public class ObjectEntity extends Entity {
     }
 
     public float getDurability() {
-        return this.dataManager.get(DURABILITY);
+        return this.entityData.get(DURABILITY);
     }
 
     public void setDurability(float health) {
-        this.dataManager.set(DURABILITY, MathHelper.clamp(health, 0.0F, this.getMaxDurability()));
+        this.entityData.set(DURABILITY, MathHelper.clamp(health, 0.0F, this.getMaxDurability()));
     }
 
     public ItemStack getItem() {
-        return this.dataManager.get(ITEM);
+        return this.entityData.get(ITEM);
     }
 
     public void setItem(ItemStack item) {
-        this.dataManager.set(ITEM, item);
+        this.entityData.set(ITEM, item);
     }
 
     @Override
-    public boolean attackEntityFrom(DamageSource source, float amount) {
+    public boolean hurt(DamageSource source, float amount) {
         this.hurtTime = 10;
         this.setDurability(this.getDurability() - amount);
-        return super.attackEntityFrom(source, amount);
+        return super.hurt(source, amount);
     }
 
     @Override
@@ -143,10 +143,10 @@ public class ObjectEntity extends Entity {
         if (this.hurtTime > 0) {
             --this.hurtTime;
         }
-        if (!this.hasNoGravity()) {
-            this.setMotion(this.getMotion().add(0.0D, -0.04D, 0.0D));
+        if (!this.isNoGravity()) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
         }
-        Vector3d vec3d = this.getMotion();
+        Vector3d vec3d = this.getDeltaMovement();
         double d1 = vec3d.x;
         double d3 = vec3d.y;
         double d5 = vec3d.z;
@@ -163,40 +163,40 @@ public class ObjectEntity extends Entity {
         if (Math.abs(vec3d.z) < 0.003D) {
             d5 = 0.0D;
         }
-        this.setMotion(d1, d3, d5);
-        this.move(MoverType.SELF, this.getMotion());
+        this.setDeltaMovement(d1, d3, d5);
+        this.move(MoverType.SELF, this.getDeltaMovement());
     }
 
     public void onKilled() {
-        this.onKillCommand();
+        this.kill();
     }
 
     @Override
-    public void onCollideWithPlayer(PlayerEntity player) {
-        if (this.getDistance(player) < 0.75) {
-            player.applyEntityCollision(this);
+    public void playerTouch(PlayerEntity player) {
+        if (this.distanceTo(player) < 0.75) {
+            player.push(this);
         }
     }
 
     @Override
-    public boolean canBeCollidedWith() {
+    public boolean isPickable() {
         return this.isAlive();
     }
 
     @Override
-    public boolean canBePushed() {
+    public boolean isPushable() {
         return this.isAlive();
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean isInRangeToRenderDist(double distance) {
-        double d0 = this.getBoundingBox().getAverageEdgeLength();
+    public boolean shouldRenderAtSqrDistance(double distance) {
+        double d0 = this.getBoundingBox().getSize();
         if (Double.isNaN(d0)) {
             d0 = 1.0D;
         }
 
-        d0 = d0 * 256.0D * getRenderDistanceWeight();
+        d0 = d0 * 256.0D * getViewScale();
         return distance < d0 * d0;
     }
 
