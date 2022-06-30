@@ -126,8 +126,8 @@ public class LinkingUtils {
                         ServerPlayerEntity player = (ServerPlayerEntity) entity;
                         player.closeContainer();
                         player.doCloseContainer();
-                        player.displayClientMessage(new TranslationTextComponent("message.linkingbooks.link_failed_start"),
-                                true);
+                        player.displayClientMessage(
+                                new TranslationTextComponent("message.linkingbooks.link_failed_start"), true);
                     }
                     return false;
                 }
@@ -165,7 +165,7 @@ public class LinkingUtils {
                     player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
                     tookExperience = true;
                 }
-                if (holdingBook && linkData.getLinkEffects().contains(LinkEffects.TETHERED.get())) {
+                if (holdingBook && !linkData.getLinkEffects().contains(LinkEffects.TETHERED.get())) {
                     LinkingBookEntity book = new LinkingBookEntity(world, player.getMainHandItem().copy());
                     Vector3d lookVec = player.getLookAngle();
                     book.setPos(player.getX() + (lookVec.x() / 4.0D), player.getY() + 1.0D,
