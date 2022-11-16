@@ -21,49 +21,48 @@ package thefloydman.linkingbooks.client.renderer.tileentity;
 
 import java.awt.Color;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.vector.Vector3f;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
 import thefloydman.linkingbooks.block.LinkTranslatorBlock;
-import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
-import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
-import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
+import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
 import thefloydman.linkingbooks.util.Reference.Resources;
 
-public class LinkTranslatorRenderer implements BlockEntityRenderer<LinkTranslatorBlockEntity> {
+public class LinkTranslatorRenderer extends TileEntityRenderer<LinkTranslatorTileEntity> {
 
-    private LinkingBookCoverModel coverModel;
-    private LinkingBookPagesModel pagesModel;
+    private LinkingBookCoverModel coverModel = new LinkingBookCoverModel();
+    private LinkingBookPagesModel pagesModel = new LinkingBookPagesModel();
     private float[] color = { 1.0F, 1.0F, 1.0F };
 
-    public LinkTranslatorRenderer(BlockEntityRendererProvider.Context context) {
-        this.coverModel = new LinkingBookCoverModel(context.bakeLayer(ModModelLayers.COVER));
+    public LinkTranslatorRenderer(TileEntityRendererDispatcher dispatcher) {
+        super(dispatcher);
         this.coverModel.setBookState(0.95F);
-        this.pagesModel = new LinkingBookPagesModel(context.bakeLayer(ModModelLayers.PAGES));
         this.pagesModel.setBookState(0.95F);
     }
 
     @Override
-    public void render(LinkTranslatorBlockEntity tileEntity, float arg1, PoseStack matrixStack,
-            MultiBufferSource buffer, int arg4, int arg5) {
+    public void render(LinkTranslatorTileEntity tileEntity, float arg1, MatrixStack matrixStack,
+            IRenderTypeBuffer buffer, int arg4, int arg5) {
         if (tileEntity.hasBook()) {
 
             ItemStack bookStack = tileEntity.getBook();
             if (bookStack != null && !bookStack.isEmpty()) {
                 Item item = bookStack.getItem();
                 if (item != null && item instanceof WrittenLinkingBookItem) {
+                    IColorCapability color = bookStack.getCapability(ColorCapability.COLOR).orElse(null);
                     if (color != null) {
-                        this.color = new Color(LinkingBookItem.getColor(bookStack, 0))
-                                .getRGBColorComponents(this.color);
+                        this.color = new Color(color.getColor()).getRGBColorComponents(this.color);
                     }
                 }
             }
@@ -107,10 +106,11 @@ public class LinkTranslatorRenderer implements BlockEntityRenderer<LinkTranslato
             matrixStack.mulPose(Vector3f.YP.rotation((float) Math.PI * rotation / 2.0F));
             matrixStack.mulPose(Vector3f.XP.rotation((float) Math.PI));
             matrixStack.scale(0.75F, 0.75F, 0.75F);
-            VertexConsumer vertexBuilder = buffer.getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
-            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, arg4, arg5, this.color[0], this.color[1],
-                    this.color[2], 1.0F);
-            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, arg4, arg5, 1.0F, 1.0F, 1.0F, 1.0F);
+            IVertexBuilder vertexBuilder = buffer
+                    .getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
+            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, 32767, arg5, this.color[0], this.color[1], this.color[2],
+                    1.0F);
+            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, 32767, arg5, 1.0F, 1.0F, 1.0F, 1.0F);
 
             matrixStack.popPose();
 

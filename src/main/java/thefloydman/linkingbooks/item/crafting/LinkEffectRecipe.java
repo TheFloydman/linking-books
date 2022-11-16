@@ -24,71 +24,52 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.level.Level;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 
-public class LinkEffectRecipe implements CraftingRecipe {
+public class LinkEffectRecipe implements ICraftingRecipe {
 
     private final ResourceLocation id;
     private final NonNullList<Ingredient> recipeInputs;
     private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
-    private ItemStack outputStack = ItemStack.EMPTY;
 
     public LinkEffectRecipe(ResourceLocation id, NonNullList<Ingredient> recipeInput, Set<LinkEffect> linkEffects) {
         this.linkEffects = linkEffects;
         this.recipeInputs = recipeInput;
         this.id = id;
-        int pos = -1;
-        List<Item> writtenBooks = Lists.asList(ModItems.BLACK_WRITTEN_LINKING_BOOK.get(),
-                new Item[] { ModItems.BLUE_WRITTEN_LINKING_BOOK.get(), ModItems.BROWN_WRITTEN_LINKING_BOOK.get(),
-                        ModItems.CYAN_WRITTEN_LINKING_BOOK.get(), ModItems.GRAY_WRITTEN_LINKING_BOOK.get(),
-                        ModItems.GREEN_WRITTEN_LINKING_BOOK.get(), ModItems.LIGHT_BLUE_WRITTEN_LINKING_BOOK.get(),
-                        ModItems.LIGHT_GRAY_WRITTEN_LINKING_BOOK.get(), ModItems.LIME_WRITTEN_LINKING_BOOK.get(),
-                        ModItems.MAGENTA_WRITTEN_LINKING_BOOK.get(), ModItems.ORANGE_WRITTEN_LINKING_BOOK.get(),
-                        ModItems.PINK_WRITTEN_LINKING_BOOK.get(), ModItems.PURPLE_WRITTEN_LINKING_BOOK.get(),
-                        ModItems.RED_WRITTEN_LINKING_BOOK.get(), ModItems.WHITE_WRITTEN_LINKING_BOOK.get(),
-                        ModItems.YELLOW_WRITTEN_LINKING_BOOK.get() });
-        for (int i = 0; i < writtenBooks.size() && pos == -1; i++) {
-            pos = recipeInput.indexOf(Ingredient.of(writtenBooks.get(i)));
-        }
-        if (pos > -1) {
-            outputStack = recipeInput.get(pos).getItems()[0];
-        }
     }
 
-    public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>>
-            implements RecipeSerializer<LinkEffectRecipe> {
+    public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>>
+            implements IRecipeSerializer<LinkEffectRecipe> {
 
         @Override
         public LinkEffectRecipe fromJson(ResourceLocation id, JsonObject json) {
             NonNullList<Ingredient> ingredients = readIngredients(
-                    GsonHelper.getAsJsonArray(json, "additional_ingredients"));
+                    JSONUtils.getAsJsonArray(json, "additional_ingredients"));
             if (ingredients.size() > 8) {
                 throw new JsonParseException(
                         "Too many additional ingredients for written linking book recipe. The max is 8");
             } else {
                 Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
-                JsonArray jsonArray = GsonHelper.getAsJsonArray(json, "link_effects");
+                JsonArray jsonArray = JSONUtils.getAsJsonArray(json, "link_effects");
                 for (JsonElement element : jsonArray) {
                     linkEffects.add(LinkEffect.get(new ResourceLocation(element.getAsString())));
                 }
@@ -97,7 +78,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
         }
 
         @Override
-        public LinkEffectRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
+        public LinkEffectRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) {
             int i = buffer.readVarInt();
             NonNullList<Ingredient> ingredients = NonNullList.withSize(i, Ingredient.EMPTY);
 
@@ -115,7 +96,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buffer, LinkEffectRecipe recipe) {
+        public void toNetwork(PacketBuffer buffer, LinkEffectRecipe recipe) {
             buffer.writeVarInt(recipe.recipeInputs.size());
 
             for (Ingredient ingredient : recipe.recipeInputs) {
@@ -143,7 +124,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer inventory, Level world) {
+    public boolean matches(CraftingInventory inventory, World world) {
         List<ItemStack> inputs = new ArrayList<>();
         int i = 0;
         // Determines how many non-empty stacks are in the crafting grid. Also places
@@ -167,7 +148,8 @@ public class LinkEffectRecipe implements CraftingRecipe {
                 ItemStack[] stacks = this.recipeInputs.get(k).getItems();
                 for (ItemStack stack : stacks) {
                     if (stack.getItem() == craftingInputs.get(j).getItems()[0].getItem()
-                            || craftingInputs.get(j).getItems()[0].getItem() instanceof WrittenLinkingBookItem) {
+                            || craftingInputs.get(j).getItems()[0]
+                                    .getItem() instanceof WrittenLinkingBookItem) {
                         foundMatch = true;
                         break;
                     }
@@ -183,7 +165,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         ItemStack writtenBook = ItemStack.EMPTY;
         for (int i = 0; i < inv.getContainerSize(); i++) {
             if (inv.getItem(i).getItem() instanceof WrittenLinkingBookItem) {
@@ -192,7 +174,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
             }
         }
         if (!writtenBook.isEmpty()) {
-            ILinkData linkData = writtenBook.getCapability(Capabilities.LINK_DATA).orElse(null);
+            ILinkData linkData = writtenBook.getCapability(LinkData.LINK_DATA).orElse(null);
             if (linkData != null) {
                 for (LinkEffect effect : this.linkEffects) {
                     if (!linkData.addLinkEffect(effect)) {
@@ -211,7 +193,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
 
     @Override
     public ItemStack getResultItem() {
-        return this.outputStack;
+        return ModItems.WRITTEN_LINKING_BOOK.get().getDefaultInstance();
     }
 
     @Override
@@ -220,7 +202,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public IRecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.LINK_EFFECT.get();
     }
 }

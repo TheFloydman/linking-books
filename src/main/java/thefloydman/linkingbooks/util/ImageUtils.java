@@ -24,15 +24,14 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.platform.NativeImage;
-
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.util.Constants.NBT;
 
 public class ImageUtils {
 
-    public static CompoundTag imageToNBT(NativeImage image) {
-        CompoundTag compound = new CompoundTag();
+    public static CompoundNBT imageToNBT(NativeImage image) {
+        CompoundNBT compound = new CompoundNBT();
         if (image != null) {
             compound.putInt("height", image.getHeight());
             compound.putInt("width", image.getWidth());
@@ -48,11 +47,11 @@ public class ImageUtils {
     }
 
     @Nullable
-    public static NativeImage imageFromNBT(CompoundTag compound) {
+    public static NativeImage imageFromNBT(CompoundNBT compound) {
         if (compound != null) {
-            if (compound.contains("height", Tag.TAG_INT)) {
-                if (compound.contains("width", Tag.TAG_INT)) {
-                    if (compound.contains("pixels", Tag.TAG_INT_ARRAY)) {
+            if (compound.contains("height", NBT.TAG_INT)) {
+                if (compound.contains("width", NBT.TAG_INT)) {
+                    if (compound.contains("pixels", NBT.TAG_INT_ARRAY)) {
                         int width = compound.getInt("width");
                         int height = compound.getInt("height");
                         NativeImage image = new NativeImage(width, height, false);

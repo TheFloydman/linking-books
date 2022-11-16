@@ -19,17 +19,21 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.block;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
+import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
+import thefloydman.linkingbooks.util.Reference;
+
+import net.minecraft.block.AbstractBlock.Properties;
 
 public class NaraBlock extends Block {
 
@@ -38,18 +42,18 @@ public class NaraBlock extends Block {
     }
 
     @Override
-    public void setPlacedBy(Level world, BlockPos blockPos, BlockState blockState, LivingEntity livingEntity,
+    public void setPlacedBy(World world, BlockPos blockPos, BlockState blockState, LivingEntity livingEntity,
             ItemStack itemStack) {
         super.setPlacedBy(world, blockPos, blockState, livingEntity, itemStack);
         for (int x = blockPos.getX() - 32; x < blockPos.getX() + 32; x++) {
             for (int y = blockPos.getY() - 32; y < blockPos.getY() + 32; y++) {
                 for (int z = blockPos.getZ() - 32; z < blockPos.getZ() + 32; z++) {
                     BlockPos currentPos = new BlockPos(x, y, z);
-                    BlockEntity blockEntity = world.getBlockEntity(currentPos);
-                    if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
-                        LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
+                    TileEntity blockEntity = world.getBlockEntity(currentPos);
+                    if (blockEntity != null && blockEntity instanceof LinkTranslatorTileEntity) {
+                        LinkTranslatorTileEntity translator = (LinkTranslatorTileEntity) blockEntity;
                         if (translator.hasBook()) {
-                            ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA).orElse(null);
+                            ILinkData linkData = translator.getBook().getCapability(LinkData.LINK_DATA).orElse(null);
                             LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }
                     }
@@ -59,17 +63,20 @@ public class NaraBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState blockState, Level world, BlockPos blockPos, BlockState blockState2, boolean bl) {
+    public void onRemove(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean bl) {
         if (!blockState.is(blockState2.getBlock())) {
             for (int x = blockPos.getX() - 32; x < blockPos.getX() + 32; x++) {
                 for (int y = blockPos.getY() - 32; y < blockPos.getY() + 32; y++) {
                     for (int z = blockPos.getZ() - 32; z < blockPos.getZ() + 32; z++) {
                         BlockPos currentPos = new BlockPos(x, y, z);
-                        BlockEntity blockEntity = world.getBlockEntity(currentPos);
-                        if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
-                            LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
+                        TileEntity blockEntity = world.getBlockEntity(currentPos);
+                        if (blockEntity != null && blockEntity instanceof LinkTranslatorTileEntity) {
+                            LinkTranslatorTileEntity translator = (LinkTranslatorTileEntity) blockEntity;
+                            if (Reference.isImmersivePortalsLoaded()) {
+                                ImmersivePortalsIntegration.deleteLinkingPortals(translator);
+                            }
                             if (translator.hasBook()) {
-                                ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA)
+                                ILinkData linkData = translator.getBook().getCapability(LinkData.LINK_DATA)
                                         .orElse(null);
                                 LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData,
                                         translator);

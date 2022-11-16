@@ -19,9 +19,9 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.block.material;
 
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
-import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.block.material.PushReaction;
 
 public class ModMaterials {
 

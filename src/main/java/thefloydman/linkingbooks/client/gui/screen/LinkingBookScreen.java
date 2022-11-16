@@ -19,19 +19,19 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.client.gui.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 
-public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookContainer> {
+public class LinkingBookScreen extends ContainerScreen<LinkingBookContainer> {
 
-    public LinkingBookScreen(LinkingBookContainer container, Inventory inventory, Component narration) {
+    public LinkingBookScreen(LinkingBookContainer container, PlayerInventory inventory, ITextComponent narration) {
         super(container, inventory, narration);
         this.imageWidth = 256;
         this.imageHeight = 192;
@@ -40,19 +40,15 @@ public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookContai
     @Override
     protected void init() {
         super.init();
-        NestedWidget linkingBook = this.addRenderableWidget(
-                new LinkingBookWidget(this.leftPos, this.topPos, 0.0F, this.imageWidth, this.imageHeight,
-                        new TextComponent("Linking Book"), this.getMenu().holdingBook, this.getMenu().bookColor,
-                        this.getMenu().linkData, this.getMenu().canLink, this.getMenu().linkingPanelImage));
+        NestedWidget linkingBook = this.addButton(new LinkingBookWidget(this.leftPos, this.topPos, 0.0F, this.imageWidth,
+                this.imageHeight, new StringTextComponent("Linking Book"), this.getMenu().holdingBook,
+                this.getMenu().bookColor, this.getMenu().linkData, this.getMenu().canLink,
+                this.getMenu().linkingPanelImage));
         linkingBook.addListener(this);
     }
 
     @Override
-    protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
-    }
-
-    @Override
-    protected void renderBg(PoseStack p_97787_, float p_97788_, int p_97789_, int p_97790_) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
     }
 
 }

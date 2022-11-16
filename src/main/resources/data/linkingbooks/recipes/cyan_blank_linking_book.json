@@ -1,7 +1,7 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
+    "type": "linkingbooks:blank_linking_book",
+    "ingredients": [
+        {
             "item": "linkingbooks:linking_panel"
         },
         {
@@ -10,8 +10,11 @@
         {
             "tag": "forge:dyes/cyan"
         }
-  ],
-  "result": {
-    "item": "linkingbooks:cyan_blank_linking_book"
-  }
+    ],
+    "color":
+    {
+        "red": 0.08627451,
+        "green": 0.6117647,
+        "blue": 0.6117647
+    }
 }

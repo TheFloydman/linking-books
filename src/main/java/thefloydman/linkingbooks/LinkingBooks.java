@@ -23,29 +23,38 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.item.ItemColors;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import thefloydman.linkingbooks.block.ModBlocks;
-import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
+import thefloydman.linkingbooks.capability.ColorCapability;
+import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
+import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
+import thefloydman.linkingbooks.client.renderer.tileentity.LinkTranslatorRenderer;
+import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
+import thefloydman.linkingbooks.client.renderer.tileentity.MarkerSwitchRenderer;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
-import thefloydman.linkingbooks.inventory.container.MenuTypes;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
+import thefloydman.linkingbooks.inventory.container.ModContainerTypes;
 import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.crafting.ModRecipeSerializers;
 import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
+import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
 import thefloydman.linkingbooks.util.Reference;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -61,8 +70,8 @@ public class LinkingBooks {
         ModItems.ITEMS.register(eventBus);
         ModFluids.FLUIDS.register(eventBus);
         ModEntityTypes.ENTITIES.register(eventBus);
-        BlockEntityTypes.TILE_ENTITIES.register(eventBus);
-        MenuTypes.CONTAINERS.register(eventBus);
+        ModTileEntityTypes.TILE_ENTITIES.register(eventBus);
+        ModContainerTypes.CONTAINERS.register(eventBus);
         LinkEffects.LINK_EFFECTS.register(eventBus);
         ModRecipeSerializers.RECIPES.register(eventBus);
 
@@ -80,35 +89,35 @@ public class LinkingBooks {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         ModNetworkHandler.registerAllMessages();
+        LinkData.register();
+        ColorCapability.register();
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
 
+        // Register Entity renderers.
+        RenderingRegistry.registerEntityRenderingHandler(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
+        if (Reference.isImmersivePortalsLoaded()) {
+            ImmersivePortalsIntegration.registerEntityRenderingHandlers();
+        }
+
+        // Register TileEntity renderers.
+        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.LINK_TRANSLATOR.get(), LinkTranslatorRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(ModTileEntityTypes.MARKER_SWITCH.get(), MarkerSwitchRenderer::new);
+
         // Register containers.
-        MenuScreens.register(MenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
+        ScreenManager.register(ModContainerTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
 
         // Register ItemColors.
         ItemColors itemColors = Minecraft.getInstance().getItemColors();
         itemColors.register((stack, index) -> LinkingBookItem.getColor(stack, index),
-                ModItems.BLACK_BLANK_LINKING_BOOK.get(), ModItems.BLUE_BLANK_LINKING_BOOK.get(),
-                ModItems.BROWN_BLANK_LINKING_BOOK.get(), ModItems.CYAN_BLANK_LINKING_BOOK.get(),
-                ModItems.GRAY_BLANK_LINKING_BOOK.get(), ModItems.GREEN_BLANK_LINKING_BOOK.get(),
-                ModItems.LIGHT_BLUE_BLANK_LINKING_BOOK.get(), ModItems.LIGHT_GRAY_BLANK_LINKING_BOOK.get(),
-                ModItems.LIME_BLANK_LINKING_BOOK.get(), ModItems.MAGENTA_BLANK_LINKING_BOOK.get(),
-                ModItems.ORANGE_BLANK_LINKING_BOOK.get(), ModItems.PINK_BLANK_LINKING_BOOK.get(),
-                ModItems.PURPLE_BLANK_LINKING_BOOK.get(), ModItems.RED_BLANK_LINKING_BOOK.get(),
-                ModItems.WHITE_BLANK_LINKING_BOOK.get(), ModItems.YELLOW_BLANK_LINKING_BOOK.get(),
-                ModItems.BLACK_WRITTEN_LINKING_BOOK.get(), ModItems.BLUE_WRITTEN_LINKING_BOOK.get(),
-                ModItems.BROWN_WRITTEN_LINKING_BOOK.get(), ModItems.CYAN_WRITTEN_LINKING_BOOK.get(),
-                ModItems.GRAY_WRITTEN_LINKING_BOOK.get(), ModItems.GREEN_WRITTEN_LINKING_BOOK.get(),
-                ModItems.LIGHT_BLUE_WRITTEN_LINKING_BOOK.get(), ModItems.LIGHT_GRAY_WRITTEN_LINKING_BOOK.get(),
-                ModItems.LIME_WRITTEN_LINKING_BOOK.get(), ModItems.MAGENTA_WRITTEN_LINKING_BOOK.get(),
-                ModItems.ORANGE_WRITTEN_LINKING_BOOK.get(), ModItems.PINK_WRITTEN_LINKING_BOOK.get(),
-                ModItems.PURPLE_WRITTEN_LINKING_BOOK.get(), ModItems.RED_WRITTEN_LINKING_BOOK.get(),
-                ModItems.WHITE_WRITTEN_LINKING_BOOK.get(), ModItems.YELLOW_WRITTEN_LINKING_BOOK.get());
+                ModItems.BLANK_LINKING_BOOK.get());
+        itemColors.register((stack, index) -> LinkingBookItem.getColor(stack, index),
+                ModItems.WRITTEN_LINKING_BOOK.get());
 
         // Register block layer renderers.
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.LINKING_PORTAL.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ModBlocks.LINKING_PORTAL.get(), RenderType.translucent());
 
     }
 

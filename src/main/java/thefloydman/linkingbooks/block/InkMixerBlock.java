@@ -19,7 +19,9 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.block;
 
-import net.minecraft.world.level.block.Block;
+import net.minecraft.block.Block;
+
+import net.minecraft.block.AbstractBlock.Properties;
 
 public class InkMixerBlock extends Block {
 

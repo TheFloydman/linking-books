@@ -1,7 +1,7 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
+    "type": "linkingbooks:blank_linking_book",
+    "ingredients": [
+        {
             "item": "linkingbooks:linking_panel"
         },
         {
@@ -10,8 +10,11 @@
         {
             "tag": "forge:dyes/blue"
         }
-  ],
-  "result": {
-    "item": "linkingbooks:blue_blank_linking_book"
-  }
+    ],
+    "color":
+    {
+        "red": 0.23529412,
+        "green": 0.26666668,
+        "blue": 0.6666667
+    }
 }

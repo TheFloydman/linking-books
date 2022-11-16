@@ -19,10 +19,12 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.fluid;
 
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.state.StateContainer;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
+
+import net.minecraftforge.fluids.ForgeFlowingFluid.Properties;
 
 public abstract class InkFluid extends ForgeFlowingFluid {
 
@@ -37,7 +39,7 @@ public abstract class InkFluid extends ForgeFlowingFluid {
         }
 
         @Override
-        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
+        protected void createFluidStateDefinition(StateContainer.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }

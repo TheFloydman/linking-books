@@ -19,17 +19,18 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.block;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.StairsBlock;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 import thefloydman.linkingbooks.block.material.ModMaterials;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.util.Reference;
@@ -41,32 +42,33 @@ public final class ModBlocks {
             Reference.MOD_ID);
 
     public static final RegistryObject<Block> LINKING_LECTERN = BLOCKS.register(BlockNames.LINKING_LECTERN,
-            () -> new LinkingLecternBlock(
-                    BlockBehaviour.Properties.of(Material.WOOD).strength(5).sound(SoundType.WOOD)));
+            () -> new LinkingLecternBlock(AbstractBlock.Properties.of(Material.WOOD).strength(5)
+                    .harvestLevel(2).harvestTool(ToolType.AXE)));
 
     public static final RegistryObject<Block> NARA = BLOCKS.register(BlockNames.NARA,
-            () -> new NaraBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
-                    .strength(100.0F, 2400.0F).requiresCorrectToolForDrops()));
+            () -> new NaraBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
+                    .strength(100.0F, 2400.0F).harvestTool(ToolType.PICKAXE)));
 
     public static final RegistryObject<Block> LINK_TRANSLATOR = BLOCKS.register(BlockNames.LINK_TRANSLATOR,
-            () -> new LinkTranslatorBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
-                    .strength(25.0F, 600.0F).requiresCorrectToolForDrops()));
+            () -> new LinkTranslatorBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN)
+                    .strength(25.0F, 600.0F).harvestTool(ToolType.PICKAXE)));
 
     public static final RegistryObject<Block> LINKING_PORTAL = BLOCKS.register(BlockNames.LINKING_PORTAL,
-            () -> new LinkingPortalBlock(BlockBehaviour.Properties.of(Material.PORTAL).noCollission()
+            () -> new LinkingPortalBlock(AbstractBlock.Properties.of(Material.PORTAL).noCollission()
                     .strength(-1.0F, -1.0F).sound(SoundType.GLASS).noOcclusion().lightLevel((state) -> {
                         return 11;
                     })));
 
     public static final RegistryObject<Block> BOOKSHELF_STAIRS = BLOCKS.register(BlockNames.BOOKSHELF_STAIRS,
-            () -> new StairBlock(() -> Blocks.SPRUCE_PLANKS.defaultBlockState(),
-                    BlockBehaviour.Properties.copy(Blocks.SPRUCE_PLANKS)));
+            () -> new StairsBlock(() -> Blocks.SPRUCE_PLANKS.defaultBlockState(),
+                    AbstractBlock.Properties.copy(Blocks.SPRUCE_PLANKS)));
 
     public static final RegistryObject<Block> MARKER_SWITCH = BLOCKS.register(BlockNames.MARKER_SWITCH,
-            () -> new MarkerSwitchBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(5)));
+            () -> new MarkerSwitchBlock(AbstractBlock.Properties.of(Material.WOOD).strength(5)
+                    .harvestLevel(2).harvestTool(ToolType.AXE)));
 
-    public static final RegistryObject<LiquidBlock> INK = BLOCKS.register(BlockNames.INK,
-            () -> new LiquidBlock(ModFluids.INK,
-                    BlockBehaviour.Properties.of(ModMaterials.INK).noCollission().strength(100.0F).noDrops()));
+    public static final RegistryObject<FlowingFluidBlock> INK = BLOCKS.register(BlockNames.INK,
+            () -> new FlowingFluidBlock(ModFluids.INK, AbstractBlock.Properties.of(ModMaterials.INK)
+                    .noCollission().strength(100.0F).noDrops()));
 
 }

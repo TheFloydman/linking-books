@@ -19,15 +19,16 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.item;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.api.capability.IColorCapability;
+import thefloydman.linkingbooks.capability.ColorCapability;
 import thefloydman.linkingbooks.capability.LinkingBookCapabilityProvider;
-import thefloydman.linkingbooks.util.Reference;
+
+import net.minecraft.item.Item.Properties;
 
 public abstract class LinkingBookItem extends Item {
 
@@ -36,7 +37,7 @@ public abstract class LinkingBookItem extends Item {
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
         return new LinkingBookCapabilityProvider();
     }
 
@@ -47,74 +48,42 @@ public abstract class LinkingBookItem extends Item {
         if (tintIndex != 0) {
             return -1;
         }
-        String itemName = stack.getItem().getRegistryName().getPath().toString();
-        if (itemName.equals(Reference.ItemNames.BLACK_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.BLACK_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.BLACK.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.BLUE_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.BLUE_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.BLUE.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.BROWN_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.BROWN_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.BROWN.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.CYAN_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.CYAN_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.CYAN.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.GRAY_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.GRAY_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.GRAY.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.LIGHT_BLUE_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.LIGHT_BLUE_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.LIGHT_BLUE.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.LIGHT_GRAY_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.LIGHT_GRAY_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.LIGHT_GRAY.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.LIME_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.LIME_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.LIME.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.MAGENTA_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.MAGENTA_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.MAGENTA.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.ORANGE_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.ORANGE_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.ORANGE.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.PINK_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.PINK_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.PINK.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.PURPLE_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.PURPLE_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.PURPLE.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.RED_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.RED_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.RED.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.WHITE_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.WHITE_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.WHITE.getFireworkColor();
-        } else if (itemName.equals(Reference.ItemNames.YELLOW_BLANK_LINKING_BOOK)
-                || itemName.equals(Reference.ItemNames.YELLOW_WRITTEN_LINKING_BOOK)) {
-            return DyeColor.YELLOW.getFireworkColor();
+        IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
+        if (color != null) {
+            return color.getColor();
         }
-        return DyeColor.GREEN.getFireworkColor();
+        return DyeColor.GREEN.getColorValue();
     }
 
+    /*
+     * These two methods help ensure that itemstacks with capabilities in the
+     * creative menu and crafting table result keep their capabilities when placed
+     * in the player's inventories.
+     * 
+     * TODO: Remove when this issue is fixed:
+     * https://github.com/brandon3055/Draconic-Evolution/blob/
+     * 4af607da1f7eb144cd6fed5708611a86356f5c66/src/main/java/com/brandon3055/
+     * draconicevolution/items/equipment/IModularItem.java#L219-L227
+     */
+
     @Override
-    public CompoundTag getShareTag(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
-        ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
-        if (linkData != null) {
-            CompoundTag tag = linkData.writeToShareTag(nbt);
+    public CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT nbt = stack.getTag();
+        IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
+        if (color != null) {
+            CompoundNBT tag = color.writeToShareTag(nbt);
             return tag;
         }
         return nbt;
     }
 
     @Override
-    public void readShareTag(ItemStack stack, CompoundTag nbt) {
+    public void readShareTag(ItemStack stack, CompoundNBT nbt) {
         stack.setTag(nbt);
         if (nbt != null) {
-            ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
-            if (linkData != null) {
-                linkData.readFromShareTag(nbt);
+            IColorCapability color = stack.getCapability(ColorCapability.COLOR).orElse(null);
+            if (color != null) {
+                color.readFromShareTag(nbt);
             }
         }
     }

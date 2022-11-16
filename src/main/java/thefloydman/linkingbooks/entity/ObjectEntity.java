@@ -19,32 +19,32 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.entity;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 public class ObjectEntity extends Entity {
 
-    private static final EntityDataAccessor<Float> DURABILITY = SynchedEntityData.defineId(ObjectEntity.class,
-            EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<ItemStack> ITEM = SynchedEntityData.defineId(ObjectEntity.class,
-            EntityDataSerializers.ITEM_STACK);
+    private static final DataParameter<Float> DURABILITY = EntityDataManager.defineId(ObjectEntity.class,
+            DataSerializers.FLOAT);
+    private static final DataParameter<ItemStack> ITEM = EntityDataManager.defineId(ObjectEntity.class,
+            DataSerializers.ITEM_STACK);
 
     private static final String LABEL_DURABILITY = "Durability";
     private static final String LABEL_ITEM = "Item";
@@ -54,7 +54,7 @@ public class ObjectEntity extends Entity {
     private final float maxDurability;
     public int hurtTime;
 
-    public ObjectEntity(EntityType<? extends ObjectEntity> type, Level world, Class<? extends Item> itemClass,
+    public ObjectEntity(EntityType<? extends ObjectEntity> type, World world, Class<? extends Item> itemClass,
             float maxDurability) {
         super(type, world);
         this.itemClass = itemClass;
@@ -63,7 +63,7 @@ public class ObjectEntity extends Entity {
         this.hurtTime = 0;
     }
 
-    public ObjectEntity(EntityType<? extends ObjectEntity> type, Level world, Class<? extends Item> itemClass,
+    public ObjectEntity(EntityType<? extends ObjectEntity> type, World world, Class<? extends Item> itemClass,
             float maxDurability, ItemStack item) {
         this(type, world, itemClass, maxDurability);
         this.setItem(item);
@@ -76,11 +76,11 @@ public class ObjectEntity extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        if (compound.contains(LABEL_DURABILITY, Tag.TAG_ANY_NUMERIC)) {
+    protected void readAdditionalSaveData(CompoundNBT compound) {
+        if (compound.contains(LABEL_DURABILITY, NBT.TAG_ANY_NUMERIC)) {
             this.setDurability(compound.getFloat(LABEL_DURABILITY));
         }
-        if (compound.contains(LABEL_ITEM, Tag.TAG_COMPOUND)) {
+        if (compound.contains(LABEL_ITEM, NBT.TAG_COMPOUND)) {
             ItemStack stack = ItemStack.of(compound.getCompound(LABEL_ITEM));
             if (itemClass.isInstance(stack.getItem())) {
                 this.setItem(stack);
@@ -93,7 +93,7 @@ public class ObjectEntity extends Entity {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
+    protected void addAdditionalSaveData(CompoundNBT compound) {
         compound.putFloat(LABEL_DURABILITY, this.getDurability());
         compound.put(LABEL_ITEM, this.getItem().serializeNBT());
         compound.putShort(LABEL_HURTTIME, (short) this.hurtTime);
@@ -103,7 +103,7 @@ public class ObjectEntity extends Entity {
      * Makes sure the entity spawns correctly client-side.
      */
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
@@ -116,7 +116,7 @@ public class ObjectEntity extends Entity {
     }
 
     public void setDurability(float health) {
-        this.entityData.set(DURABILITY, Mth.clamp(health, 0.0F, this.getMaxDurability()));
+        this.entityData.set(DURABILITY, MathHelper.clamp(health, 0.0F, this.getMaxDurability()));
     }
 
     public ItemStack getItem() {
@@ -146,7 +146,7 @@ public class ObjectEntity extends Entity {
         if (!this.isNoGravity()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
         }
-        Vec3 vec3d = this.getDeltaMovement();
+        Vector3d vec3d = this.getDeltaMovement();
         double d1 = vec3d.x;
         double d3 = vec3d.y;
         double d5 = vec3d.z;
@@ -172,7 +172,7 @@ public class ObjectEntity extends Entity {
     }
 
     @Override
-    public void playerTouch(Player player) {
+    public void playerTouch(PlayerEntity player) {
         if (this.distanceTo(player) < 0.75) {
             player.push(this);
         }

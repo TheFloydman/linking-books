@@ -19,12 +19,12 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.item;
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.BucketItem;
+import net.minecraft.item.Item;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.util.Reference;
@@ -33,153 +33,36 @@ public class ModItems {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Reference.MOD_ID);
 
-    public static final RegistryObject<Item> BLACK_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.BLACK_BLANK_LINKING_BOOK,
+    public static final RegistryObject<Item> BLANK_LINKING_BOOK = ITEMS.register(Reference.ItemNames.BLANK_LINKNG_BOOK,
             () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
 
-    public static final RegistryObject<Item> BLUE_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.BLUE_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> BROWN_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.BROWN_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> CYAN_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.CYAN_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> GRAY_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.GRAY_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> GREEN_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.GREEN_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> LIGHT_BLUE_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.LIGHT_BLUE_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> LIGHT_GRAY_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.LIGHT_GRAY_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> LIME_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.LIME_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> MAGENTA_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.MAGENTA_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> ORANGE_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.ORANGE_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> PINK_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.PINK_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> PURPLE_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.PURPLE_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> RED_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.RED_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> WHITE_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.WHITE_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> YELLOW_BLANK_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.YELLOW_BLANK_LINKING_BOOK,
-            () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> BLACK_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.BLACK_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> BLUE_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.BLUE_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> BROWN_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.BROWN_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> CYAN_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.CYAN_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> GRAY_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.GRAY_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> GREEN_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.GREEN_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> LIGHT_BLUE_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.LIGHT_BLUE_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> LIGHT_GRAY_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.LIGHT_GRAY_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> LIME_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.LIME_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> MAGENTA_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.MAGENTA_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> ORANGE_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.ORANGE_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> PINK_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.PINK_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> PURPLE_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.PURPLE_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> RED_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.RED_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> WHITE_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.WHITE_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
-
-    public static final RegistryObject<Item> YELLOW_WRITTEN_LINKING_BOOK = ITEMS.register(
-            Reference.ItemNames.YELLOW_WRITTEN_LINKING_BOOK,
-            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> WRITTEN_LINKING_BOOK = ITEMS.register(
+            Reference.ItemNames.WRITTEN_LINKNG_BOOK,
+            () -> new WrittenLinkingBookItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> LINKING_LECTERN = ITEMS.register(Reference.BlockNames.LINKING_LECTERN,
-            () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(), new Item.Properties().tab(ItemGroups.LINKING_BOOKS)));
+            () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(),
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> NARA = ITEMS.register(Reference.BlockNames.NARA,
-            () -> new BlockItem(ModBlocks.NARA.get(), new Item.Properties().tab(ItemGroups.LINKING_BOOKS)));
+            () -> new BlockItem(ModBlocks.NARA.get(), new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> LINK_TRANSLATOR = ITEMS.register(Reference.BlockNames.LINK_TRANSLATOR,
-            () -> new BlockItem(ModBlocks.LINK_TRANSLATOR.get(), new Item.Properties().tab(ItemGroups.LINKING_BOOKS)));
+            () -> new BlockItem(ModBlocks.LINK_TRANSLATOR.get(),
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> MARKER_SWITCH = ITEMS.register(Reference.BlockNames.MARKER_SWITCH,
-            () -> new BlockItem(ModBlocks.MARKER_SWITCH.get(), new Item.Properties().tab(ItemGroups.LINKING_BOOKS)));
+            () -> new BlockItem(ModBlocks.MARKER_SWITCH.get(),
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> BOOKSHELF_STAIRS = ITEMS.register(Reference.BlockNames.BOOKSHELF_STAIRS,
-            () -> new BlockItem(ModBlocks.BOOKSHELF_STAIRS.get(), new Item.Properties().tab(ItemGroups.LINKING_BOOKS)));
+            () -> new BlockItem(ModBlocks.BOOKSHELF_STAIRS.get(),
+                    new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> LINKING_PANEL = ITEMS.register(Reference.ItemNames.LINKING_PANEL,
-            () -> new LinkingPanelItem(new Item.Properties().tab(ItemGroups.LINKING_BOOKS)));
+            () -> new LinkingPanelItem(new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
     public static final RegistryObject<Item> INK_BUCKET = ITEMS.register(Reference.ItemNames.INK_BUCKET,
-            () -> new BucketItem(ModFluids.INK, new Item.Properties().tab(ItemGroups.LINKING_BOOKS)));
+            () -> new BucketItem(ModFluids.INK, new Item.Properties().tab(ModItemGroups.LINKING_BOOKS)));
 
 }

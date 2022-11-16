@@ -1,7 +1,7 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
+    "type": "linkingbooks:blank_linking_book",
+    "ingredients": [
+        {
             "item": "linkingbooks:linking_panel"
         },
         {
@@ -10,8 +10,11 @@
         {
             "tag": "forge:dyes/magenta"
         }
-  ],
-  "result": {
-    "item": "linkingbooks:magenta_blank_linking_book"
-  }
+    ],
+    "color":
+    {
+        "red": 0.78039217,
+        "green": 0.30588236,
+        "blue": 0.7411765
+    }
 }

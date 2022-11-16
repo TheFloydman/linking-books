@@ -22,10 +22,9 @@ package thefloydman.linkingbooks.api.capability;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 
 public interface ILinkData {
@@ -54,12 +53,8 @@ public interface ILinkData {
 
     public boolean removeLinkEffect(LinkEffect effect);
 
-    public FriendlyByteBuf write(FriendlyByteBuf buffer);
+    public PacketBuffer write(PacketBuffer buffer);
 
-    public void read(FriendlyByteBuf buffer);
-
-    public CompoundTag writeToShareTag(CompoundTag nbt);
-
-    public void readFromShareTag(CompoundTag nbt);
+    public void read(PacketBuffer buffer);
 
 }

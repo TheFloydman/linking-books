@@ -19,26 +19,13 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.event;
 
-import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraft.entity.EntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
-import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
-import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
-import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
-import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
-import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
-import thefloydman.linkingbooks.client.renderer.tileentity.LinkTranslatorRenderer;
-import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
-import thefloydman.linkingbooks.client.renderer.tileentity.MarkerSwitchRenderer;
-import thefloydman.linkingbooks.entity.ModEntityTypes;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
@@ -48,40 +35,18 @@ public class ModEventHandler {
      * Use to create new registries.
      */
     @SubscribeEvent
-    public static void createNewRegistries(NewRegistryEvent event) {
+    public static void createNewRegistries(RegistryEvent.NewRegistry event) {
         RegistryBuilder<LinkEffect> linkEffectRegistryBuilder = new RegistryBuilder<LinkEffect>();
-        linkEffectRegistryBuilder.setName(Reference.getAsResourceLocation("linkeffects"));
+        linkEffectRegistryBuilder.setName(Reference.getAsResourceLocation("link_effect"));
         linkEffectRegistryBuilder.setType(LinkEffect.class);
-        event.create(linkEffectRegistryBuilder, (foo) -> {
-            LinkEffect.registry = foo;
-        });
+        linkEffectRegistryBuilder.create();
     }
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
-    }
-
-    @SubscribeEvent
-    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-
-        // Entities
-        event.registerEntityRenderer(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
-
-        // Block entities
-        event.registerBlockEntityRenderer(BlockEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityTypes.LINK_TRANSLATOR.get(), LinkTranslatorRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityTypes.MARKER_SWITCH.get(), MarkerSwitchRenderer::new);
-    }
-
-    @SubscribeEvent
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(ILinkData.class);
-    }
-
-    @SubscribeEvent
-    public static void register(RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(ModModelLayers.PAGES, LinkingBookPagesModel::createBodyLayer);
-        event.registerLayerDefinition(ModModelLayers.COVER, LinkingBookCoverModel::createBodyLayer);
+        if (Reference.isImmersivePortalsLoaded()) {
+            ImmersivePortalsIntegration.registerImmersivePortalsEntities(event);
+        }
     }
 
 }

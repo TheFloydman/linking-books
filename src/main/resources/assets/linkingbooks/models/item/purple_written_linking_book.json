@@ -1,7 +1,0 @@
-{
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "linkingbooks:item/written_linking_book",
-        "layer1": "linkingbooks:item/linking_book_pages"
-    }
-}

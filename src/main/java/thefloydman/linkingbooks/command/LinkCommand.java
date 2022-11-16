@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.DimensionArgument;
-import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.BlockPosArgument;
+import net.minecraft.command.arguments.DimensionArgument;
+import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.Entity;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.linking.LinkEffects;
@@ -42,19 +42,19 @@ public class LinkCommand {
     private static final String POSITION = "position";
     private static final String DIMENSION = "dimension";
 
-    public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
+    public static void register(CommandDispatcher<CommandSource> dispatcher) {
 
-        commandDispatcher.register(Commands.literal("link").requires((context) -> {
+        dispatcher.register(Commands.literal("link").requires((context) -> {
             return context.hasPermission(2);
         })
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
                         .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
-                            ILinkData linkData = new LinkData();
-                            linkData.setDimension(context.getSource().getPlayerOrException().getCommandSenderWorld()
-                                    .dimension().location());
-                            linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
-                            linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
+                            ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                            linkData.setDimension(
+                                    context.getSource().getPlayerOrException().getCommandSenderWorld().dimension().location());
+                            linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                            linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                             linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             return LinkingUtils.linkEntities(
                                     new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData, false);
@@ -63,11 +63,11 @@ public class LinkCommand {
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
                         .then(Commands.argument(DIMENSION, DimensionArgument.dimension())
                                 .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
-                                    ILinkData linkData = new LinkData();
-                                    linkData.setDimension(
-                                            DimensionArgument.getDimension(context, DIMENSION).dimension().location());
-                                    linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
-                                    linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
+                                    ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                                    linkData.setDimension(DimensionArgument.getDimension(context, DIMENSION)
+                                            .dimension().location());
+                                    linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                                    linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                                     linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                                     return LinkingUtils.linkEntities(
                                             new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData,
@@ -76,39 +76,38 @@ public class LinkCommand {
 
                 .then(Commands.argument(DIMENSION, DimensionArgument.dimension())
                         .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
-                            ILinkData linkData = new LinkData();
-                            linkData.setDimension(
-                                    DimensionArgument.getDimension(context, DIMENSION).dimension().location());
-                            linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
-                            linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
+                            ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+                            linkData.setDimension(DimensionArgument.getDimension(context, DIMENSION)
+                                    .dimension().location());
+                            linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                            linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                             linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             return LinkingUtils.linkEntities(
-                                    new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())),
-                                    linkData, false);
+                                    new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())), linkData,
+                                    false);
                         })))
 
                 .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {
-                    ILinkData linkData = new LinkData();
+                    ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
                     linkData.setDimension(
                             context.getSource().getPlayerOrException().getCommandSenderWorld().dimension().location());
-                    linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
-                    linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
+                    linkData.setPosition(BlockPosArgument.getOrLoadBlockPos(context, POSITION));
+                    linkData.setRotation(context.getSource().getPlayerOrException().yRot);
                     linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                     return LinkingUtils.linkEntities(
-                            new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())), linkData,
-                            false);
+                            new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())), linkData, false);
                 }))
 
                 .then(Commands.argument(ENTITIES, EntityArgument.entities())
                         .then(Commands.argument(ENTITY, EntityArgument.entity()).executes((context) -> {
-                            ILinkData linkData = new LinkData();
+                            ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
                             linkData.setDimension(EntityArgument.getEntity(context, ENTITY).getCommandSenderWorld()
                                     .dimension().location());
                             linkData.setPosition(EntityArgument.getEntity(context, ENTITY).blockPosition());
                             linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
                             int i = 0;
                             for (Entity entity : EntityArgument.getEntities(context, ENTITIES)) {
-                                linkData.setRotation(entity.getYRot());
+                                linkData.setRotation(entity.yRot);
                                 i += LinkingUtils.linkEntities(new ArrayList<>(Lists.newArrayList(entity)), linkData,
                                         false);
                             }
