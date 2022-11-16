@@ -1,7 +1,7 @@
 {
 	"loader": "forge:obj",
 	"model": "linkingbooks:models/block/marker_switch_handle_on.obj",
-	"ambientToFullbright": true,
-	"flip-v": false,
-	"detectCullableFaces": true
+	"emissive_ambient": true,
+	"flip_v": false,
+	"automatic_culling": true
 }

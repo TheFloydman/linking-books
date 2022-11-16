@@ -57,12 +57,12 @@ public class SaveLinkingPanelImageMessage implements IMessage {
 
     @Override
     public void handle(Context ctx) {
-        ctx.enqueueWork(() -> {
-            LinkingBooksSavedData worldData = ctx.getSender().getServer().getLevel(Level.OVERWORLD).getDataStorage()
-                    .computeIfAbsent(LinkingBooksSavedData::load, LinkingBooksSavedData::new, Reference.MOD_ID);
-            worldData.addLinkingPanelImage(this.uuid, this.image);
-            ctx.setPacketHandled(true);
-        });
+
+        LinkingBooksSavedData worldData = ctx.getSender().getServer().getLevel(Level.OVERWORLD).getDataStorage()
+                .computeIfAbsent(LinkingBooksSavedData::load, LinkingBooksSavedData::new, Reference.MOD_ID);
+        worldData.addLinkingPanelImage(this.uuid, this.image);
+        ctx.setPacketHandled(true);
+
     }
 
 }

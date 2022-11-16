@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -78,16 +76,20 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
         super.appendHoverText(stack, world, tooltip, flag);
         ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
         if (linkData != null) {
-            tooltip.add(new TextComponent("§eAge: §9§o" + linkData.getDimension().toString()));
-            tooltip.add(new TextComponent("§ePosition: §9§o(" + linkData.getPosition().getX() + ", "
+            tooltip.add(Component.literal("§eAge: §9§o" + linkData.getDimension().toString()));
+            tooltip.add(Component.literal("§ePosition: §9§o(" + linkData.getPosition().getX() + ", "
                     + linkData.getPosition().getY() + ", " + linkData.getPosition().getZ() + ")"));
             Set<LinkEffect> linkEffects = new HashSet<LinkEffect>(linkData.getLinkEffects());
             if (!linkEffects.isEmpty()) {
-                tooltip.add(new TextComponent("§eLink Effects:"));
+                tooltip.add(Component.literal("§eLink Effects:"));
                 for (LinkEffect effect : linkEffects) {
-                    tooltip.add(new TextComponent("    §9§o"
-                            + new TranslatableComponent("linkEffect." + effect.getRegistryName().getNamespace() + "."
-                                    + effect.getRegistryName().getPath()).getString()));
+                    tooltip.add(
+                            Component
+                                    .literal("    §9§o" + Component
+                                            .translatable(
+                                                    "linkEffect." + LinkEffect.registry.getKey(effect).getNamespace()
+                                                            + "." + LinkEffect.registry.getKey(effect).getPath())
+                                            .getString()));
                 }
             }
         }

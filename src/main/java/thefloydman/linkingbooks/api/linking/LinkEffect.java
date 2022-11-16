@@ -24,11 +24,10 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 
-public abstract class LinkEffect extends ForgeRegistryEntry<LinkEffect> {
+public abstract class LinkEffect {
 
     public static IForgeRegistry<LinkEffect> registry;
     public static final Logger LOGGER = LogManager.getLogger();

@@ -106,6 +106,10 @@ public class Reference {
         public static final String FLOWING_INK = "flowing_ink";
     }
 
+    public static class FluidTypeNames {
+        public static final String INK = "ink";
+    }
+
     public static class ContainerNames {
         public static final String LINKING_BOOK = "linking_book";
     }

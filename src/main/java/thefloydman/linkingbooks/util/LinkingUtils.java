@@ -27,8 +27,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -41,6 +40,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.Capabilities;
@@ -61,7 +61,7 @@ public class LinkingUtils {
 
         ItemStack resultItem = ModItems.GREEN_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
 
-        String itemName = originItem.getItem().getRegistryName().getPath();
+        String itemName = ForgeRegistries.ITEMS.getKey(originItem.getItem()).getPath();
 
         if (itemName.equals(Reference.ItemNames.BLACK_BLANK_LINKING_BOOK)) {
             resultItem = ModItems.BLACK_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
@@ -132,8 +132,7 @@ public class LinkingUtils {
                 ServerPlayer player = (ServerPlayer) entity;
                 player.closeContainer();
                 player.doCloseContainer();
-                player.displayClientMessage(new TranslatableComponent("message.linkingbooks.no_intraage_linking"),
-                        true);
+                player.displayClientMessage(Component.translatable("message.linkingbooks.no_intraage_linking"), true);
             }
         } else {
 
@@ -151,7 +150,7 @@ public class LinkingUtils {
                         ServerPlayer player = (ServerPlayer) entity;
                         player.closeContainer();
                         player.doCloseContainer();
-                        player.displayClientMessage(new TranslatableComponent("message.linkingbooks.link_failed_start"),
+                        player.displayClientMessage(Component.translatable("message.linkingbooks.link_failed_start"),
                                 true);
                     }
                     return false;
@@ -184,7 +183,7 @@ public class LinkingUtils {
                         player.closeContainer();
                         player.doCloseContainer();
                         player.displayClientMessage(
-                                new TranslatableComponent("message.linkingbooks.insufficient_experience"), true);
+                                Component.translatable("message.linkingbooks.insufficient_experience"), true);
                         return false;
                     }
                     player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
@@ -224,8 +223,8 @@ public class LinkingUtils {
                         serverWorld.getServer().execute(() -> {
                             player.teleportTo((ServerLevel) world, originalPos.x, originalPos.y, originalPos.z,
                                     originalRot, player.getXRot());
-                            player.displayClientMessage(
-                                    new TranslatableComponent("message.linkingbooks.link_failed_end"), true);
+                            player.displayClientMessage(Component.translatable("message.linkingbooks.link_failed_end"),
+                                    true);
                         });
                     } else {
                         serverWorld.getServer().execute(() -> {
@@ -269,9 +268,9 @@ public class LinkingUtils {
 
     public static void openLinkingBookGui(ServerPlayer player, boolean holdingBook, int color, ILinkData linkData,
             ResourceLocation currentDimension) {
-        NetworkHooks.openGui(player, new SimpleMenuProvider((id, playerInventory, playerEntity) -> {
+        NetworkHooks.openScreen(player, new SimpleMenuProvider((id, playerInventory, playerEntity) -> {
             return new LinkingBookContainer(id, playerInventory);
-        }, new TextComponent("")), extraData -> {
+        }, Component.literal("")), extraData -> {
             extraData.writeBoolean(holdingBook);
             extraData.writeInt(color);
             linkData.write(extraData);

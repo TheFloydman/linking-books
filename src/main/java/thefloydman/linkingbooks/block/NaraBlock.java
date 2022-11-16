@@ -49,7 +49,8 @@ public class NaraBlock extends Block {
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
                         LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
                         if (translator.hasBook()) {
-                            ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA).orElse(null);
+                            ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA)
+                                    .orElse(null);
                             LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }
                     }
@@ -58,6 +59,7 @@ public class NaraBlock extends Block {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onRemove(BlockState blockState, Level world, BlockPos blockPos, BlockState blockState2, boolean bl) {
         if (!blockState.is(blockState2.getBlock())) {

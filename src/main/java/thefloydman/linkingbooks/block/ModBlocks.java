@@ -67,6 +67,6 @@ public final class ModBlocks {
 
     public static final RegistryObject<LiquidBlock> INK = BLOCKS.register(BlockNames.INK,
             () -> new LiquidBlock(ModFluids.INK,
-                    BlockBehaviour.Properties.of(ModMaterials.INK).noCollission().strength(100.0F).noDrops()));
+                    BlockBehaviour.Properties.of(ModMaterials.INK).noCollission().strength(100.0F).noLootTable()));
 
 }

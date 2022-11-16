@@ -29,7 +29,7 @@ import thefloydman.linkingbooks.util.Reference.EntityNames;
 
 public class ModEntityTypes {
 
-    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES,
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
             Reference.MOD_ID);
 
     public static final RegistryObject<EntityType<LinkingBookEntity>> LINKING_BOOK = ENTITIES

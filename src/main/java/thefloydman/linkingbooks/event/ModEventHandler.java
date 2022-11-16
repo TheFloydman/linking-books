@@ -19,11 +19,12 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.event;
 
-import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.registries.NewRegistryEvent;
@@ -39,6 +40,8 @@ import thefloydman.linkingbooks.client.renderer.tileentity.LinkTranslatorRendere
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.MarkerSwitchRenderer;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
+import thefloydman.linkingbooks.item.LinkingBookItem;
+import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.util.Reference;
 
 @EventBusSubscriber(modid = Reference.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
@@ -51,14 +54,9 @@ public class ModEventHandler {
     public static void createNewRegistries(NewRegistryEvent event) {
         RegistryBuilder<LinkEffect> linkEffectRegistryBuilder = new RegistryBuilder<LinkEffect>();
         linkEffectRegistryBuilder.setName(Reference.getAsResourceLocation("linkeffects"));
-        linkEffectRegistryBuilder.setType(LinkEffect.class);
         event.create(linkEffectRegistryBuilder, (foo) -> {
             LinkEffect.registry = foo;
         });
-    }
-
-    @SubscribeEvent
-    public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
     }
 
     @SubscribeEvent
@@ -82,6 +80,28 @@ public class ModEventHandler {
     public static void register(RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.PAGES, LinkingBookPagesModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.COVER, LinkingBookCoverModel::createBodyLayer);
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, index) -> LinkingBookItem.getColor(stack, index),
+                ModItems.BLACK_BLANK_LINKING_BOOK.get(), ModItems.BLUE_BLANK_LINKING_BOOK.get(),
+                ModItems.BROWN_BLANK_LINKING_BOOK.get(), ModItems.CYAN_BLANK_LINKING_BOOK.get(),
+                ModItems.GRAY_BLANK_LINKING_BOOK.get(), ModItems.GREEN_BLANK_LINKING_BOOK.get(),
+                ModItems.LIGHT_BLUE_BLANK_LINKING_BOOK.get(), ModItems.LIGHT_GRAY_BLANK_LINKING_BOOK.get(),
+                ModItems.LIME_BLANK_LINKING_BOOK.get(), ModItems.MAGENTA_BLANK_LINKING_BOOK.get(),
+                ModItems.ORANGE_BLANK_LINKING_BOOK.get(), ModItems.PINK_BLANK_LINKING_BOOK.get(),
+                ModItems.PURPLE_BLANK_LINKING_BOOK.get(), ModItems.RED_BLANK_LINKING_BOOK.get(),
+                ModItems.WHITE_BLANK_LINKING_BOOK.get(), ModItems.YELLOW_BLANK_LINKING_BOOK.get(),
+                ModItems.BLACK_WRITTEN_LINKING_BOOK.get(), ModItems.BLUE_WRITTEN_LINKING_BOOK.get(),
+                ModItems.BROWN_WRITTEN_LINKING_BOOK.get(), ModItems.CYAN_WRITTEN_LINKING_BOOK.get(),
+                ModItems.GRAY_WRITTEN_LINKING_BOOK.get(), ModItems.GREEN_WRITTEN_LINKING_BOOK.get(),
+                ModItems.LIGHT_BLUE_WRITTEN_LINKING_BOOK.get(), ModItems.LIGHT_GRAY_WRITTEN_LINKING_BOOK.get(),
+                ModItems.LIME_WRITTEN_LINKING_BOOK.get(), ModItems.MAGENTA_WRITTEN_LINKING_BOOK.get(),
+                ModItems.ORANGE_WRITTEN_LINKING_BOOK.get(), ModItems.PINK_WRITTEN_LINKING_BOOK.get(),
+                ModItems.PURPLE_WRITTEN_LINKING_BOOK.get(), ModItems.RED_WRITTEN_LINKING_BOOK.get(),
+                ModItems.WHITE_WRITTEN_LINKING_BOOK.get(), ModItems.YELLOW_WRITTEN_LINKING_BOOK.get());
     }
 
 }

@@ -127,8 +127,7 @@ public abstract class NestedWidget extends AbstractWidget {
         bufferBuilder.vertex(matrix, xEnd, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
         bufferBuilder.vertex(matrix, xEnd, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
         bufferBuilder.vertex(matrix, xStart, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.end();
-        BufferUploader.end(bufferBuilder);
+        BufferUploader.drawWithShader(bufferBuilder.end());
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }

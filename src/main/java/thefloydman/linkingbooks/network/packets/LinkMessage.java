@@ -55,11 +55,11 @@ public class LinkMessage implements IMessage {
 
     @Override
     public void handle(Context ctx) {
-        ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
-            LinkingUtils.linkEntity(player, this.linkData, this.holdingBook);
-            ctx.setPacketHandled(true);
-        });
+
+        ServerPlayer player = ctx.getSender();
+        LinkingUtils.linkEntity(player, this.linkData, this.holdingBook);
+        ctx.setPacketHandled(true);
+
     }
 
 }

@@ -23,7 +23,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
@@ -42,7 +41,7 @@ public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookContai
         super.init();
         NestedWidget linkingBook = this.addRenderableWidget(
                 new LinkingBookWidget(this.leftPos, this.topPos, 0.0F, this.imageWidth, this.imageHeight,
-                        new TextComponent("Linking Book"), this.getMenu().holdingBook, this.getMenu().bookColor,
+                        Component.literal("Linking Book"), this.getMenu().holdingBook, this.getMenu().bookColor,
                         this.getMenu().linkData, this.getMenu().canLink, this.getMenu().linkingPanelImage));
         linkingBook.addListener(this);
     }

@@ -24,6 +24,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.registries.ForgeRegistries;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.Capabilities;
 import thefloydman.linkingbooks.capability.LinkingBookCapabilityProvider;
@@ -47,7 +48,7 @@ public abstract class LinkingBookItem extends Item {
         if (tintIndex != 0) {
             return -1;
         }
-        String itemName = stack.getItem().getRegistryName().getPath().toString();
+        String itemName = ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath().toString();
         if (itemName.equals(Reference.ItemNames.BLACK_BLANK_LINKING_BOOK)
                 || itemName.equals(Reference.ItemNames.BLACK_WRITTEN_LINKING_BOOK)) {
             return DyeColor.BLACK.getFireworkColor();

@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 
@@ -57,6 +58,11 @@ public class LinkingBookContainer extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
+        return null;
     }
 
 }

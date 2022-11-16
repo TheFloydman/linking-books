@@ -71,6 +71,7 @@ public class LinkingPortalBlock extends Block {
         return ItemStack.EMPTY;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2,
             LevelAccessor worldAccess, BlockPos blockPos, BlockPos blockPos2) {
@@ -110,6 +111,7 @@ public class LinkingPortalBlock extends Block {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onRemove(BlockState blockState, Level world, BlockPos pos, BlockState blockState2, boolean bl) {
         if (blockState.getBlock() != blockState2.getBlock() && !world.isClientSide()) {

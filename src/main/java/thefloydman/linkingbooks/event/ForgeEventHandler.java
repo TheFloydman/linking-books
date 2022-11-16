@@ -43,8 +43,8 @@ import thefloydman.linkingbooks.block.MarkerSwitchBlock;
 import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
 import thefloydman.linkingbooks.blockentity.LinkingBookHolderBlockEntity;
 import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
-import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
@@ -60,7 +60,7 @@ public class ForgeEventHandler {
      */
     @SubscribeEvent
     public static void tossItem(ItemTossEvent event) {
-        ItemStack stack = event.getEntityItem().getItem();
+        ItemStack stack = event.getEntity().getItem();
         /*
          * Override WrittenLinkingBookItem.createEntity() specifically for player tosses
          * so that we can use player information to set entity attributes.
@@ -110,8 +110,8 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void rightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        Level world = event.getWorld();
-        Player player = event.getPlayer();
+        Level world = event.getLevel();
+        Player player = event.getEntity();
         InteractionHand hand = event.getHand();
         if (world.isClientSide() || hand.equals(InteractionHand.OFF_HAND) || !player.isShiftKeyDown()) {
             return;
@@ -138,7 +138,6 @@ public class ForgeEventHandler {
                 player.inventoryMenu.broadcastChanges();
                 tileEntity.setBook(ItemStack.EMPTY);
                 if (world.getBlockEntity(pos) instanceof LinkTranslatorBlockEntity) {
-                    LinkTranslatorBlockEntity linkTranslatorBlockEntity = (LinkTranslatorBlockEntity) tileEntity;
                     LinkingPortalArea.tryEraseLinkingPortalOnEveryAxis(world, pos);
                 }
             }

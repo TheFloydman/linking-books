@@ -127,7 +127,7 @@ public class LinkData implements ILinkData, INBTSerializable<CompoundTag> {
         nbt.putFloat("rotation", this.getRotation());
         ListTag effectsList = new ListTag();
         for (LinkEffect effect : this.getLinkEffects()) {
-            effectsList.add(StringTag.valueOf(effect.getRegistryName().toString()));
+            effectsList.add(StringTag.valueOf(LinkEffect.registry.getKey(effect).toString()));
         }
         nbt.putUUID("uuid", this.getUUID());
         nbt.put("effects", effectsList);

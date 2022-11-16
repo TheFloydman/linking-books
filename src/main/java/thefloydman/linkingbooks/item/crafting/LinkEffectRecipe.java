@@ -76,8 +76,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
         }
     }
 
-    public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>>
-            implements RecipeSerializer<LinkEffectRecipe> {
+    public static class Serializer implements RecipeSerializer<LinkEffectRecipe> {
 
         @Override
         public LinkEffectRecipe fromJson(ResourceLocation id, JsonObject json) {
@@ -124,7 +123,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
 
             buffer.writeInt(recipe.linkEffects.size());
             for (LinkEffect effect : recipe.linkEffects) {
-                buffer.writeUtf(effect.getRegistryName().toString());
+                buffer.writeUtf(LinkEffect.registry.getKey(effect).toString());
             }
         }
     }

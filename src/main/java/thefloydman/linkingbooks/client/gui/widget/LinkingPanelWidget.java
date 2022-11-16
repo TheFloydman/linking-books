@@ -76,8 +76,8 @@ public class LinkingPanelWidget extends NestedWidget {
         if (this.canLink) {
             if (this.linkingPanelImage != null) {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.setShaderTexture(0, this.linkingPanelImage.getId());
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
                         this.linkingPanelImage.getPixels().getHeight());
             }

@@ -50,8 +50,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
 import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
+import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
 
 public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
@@ -178,6 +178,7 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
     /**
      * See DoorBlock.updatePostPlacement().
      */
+    @SuppressWarnings("deprecation")
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world,
             BlockPos pos, BlockPos posFrom) {
@@ -237,6 +238,7 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
         return BlockEntityTypes.MARKER_SWITCH.get().create(pos, state);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock() && state.getValue(HALF) == DoubleBlockHalf.LOWER

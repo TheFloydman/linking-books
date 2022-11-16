@@ -30,7 +30,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
@@ -54,7 +53,7 @@ public class LinkingBookWidget extends NestedWidget {
         super(x, y, width, height, narration);
         this.color = color;
         NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget(this.x + 155, this.y + 41, 0.0F, 64, 42,
-                new TextComponent("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
+                Component.literal("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
         for (GuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }

@@ -22,11 +22,7 @@ package thefloydman.linkingbooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -39,9 +35,9 @@ import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
+import thefloydman.linkingbooks.fluid.ModFluidTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
 import thefloydman.linkingbooks.inventory.container.MenuTypes;
-import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.crafting.ModRecipeSerializers;
 import thefloydman.linkingbooks.linking.LinkEffects;
@@ -59,6 +55,7 @@ public class LinkingBooks {
         final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModBlocks.BLOCKS.register(eventBus);
         ModItems.ITEMS.register(eventBus);
+        ModFluidTypes.FLUID_TYPES.register(eventBus);
         ModFluids.FLUIDS.register(eventBus);
         ModEntityTypes.ENTITIES.register(eventBus);
         BlockEntityTypes.TILE_ENTITIES.register(eventBus);
@@ -79,36 +76,17 @@ public class LinkingBooks {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        ModNetworkHandler.registerAllMessages();
+        event.enqueueWork(() -> {
+            ModNetworkHandler.registerAllMessages();
+        });
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
 
-        // Register containers.
-        MenuScreens.register(MenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
-
-        // Register ItemColors.
-        ItemColors itemColors = Minecraft.getInstance().getItemColors();
-        itemColors.register((stack, index) -> LinkingBookItem.getColor(stack, index),
-                ModItems.BLACK_BLANK_LINKING_BOOK.get(), ModItems.BLUE_BLANK_LINKING_BOOK.get(),
-                ModItems.BROWN_BLANK_LINKING_BOOK.get(), ModItems.CYAN_BLANK_LINKING_BOOK.get(),
-                ModItems.GRAY_BLANK_LINKING_BOOK.get(), ModItems.GREEN_BLANK_LINKING_BOOK.get(),
-                ModItems.LIGHT_BLUE_BLANK_LINKING_BOOK.get(), ModItems.LIGHT_GRAY_BLANK_LINKING_BOOK.get(),
-                ModItems.LIME_BLANK_LINKING_BOOK.get(), ModItems.MAGENTA_BLANK_LINKING_BOOK.get(),
-                ModItems.ORANGE_BLANK_LINKING_BOOK.get(), ModItems.PINK_BLANK_LINKING_BOOK.get(),
-                ModItems.PURPLE_BLANK_LINKING_BOOK.get(), ModItems.RED_BLANK_LINKING_BOOK.get(),
-                ModItems.WHITE_BLANK_LINKING_BOOK.get(), ModItems.YELLOW_BLANK_LINKING_BOOK.get(),
-                ModItems.BLACK_WRITTEN_LINKING_BOOK.get(), ModItems.BLUE_WRITTEN_LINKING_BOOK.get(),
-                ModItems.BROWN_WRITTEN_LINKING_BOOK.get(), ModItems.CYAN_WRITTEN_LINKING_BOOK.get(),
-                ModItems.GRAY_WRITTEN_LINKING_BOOK.get(), ModItems.GREEN_WRITTEN_LINKING_BOOK.get(),
-                ModItems.LIGHT_BLUE_WRITTEN_LINKING_BOOK.get(), ModItems.LIGHT_GRAY_WRITTEN_LINKING_BOOK.get(),
-                ModItems.LIME_WRITTEN_LINKING_BOOK.get(), ModItems.MAGENTA_WRITTEN_LINKING_BOOK.get(),
-                ModItems.ORANGE_WRITTEN_LINKING_BOOK.get(), ModItems.PINK_WRITTEN_LINKING_BOOK.get(),
-                ModItems.PURPLE_WRITTEN_LINKING_BOOK.get(), ModItems.RED_WRITTEN_LINKING_BOOK.get(),
-                ModItems.WHITE_WRITTEN_LINKING_BOOK.get(), ModItems.YELLOW_WRITTEN_LINKING_BOOK.get());
-
-        // Register block layer renderers.
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.LINKING_PORTAL.get(), RenderType.translucent());
+        event.enqueueWork(() -> {
+            // Register containers.
+            MenuScreens.register(MenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
+        });
 
     }
 

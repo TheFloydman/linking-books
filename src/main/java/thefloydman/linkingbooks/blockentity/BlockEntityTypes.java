@@ -38,15 +38,13 @@ import thefloydman.linkingbooks.util.Reference.TileEntityNames;
 public class BlockEntityTypes {
 
     public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister
-            .create(ForgeRegistries.BLOCK_ENTITIES, Reference.MOD_ID);
+            .create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<LinkingLecternBlockEntity>> LINKING_LECTERN = TILE_ENTITIES
-            .register(TileEntityNames.LINKING_LECTERN,
-                    make(LinkingLecternBlockEntity::new, ModBlocks.LINKING_LECTERN));
+            .register(TileEntityNames.LINKING_LECTERN, make(LinkingLecternBlockEntity::new, ModBlocks.LINKING_LECTERN));
 
     public static final RegistryObject<BlockEntityType<LinkTranslatorBlockEntity>> LINK_TRANSLATOR = TILE_ENTITIES
-            .register(TileEntityNames.LINK_TRANSLATOR,
-                    make(LinkTranslatorBlockEntity::new, ModBlocks.LINK_TRANSLATOR));
+            .register(TileEntityNames.LINK_TRANSLATOR, make(LinkTranslatorBlockEntity::new, ModBlocks.LINK_TRANSLATOR));
 
     public static final RegistryObject<BlockEntityType<MarkerSwitchBlockEntity>> MARKER_SWITCH = TILE_ENTITIES
             .register(TileEntityNames.MARKER_SWITCH, make(MarkerSwitchBlockEntity::new, ModBlocks.MARKER_SWITCH));

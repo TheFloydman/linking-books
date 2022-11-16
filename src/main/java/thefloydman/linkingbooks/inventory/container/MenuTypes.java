@@ -29,7 +29,7 @@ import thefloydman.linkingbooks.util.Reference.ContainerNames;
 
 public class MenuTypes {
 
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS,
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
             Reference.MOD_ID);
 
     public static final RegistryObject<MenuType<LinkingBookContainer>> LINKING_BOOK = CONTAINERS

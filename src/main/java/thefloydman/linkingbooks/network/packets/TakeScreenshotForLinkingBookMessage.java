@@ -58,18 +58,17 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
 
     @Override
     public void handle(Context ctx) {
-        ctx.enqueueWork(() -> {
 
-            if (RenderSystem.isOnRenderThread()) {
+        if (RenderSystem.isOnRenderThread()) {
+            this.getScreenshot();
+        } else {
+            RenderSystem.recordRenderCall(() -> {
                 this.getScreenshot();
-            } else {
-                RenderSystem.recordRenderCall(() -> {
-                    this.getScreenshot();
-                });
-            }
+            });
+        }
 
-            ctx.setPacketHandled(true);
-        });
+        ctx.setPacketHandled(true);
+
     }
 
     private void getScreenshot() {
