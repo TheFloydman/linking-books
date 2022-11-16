@@ -17,18 +17,16 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.api.capability;
+package thefloydman.linkingbooks.capability;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import thefloydman.linkingbooks.api.capability.ILinkData;
 
-public interface IColorCapability {
+public class Capabilities {
 
-    public void setColor(int color);
-
-    public int getColor();
-
-    public CompoundNBT writeToShareTag(CompoundNBT nbt);
-
-    public void readFromShareTag(CompoundNBT nbt);
+    public static final Capability<ILinkData> LINK_DATA = CapabilityManager.get(new CapabilityToken<>() {
+    });
 
 }

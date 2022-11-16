@@ -19,14 +19,14 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.network.packets;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public interface IMessage {
 
-    public PacketBuffer toData(PacketBuffer buffer);
+    public FriendlyByteBuf toData(FriendlyByteBuf buffer);
 
-    public void fromData(PacketBuffer buffer);
+    public void fromData(FriendlyByteBuf buffer);
 
     public void handle(Context ctx);
 

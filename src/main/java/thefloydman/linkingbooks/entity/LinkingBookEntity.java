@@ -19,69 +19,67 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.entity;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
-import thefloydman.linkingbooks.api.capability.IColorCapability;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.capability.ColorCapability;
-import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class LinkingBookEntity extends ObjectEntity {
 
-    protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, World world) {
+    protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, Level world) {
         super(type, world, WrittenLinkingBookItem.class, 10.0F);
         if (world.isClientSide()) {
             setViewScale(2.0D);
         }
     }
 
-    protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, World world, ItemStack item) {
+    protected LinkingBookEntity(EntityType<? extends LinkingBookEntity> type, Level world, ItemStack item) {
         super(type, world, WrittenLinkingBookItem.class, 10.0F, item);
         if (world.isClientSide()) {
             setViewScale(2.0D);
         }
     }
 
-    public LinkingBookEntity(World world) {
+    public LinkingBookEntity(Level world) {
         this(ModEntityTypes.LINKING_BOOK.get(), world);
     }
 
-    public LinkingBookEntity(World world, ItemStack item) {
+    public LinkingBookEntity(Level world, ItemStack item) {
         this(ModEntityTypes.LINKING_BOOK.get(), world, item);
     }
 
     @Override
-    public ActionResultType interact(PlayerEntity player, Hand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand) {
         if (!player.getCommandSenderWorld().isClientSide()) {
-            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
-            if (hand == Hand.MAIN_HAND) {
+            ServerPlayer serverPlayer = (ServerPlayer) player;
+            if (hand == InteractionHand.MAIN_HAND) {
                 ItemStack bookStack = this.getItem();
                 if (!bookStack.isEmpty()) {
                     if (serverPlayer.isShiftKeyDown()) {
                         serverPlayer.addItem(bookStack);
                         serverPlayer.inventoryMenu.broadcastChanges();
-                        this.remove();
-                        return ActionResultType.SUCCESS;
+                        this.remove(RemovalReason.DISCARDED);
+                        return InteractionResult.SUCCESS;
                     } else {
-                        ILinkData linkData = bookStack.getCapability(LinkData.LINK_DATA).orElse(null);
-                        IColorCapability color = bookStack.getCapability(ColorCapability.COLOR).orElse(null);
-                        if (linkData != null && color != null) {
-                            LinkingUtils.openLinkingBookGui(serverPlayer, false, color.getColor(), linkData,
-                                    serverPlayer.getCommandSenderWorld().dimension().location());
-                            return ActionResultType.CONSUME;
+                        ILinkData linkData = bookStack.getCapability(Capabilities.LINK_DATA).orElse(null);
+                        if (linkData != null) {
+                            LinkingUtils.openLinkingBookGui(serverPlayer, false, LinkingBookItem.getColor(bookStack, 0),
+                                    linkData, serverPlayer.getCommandSenderWorld().dimension().location());
+                            return InteractionResult.CONSUME;
                         }
                     }
                 }
             }
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
 }

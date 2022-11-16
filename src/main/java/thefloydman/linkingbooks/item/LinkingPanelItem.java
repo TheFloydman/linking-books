@@ -19,13 +19,11 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.item;
 
-import net.minecraft.item.Item;
-
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item;
 
 public class LinkingPanelItem extends Item {
 
-    public LinkingPanelItem(Properties properties) {
+    public LinkingPanelItem(Item.Properties properties) {
         super(properties);
     }
 

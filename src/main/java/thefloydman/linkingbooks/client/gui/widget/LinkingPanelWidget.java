@@ -21,14 +21,15 @@ package thefloydman.linkingbooks.client.gui.widget;
 
 import java.awt.Color;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.api.capability.ILinkData;
@@ -41,13 +42,13 @@ import thefloydman.linkingbooks.util.ImageUtils;
 public class LinkingPanelWidget extends NestedWidget {
 
     public boolean holdingBook = false;
-    public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+    public ILinkData linkData = new LinkData();
     public boolean canLink = false;
     DynamicTexture linkingPanelImage = null;
     Minecraft client = Minecraft.getInstance();
 
-    public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, ITextComponent narration,
-            boolean holdingBook, ILinkData linkData, boolean canLink, CompoundNBT linkingPanelImageTag) {
+    public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, Component narration,
+            boolean holdingBook, ILinkData linkData, boolean canLink, CompoundTag linkingPanelImageTag) {
         super(x, y, width, height, narration);
         this.holdingBook = holdingBook;
         this.linkData = linkData;
@@ -65,7 +66,7 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (!this.visible) {
             return;
         }
@@ -73,14 +74,10 @@ public class LinkingPanelWidget extends NestedWidget {
         this.zFill(matrixStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
 
         if (this.canLink) {
-            /*
-             * if (Reference.isImmersivePortalsLoaded() &&
-             * ModConfig.COMMON.useImmersivePortalsForLinkingPanels.get() == true) {
-             * ImmersivePortalsIntegration.renderGuiPortal(this.linkData, this.frameBuffer,
-             * this.client, matrixStack, this.x, this.y, this.width, this.height); } else
-             */if (this.linkingPanelImage != null) {
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                this.linkingPanelImage.bind();
+            if (this.linkingPanelImage != null) {
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderTexture(0, this.linkingPanelImage.getId());
                 this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
                         this.linkingPanelImage.getPixels().getHeight());
             }

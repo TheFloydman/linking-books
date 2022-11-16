@@ -21,11 +21,11 @@ package thefloydman.linkingbooks.network;
 
 import java.util.function.Supplier;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 import thefloydman.linkingbooks.network.packets.IMessage;
 import thefloydman.linkingbooks.network.packets.LinkMessage;
 import thefloydman.linkingbooks.network.packets.SaveLinkingPanelImageMessage;
@@ -60,7 +60,7 @@ public class ModNetworkHandler {
         CHANNEL.sendToServer(msg);
     }
 
-    public static void sendToPlayer(IMessage msg, ServerPlayerEntity player) {
+    public static void sendToPlayer(IMessage msg, ServerPlayer player) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), msg);
     }
 

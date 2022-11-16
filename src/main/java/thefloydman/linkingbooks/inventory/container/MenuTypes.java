@@ -17,19 +17,22 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.tileentity;
+package thefloydman.linkingbooks.inventory.container;
 
-import java.util.HashSet;
-import java.util.Set;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.util.Reference.ContainerNames;
 
-import net.minecraft.entity.Entity;
+public class MenuTypes {
 
-public class LinkTranslatorTileEntity extends LinkingBookHolderTileEntity {
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS,
+            Reference.MOD_ID);
 
-    protected Set<Entity> immersivePortalsEntities = new HashSet<Entity>();
-
-    public LinkTranslatorTileEntity() {
-        super(ModTileEntityTypes.LINK_TRANSLATOR.get());
-    }
+    public static final RegistryObject<MenuType<LinkingBookContainer>> LINKING_BOOK = CONTAINERS
+            .register(ContainerNames.LINKING_BOOK, () -> IForgeMenuType.create(LinkingBookContainer::new));
 
 }

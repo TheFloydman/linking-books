@@ -19,9 +19,9 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.network.packets;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent.Context;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.util.LinkingUtils;
@@ -29,7 +29,7 @@ import thefloydman.linkingbooks.util.LinkingUtils;
 public class LinkMessage implements IMessage {
 
     public boolean holdingBook = false;
-    public ILinkData linkData = LinkData.LINK_DATA.getDefaultInstance();
+    public ILinkData linkData = new LinkData();
 
     public LinkMessage(boolean holdingBook, ILinkData linkData) {
         this.holdingBook = holdingBook;
@@ -37,18 +37,18 @@ public class LinkMessage implements IMessage {
     }
 
     public LinkMessage() {
-        this(false, LinkData.LINK_DATA.getDefaultInstance());
+        this(false, new LinkData());
     }
 
     @Override
-    public PacketBuffer toData(PacketBuffer buffer) {
+    public FriendlyByteBuf toData(FriendlyByteBuf buffer) {
         buffer.writeBoolean(this.holdingBook);
         this.linkData.write(buffer);
         return buffer;
     }
 
     @Override
-    public void fromData(PacketBuffer buffer) {
+    public void fromData(FriendlyByteBuf buffer) {
         this.holdingBook = buffer.readBoolean();
         this.linkData.read(buffer);
     }
@@ -56,7 +56,7 @@ public class LinkMessage implements IMessage {
     @Override
     public void handle(Context ctx) {
         ctx.enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.getSender();
+            ServerPlayer player = ctx.getSender();
             LinkingUtils.linkEntity(player, this.linkData, this.holdingBook);
             ctx.setPacketHandled(true);
         });

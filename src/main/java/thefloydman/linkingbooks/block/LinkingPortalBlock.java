@@ -19,31 +19,29 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.util.LinkingUtils;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
-
-import net.minecraft.block.AbstractBlock.Properties;
 
 /**
  * Much of this code is copied from
@@ -63,26 +61,26 @@ public class LinkingPortalBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AXIS);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public ItemStack getCloneItemStack(IBlockReader blockView, BlockPos blockPos, BlockState blockState) {
+    public ItemStack getCloneItemStack(BlockGetter blockView, BlockPos blockPos, BlockState blockState) {
         return ItemStack.EMPTY;
     }
 
     @Override
     public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2,
-            IWorld worldAccess, BlockPos blockPos, BlockPos blockPos2) {
+            LevelAccessor worldAccess, BlockPos blockPos, BlockPos blockPos2) {
         return !blockState2.is(this) ? Blocks.AIR.defaultBlockState()
                 : super.updateShape(blockState, direction, blockState2, worldAccess, blockPos, blockPos2);
     }
 
     @Override
-    public VoxelShape getShape(BlockState blockState, IBlockReader blockView, BlockPos blockPos,
-            ISelectionContext shapeContext) {
+    public VoxelShape getShape(BlockState blockState, BlockGetter blockView, BlockPos blockPos,
+            CollisionContext shapeContext) {
         switch (blockState.getValue(AXIS)) {
             case Z:
                 return Z_SHAPE;
@@ -99,13 +97,13 @@ public class LinkingPortalBlock extends Block {
      *
      */
     @Override
-    public void entityInside(BlockState blockState, World world, BlockPos blockPos, Entity entity) {
-        if (world instanceof ServerWorld && !entity.isPassenger() && !entity.isVehicle() && entity.canChangeDimensions()
-                && VoxelShapes.joinIsNotEmpty(VoxelShapes.create(
+    public void entityInside(BlockState blockState, Level world, BlockPos blockPos, Entity entity) {
+        if (world instanceof ServerLevel && !entity.isPassenger() && !entity.isVehicle() && entity.canChangeDimensions()
+                && Shapes.joinIsNotEmpty(Shapes.create(
                         entity.getBoundingBox().move((-blockPos.getX()), (-blockPos.getY()), (-blockPos.getZ()))),
-                        blockState.getShape(world, blockPos), IBooleanFunction.AND)) {
-            LinkingBooksSavedData savedData = ((ServerWorld) world).getDataStorage()
-                    .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
+                        blockState.getShape(world, blockPos), BooleanOp.AND)) {
+            LinkingBooksSavedData savedData = ((ServerLevel) world).getDataStorage()
+                    .computeIfAbsent(LinkingBooksSavedData::load, LinkingBooksSavedData::new, Reference.MOD_ID);
 
             LinkingUtils.linkEntity(entity, savedData.getLinkingPortalData(blockPos), false);
         }
@@ -113,10 +111,10 @@ public class LinkingPortalBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState blockState, World world, BlockPos pos, BlockState blockState2, boolean bl) {
+    public void onRemove(BlockState blockState, Level world, BlockPos pos, BlockState blockState2, boolean bl) {
         if (blockState.getBlock() != blockState2.getBlock() && !world.isClientSide()) {
-            LinkingBooksSavedData savedData = ((ServerWorld) world).getDataStorage()
-                    .computeIfAbsent(LinkingBooksSavedData::new, Reference.MOD_ID);
+            LinkingBooksSavedData savedData = ((ServerLevel) world).getDataStorage()
+                    .computeIfAbsent(LinkingBooksSavedData::load, LinkingBooksSavedData::new, Reference.MOD_ID);
             savedData.removeLinkingPortalData(pos);
         }
         super.onRemove(blockState, world, pos, blockState2, bl);

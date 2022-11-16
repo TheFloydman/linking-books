@@ -19,35 +19,35 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.event;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.DoubleBlockHalf;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.block.LinkTranslatorBlock;
 import thefloydman.linkingbooks.block.LinkingLecternBlock;
 import thefloydman.linkingbooks.block.MarkerSwitchBlock;
+import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
+import thefloydman.linkingbooks.blockentity.LinkingBookHolderBlockEntity;
+import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
 import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.capability.Capabilities;
 import thefloydman.linkingbooks.command.LinkCommand;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
-import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
-import thefloydman.linkingbooks.tileentity.LinkTranslatorTileEntity;
-import thefloydman.linkingbooks.tileentity.LinkingBookHolderTileEntity;
-import thefloydman.linkingbooks.tileentity.MarkerSwitchTileEntity;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.Reference;
 
@@ -67,13 +67,13 @@ public class ForgeEventHandler {
          */
         if (stack.getItem() instanceof WrittenLinkingBookItem) {
             event.setCanceled(true);
-            PlayerEntity player = event.getPlayer();
-            World world = event.getEntity().getCommandSenderWorld();
+            Player player = event.getPlayer();
+            Level world = event.getEntity().getCommandSenderWorld();
             LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
-            Vector3d lookVec = player.getLookAngle();
+            Vec3 lookVec = player.getLookAngle();
             entity.setPos(player.getX() + lookVec.x(), player.getY() + 1.75D + lookVec.y(),
                     player.getZ() + lookVec.z());
-            entity.yRot = player.yHeadRot;
+            entity.setYRot(player.yHeadRot);
             entity.push(lookVec.x / 4, lookVec.y / 4, lookVec.z / 4);
             world.addFreshEntity(entity);
         }
@@ -84,7 +84,6 @@ public class ForgeEventHandler {
      */
     @SubscribeEvent
     public static void attachItemCapabilities(AttachCapabilitiesEvent<ItemStack> event) {
-
     }
 
     /**
@@ -96,72 +95,70 @@ public class ForgeEventHandler {
     }
 
     /**
-     * Use to attach capabilities to tileentities not native to Linking Books.
+     * Use to attach capabilities to block entities not native to Linking Books.
      */
     @SubscribeEvent
-    public static void attachTileEntityCapabilities(AttachCapabilitiesEvent<TileEntity> event) {
+    public static void attachTileEntityCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
 
     }
 
     @SubscribeEvent
-    public static void serverStarting(FMLServerStartingEvent event) {
+    public static void serverStarting(ServerStartingEvent event) {
         // Register commands.
         LinkCommand.register(event.getServer().getCommands().getDispatcher());
     }
 
     @SubscribeEvent
     public static void rightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        World world = event.getWorld();
-        PlayerEntity player = event.getPlayer();
-        Hand hand = event.getHand();
-        if (world.isClientSide() || hand.equals(Hand.OFF_HAND) || !player.isShiftKeyDown()) {
+        Level world = event.getWorld();
+        Player player = event.getPlayer();
+        InteractionHand hand = event.getHand();
+        if (world.isClientSide() || hand.equals(InteractionHand.OFF_HAND) || !player.isShiftKeyDown()) {
             return;
         }
         BlockPos pos = event.getPos();
         if (world.getBlockState(pos).getBlock() instanceof LinkingLecternBlock
                 || world.getBlockState(pos).getBlock() instanceof LinkTranslatorBlock) {
-            TileEntity generic = world.getBlockEntity(pos);
-            if (!(generic instanceof LinkingBookHolderTileEntity)) {
+            BlockEntity generic = world.getBlockEntity(pos);
+            if (!(generic instanceof LinkingBookHolderBlockEntity)) {
                 return;
             }
-            LinkingBookHolderTileEntity tileEntity = (LinkingBookHolderTileEntity) generic;
+            LinkingBookHolderBlockEntity tileEntity = (LinkingBookHolderBlockEntity) generic;
             ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem() instanceof WrittenLinkingBookItem && !tileEntity.hasBook()) {
-                ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
+                ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(new LinkData());
                 tileEntity.setBook(stack);
                 player.inventoryMenu.broadcastChanges();
-                if (world.getBlockEntity(pos) instanceof LinkTranslatorTileEntity) {
-                    LinkTranslatorTileEntity linkTranslatorTileEntity = (LinkTranslatorTileEntity) tileEntity;
+                if (world.getBlockEntity(pos) instanceof LinkTranslatorBlockEntity) {
+                    LinkTranslatorBlockEntity linkTranslatorTileEntity = (LinkTranslatorBlockEntity) tileEntity;
                     LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, pos, linkData, linkTranslatorTileEntity);
                 }
             } else if (stack.isEmpty() && tileEntity.hasBook()) {
                 player.addItem(tileEntity.getBook());
                 player.inventoryMenu.broadcastChanges();
                 tileEntity.setBook(ItemStack.EMPTY);
-                if (world.getBlockEntity(pos) instanceof LinkTranslatorTileEntity) {
-                    LinkTranslatorTileEntity linkTranslatorBlockEntity = (LinkTranslatorTileEntity) tileEntity;
-                    if (Reference.isImmersivePortalsLoaded()) {
-                        ImmersivePortalsIntegration.deleteLinkingPortals(linkTranslatorBlockEntity);
-                    }
+                if (world.getBlockEntity(pos) instanceof LinkTranslatorBlockEntity) {
+                    LinkTranslatorBlockEntity linkTranslatorBlockEntity = (LinkTranslatorBlockEntity) tileEntity;
                     LinkingPortalArea.tryEraseLinkingPortalOnEveryAxis(world, pos);
                 }
             }
         } else if (world.getBlockState(pos).getBlock() instanceof MarkerSwitchBlock) {
             BlockState state = world.getBlockState(pos);
             if (state.getValue(MarkerSwitchBlock.OPEN) == true) {
-                TileEntity generic = world.getBlockEntity(pos);
-                if (generic instanceof MarkerSwitchTileEntity) {
-                    MarkerSwitchTileEntity tileEntity = (MarkerSwitchTileEntity) generic;
-                    MarkerSwitchTileEntity twinEntity = (MarkerSwitchTileEntity) (state
-                            .getValue(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER ? world.getBlockEntity(pos.above())
+                BlockEntity generic = world.getBlockEntity(pos);
+                if (generic instanceof MarkerSwitchBlockEntity) {
+                    MarkerSwitchBlockEntity tileEntity = (MarkerSwitchBlockEntity) generic;
+                    MarkerSwitchBlockEntity twinEntity = (MarkerSwitchBlockEntity) (state
+                            .getValue(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER
+                                    ? world.getBlockEntity(pos.above())
                                     : world.getBlockEntity(pos.below()));
                     ItemStack stack = player.getItemInHand(hand);
-                    if (tileEntity.isEmpty()) {
+                    if (!tileEntity.hasItem()) {
                         tileEntity.setItem(stack);
                         twinEntity.setItem(stack);
                         stack.setCount(0);
                         player.inventoryMenu.broadcastChanges();
-                    } else if (tileEntity.hasItem()) {
+                    } else {
                         player.addItem(tileEntity.getItem());
                         player.inventoryMenu.broadcastChanges();
                         tileEntity.setItem(ItemStack.EMPTY);
@@ -173,7 +170,7 @@ public class ForgeEventHandler {
     }
 
     @SubscribeEvent
-    public static void onServerStarted(FMLServerStartedEvent event) {
+    public static void onServerStarted(ServerStartedEvent event) {
         Reference.server = event.getServer();
     }
 

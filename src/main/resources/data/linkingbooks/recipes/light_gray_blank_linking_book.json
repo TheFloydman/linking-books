@@ -1,7 +1,7 @@
 {
-    "type": "linkingbooks:blank_linking_book",
-    "ingredients": [
-        {
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
             "item": "linkingbooks:linking_panel"
         },
         {
@@ -10,11 +10,8 @@
         {
             "tag": "forge:dyes/light_gray"
         }
-    ],
-    "color":
-    {
-        "red": 0.6156863,
-        "green": 0.6156863,
-        "blue": 0.5921569
-    }
+  ],
+  "result": {
+    "item": "linkingbooks:light_gray_blank_linking_book"
+  }
 }

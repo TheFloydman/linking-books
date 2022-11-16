@@ -22,41 +22,60 @@ package thefloydman.linkingbooks.client.renderer.entity.model;
 import java.util.Arrays;
 import java.util.List;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 
 public class LinkingBookCoverModel extends EntityModel<LinkingBookEntity> {
 
-    private final ModelRenderer coverRight = new ModelRenderer(64, 32, 0, 0).addBox(-6.0F, -5.0F, -0.005F, 6.0F, 10.0F,
-            0.005F);
-    private final ModelRenderer coverLeft = new ModelRenderer(64, 32, 16, 0).addBox(0.0F, -5.0F, -0.005F, 6.0F, 10.0F,
-            0.005F);
-    private final ModelRenderer bookSpine = new ModelRenderer(64, 32, 12, 0).addBox(-1.0F, -5.0F, 0.0F, 2.0F, 10.0F,
-            0.005F);
-    private final List<ModelRenderer> allModels = Arrays.asList(this.coverRight, this.coverLeft, this.bookSpine);
+    private final ModelPart coverRight;
+    private final ModelPart coverLeft;
+    private final ModelPart bookSpine;
+    private final List<ModelPart> allModels;
 
-    public LinkingBookCoverModel() {
+    public LinkingBookCoverModel(ModelPart model) {
         super(RenderType::entitySolid);
-        this.coverRight.setPos(0.0F, 0.0F, -1.0F);
-        this.coverLeft.setPos(0.0F, 0.0F, 1.0F);
-        this.bookSpine.yRot = ((float) Math.PI / 2F);
+        this.coverRight = model.getChild("right_cover");
+        this.coverLeft = model.getChild("left_cover");
+        this.bookSpine = model.getChild("spine");
+        this.allModels = Arrays.asList(this.coverRight, this.coverLeft, this.bookSpine);
     }
 
-    public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn,
+    @Override
+    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
             float red, float green, float blue, float alpha) {
         this.allModels.forEach((model) -> {
             model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         });
     }
 
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+        partdefinition.addOrReplaceChild("right_cover",
+                CubeListBuilder.create().texOffs(0, 0).addBox(-6.0F, -5.0F, -0.005F, 6.0F, 10.0F, 0.005F),
+                PartPose.offset(0.0F, 0.0F, -1.0F));
+        partdefinition.addOrReplaceChild("left_cover",
+                CubeListBuilder.create().texOffs(16, 0).addBox(0.0F, -5.0F, -0.005F, 6.0F, 10.0F, 0.005F),
+                PartPose.offset(0.0F, 0.0F, 1.0F));
+        partdefinition.addOrReplaceChild("spine",
+                CubeListBuilder.create().texOffs(12, 0).addBox(-1.0F, -5.0F, 0.0F, 2.0F, 10.0F, 0.005F),
+                PartPose.rotation(0.0F, (float) Math.PI / 2.0F, 0.0F));
+        return LayerDefinition.create(meshdefinition, 64, 32);
+    }
+
     public void setBookState(float openAmount) {
-        float radians = MathHelper.clamp((float) Math.PI / 2.0F * openAmount, 0.0F, (float) Math.PI / 2.0F);
+        float radians = Mth.clamp((float) Math.PI / 2.0F * openAmount, 0.0F, (float) Math.PI / 2.0F);
         this.coverRight.yRot = (float) Math.PI + radians;
         this.coverLeft.yRot = -radians;
     }

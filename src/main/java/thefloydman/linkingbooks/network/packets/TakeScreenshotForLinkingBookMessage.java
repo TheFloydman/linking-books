@@ -21,15 +21,15 @@ package thefloydman.linkingbooks.network.packets;
 
 import java.util.UUID;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Util;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent.Context;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.util.ImageUtils;
 
@@ -46,13 +46,13 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
     }
 
     @Override
-    public PacketBuffer toData(PacketBuffer buffer) {
+    public FriendlyByteBuf toData(FriendlyByteBuf buffer) {
         buffer.writeUUID(this.uuid);
         return buffer;
     }
 
     @Override
-    public void fromData(PacketBuffer buffer) {
+    public void fromData(FriendlyByteBuf buffer) {
         this.uuid = buffer.readUUID();
     }
 
@@ -75,7 +75,7 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
     private void getScreenshot() {
 
         Minecraft mc = Minecraft.getInstance();
-        Framebuffer buffer = mc.getMainRenderTarget();
+        RenderTarget buffer = mc.getMainRenderTarget();
         float largeWidth = buffer.viewWidth;
         float largeHeight = buffer.viewHeight;
         float smallWidth = 64.0F;
@@ -100,7 +100,7 @@ public class TakeScreenshotForLinkingBookMessage implements IMessage {
         mc.getMainRenderTarget().bindWrite(true);
         boolean hide = mc.options.hideGui;
         mc.options.hideGui = true;
-        mc.gameRenderer.renderLevel(mc.getFrameTime(), Util.getNanos(), new MatrixStack());
+        mc.gameRenderer.renderLevel(mc.getFrameTime(), Util.getNanos(), new PoseStack());
         mc.options.hideGui = hide;
         buffer.bindRead();
         fullImage.downloadTexture(0, true);
