@@ -17,25 +17,28 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.tileentity;
+package thefloydman.linkingbooks.blockentity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 
-public class LinkingBookHolderTileEntity extends TileEntity {
+public class LinkingBookHolderBlockEntity extends BlockEntity {
 
     private ItemStack book = ItemStack.EMPTY;
 
-    public LinkingBookHolderTileEntity(TileEntityType<? extends LinkingBookHolderTileEntity> tileEntityType) {
-        super(tileEntityType);
+    public LinkingBookHolderBlockEntity(BlockEntityType<? extends LinkingBookHolderBlockEntity> type, BlockPos pos,
+            BlockState state) {
+        super(type, pos, state);
     }
 
     /**
@@ -62,42 +65,39 @@ public class LinkingBookHolderTileEntity extends TileEntity {
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
-        if (nbt.contains("book", NBT.TAG_COMPOUND)) {
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+        if (nbt.contains("book", Tag.TAG_COMPOUND)) {
             this.book = ItemStack.of(nbt.getCompound("book"));
         }
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
-        super.save(nbt);
-        nbt.put("book", this.book.save(new CompoundNBT()));
-        return nbt;
+    protected void saveAdditional(CompoundTag nbt) {
+        super.saveAdditional(nbt);
+        nbt.put("book", this.book.save(new CompoundTag()));
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        CompoundNBT nbt = new CompoundNBT();
-        this.save(nbt);
-        return new SUpdateTileEntityPacket(this.getBlockPos(), 462, nbt);
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        this.saveWithFullMetadata();
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT nbt = super.getUpdateTag();
-        return this.save(nbt);
+    public CompoundTag getUpdateTag() {
+        return this.saveWithFullMetadata();
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT nbt) {
-        super.handleUpdateTag(state, nbt);
-        this.load(state, nbt);
+    public void handleUpdateTag(CompoundTag nbt) {
+        super.handleUpdateTag(nbt);
+        this.load(nbt);
     }
 
     @Override
-    public void onDataPacket(NetworkManager manager, SUpdateTileEntityPacket packet) {
-        this.load(Blocks.AIR.defaultBlockState(), packet.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
+        this.load(packet.getTag());
     }
 
 }

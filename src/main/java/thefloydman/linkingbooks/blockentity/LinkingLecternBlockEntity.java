@@ -17,22 +17,15 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.inventory.container;
+package thefloydman.linkingbooks.blockentity;
 
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraftforge.common.extensions.IForgeContainerType;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.ContainerNames;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class ModContainerTypes {
+public class LinkingLecternBlockEntity extends LinkingBookHolderBlockEntity {
 
-    public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister
-            .create(ForgeRegistries.CONTAINERS, Reference.MOD_ID);
-
-    public static final RegistryObject<ContainerType<LinkingBookContainer>> LINKING_BOOK = CONTAINERS
-            .register(ContainerNames.LINKING_BOOK, () -> IForgeContainerType.create(LinkingBookContainer::new));
+    public LinkingLecternBlockEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.LINKING_LECTERN.get(), pos, state);
+    }
 
 }

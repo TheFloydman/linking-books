@@ -23,186 +23,153 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.util.Reference;
 
-public class LinkData {
+public class LinkData implements ILinkData, INBTSerializable<CompoundTag> {
 
-    @CapabilityInject(ILinkData.class)
-    public static final Capability<ILinkData> LINK_DATA = null;
+    private ResourceLocation dimension = new ResourceLocation("minecraft:overworld");
+    private BlockPos position = Reference.server == null ? BlockPos.ZERO
+            : Reference.server.overworld().getSharedSpawnPos();
+    private float rotation = 0.0F;
+    private UUID uuid = UUID.randomUUID();
+    private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
 
-    public static void register() {
-        CapabilityManager.INSTANCE.register(ILinkData.class, new Storage(), Default::new);
+    @Override
+    public void setDimension(ResourceLocation dimension) {
+        this.dimension = dimension;
     }
 
-    public static class Default implements ILinkData {
-
-        private ResourceLocation dimension = new ResourceLocation("minecraft:overworld");
-        private BlockPos position = Reference.server == null ? BlockPos.ZERO
-                : Reference.server.overworld().getSharedSpawnPos();
-        private float rotation = 0.0F;
-        private UUID uuid = UUID.randomUUID();
-        private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
-
-        @Override
-        public void setDimension(ResourceLocation dimension) {
-            this.dimension = dimension;
-        }
-
-        @Override
-        public ResourceLocation getDimension() {
-            return this.dimension;
-        }
-
-        @Override
-        public void setPosition(BlockPos position) {
-            this.position = position;
-        }
-
-        @Override
-        public BlockPos getPosition() {
-            return this.position;
-        }
-
-        @Override
-        public void setRotation(float rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public float getRotation() {
-            return this.rotation;
-        }
-
-        @Override
-        public void setUUID(UUID uuid) {
-            this.uuid = uuid;
-        }
-
-        @Override
-        public UUID getUUID() {
-            return this.uuid;
-        }
-
-        @Override
-        public void setLinkEffects(Set<LinkEffect> effects) {
-            this.linkEffects = effects;
-        }
-
-        @Override
-        public Set<LinkEffect> getLinkEffects() {
-            return this.linkEffects;
-        }
-
-        @Override
-        public boolean addLinkEffect(LinkEffect effect) {
-            return this.getLinkEffects().add(effect);
-        }
-
-        @Override
-        public boolean removeLinkEffect(LinkEffect effect) {
-            return this.getLinkEffects().remove(effect);
-        }
-
-        @Override
-        public PacketBuffer write(PacketBuffer buffer) {
-            CompoundNBT compound = (CompoundNBT) LINK_DATA.getStorage().writeNBT(LINK_DATA, this, null);
-            buffer.writeNbt(compound);
-            return buffer;
-        }
-
-        @Override
-        public void read(PacketBuffer buffer) {
-            LINK_DATA.getStorage().readNBT(LINK_DATA, this, null, buffer.readNbt());
-        }
-
+    @Override
+    public ResourceLocation getDimension() {
+        return this.dimension;
     }
 
-    public static class Storage implements Capability.IStorage<ILinkData> {
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<ILinkData> capability, ILinkData instance, Direction side) {
-            CompoundNBT nbt = new CompoundNBT();
-            nbt.putString("dimension",
-                    instance.getDimension() == null ? "minecraft:overworld" : instance.getDimension().toString());
-            nbt.put("position", NBTUtil
-                    .writeBlockPos(instance.getPosition() == null ? new BlockPos(0, 0, 0) : instance.getPosition()));
-            nbt.putFloat("rotation", instance.getRotation());
-            ListNBT effectsList = new ListNBT();
-            for (LinkEffect effect : instance.getLinkEffects()) {
-                effectsList.add(StringNBT.valueOf(effect.getRegistryName().toString()));
-            }
-            nbt.putUUID("uuid", instance.getUUID());
-            nbt.put("effects", effectsList);
-            return nbt;
-        }
+    @Override
+    public void setPosition(BlockPos position) {
+        this.position = position;
+    }
 
-        @Override
-        public void readNBT(Capability<ILinkData> capability, ILinkData instance, Direction side, INBT nbt) {
-            if (nbt instanceof CompoundNBT) {
-                CompoundNBT compound = (CompoundNBT) nbt;
-                if (compound.contains("dimension", NBT.TAG_STRING)) {
-                    instance.setDimension(new ResourceLocation(compound.getString("dimension")));
-                }
-                if (compound.contains("position", NBT.TAG_COMPOUND)) {
-                    instance.setPosition(NBTUtil.readBlockPos(compound.getCompound("position")));
-                }
-                if (compound.contains("rotation", NBT.TAG_FLOAT)) {
-                    instance.setRotation(compound.getFloat("rotation"));
-                }
-                if (compound.contains("uuid", NBT.TAG_INT_ARRAY)) {
-                    instance.setUUID(compound.getUUID("uuid"));
-                }
-                if (compound.contains("effects", NBT.TAG_LIST)) {
-                    for (INBT item : compound.getList("effects", NBT.TAG_STRING)) {
-                        instance.addLinkEffect(LinkEffect
-                                .get(new ResourceLocation(((StringNBT) item).getAsString())));
-                    }
-                }
+    @Override
+    public BlockPos getPosition() {
+        return this.position;
+    }
+
+    @Override
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+    }
+
+    @Override
+    public float getRotation() {
+        return this.rotation;
+    }
+
+    @Override
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
+    @Override
+    public void setLinkEffects(Set<LinkEffect> effects) {
+        this.linkEffects = effects;
+    }
+
+    @Override
+    public Set<LinkEffect> getLinkEffects() {
+        return this.linkEffects;
+    }
+
+    @Override
+    public boolean addLinkEffect(LinkEffect effect) {
+        return this.getLinkEffects().add(effect);
+    }
+
+    @Override
+    public boolean removeLinkEffect(LinkEffect effect) {
+        return this.getLinkEffects().remove(effect);
+    }
+
+    @Override
+    public FriendlyByteBuf write(FriendlyByteBuf buffer) {
+        CompoundTag compound = this.serializeNBT();
+        buffer.writeNbt(compound);
+        return buffer;
+    }
+
+    @Override
+    public void read(FriendlyByteBuf buffer) {
+        this.deserializeNBT(buffer.readNbt());
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putString("dimension",
+                this.getDimension() == null ? "minecraft:overworld" : this.getDimension().toString());
+        nbt.put("position",
+                NbtUtils.writeBlockPos(this.getPosition() == null ? new BlockPos(0, 0, 0) : this.getPosition()));
+        nbt.putFloat("rotation", this.getRotation());
+        ListTag effectsList = new ListTag();
+        for (LinkEffect effect : this.getLinkEffects()) {
+            effectsList.add(StringTag.valueOf(effect.getRegistryName().toString()));
+        }
+        nbt.putUUID("uuid", this.getUUID());
+        nbt.put("effects", effectsList);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        if (nbt.contains("dimension", Tag.TAG_STRING)) {
+            this.setDimension(new ResourceLocation(nbt.getString("dimension")));
+        }
+        if (nbt.contains("position", Tag.TAG_COMPOUND)) {
+            this.setPosition(NbtUtils.readBlockPos(nbt.getCompound("position")));
+        }
+        if (nbt.contains("rotation", Tag.TAG_FLOAT)) {
+            this.setRotation(nbt.getFloat("rotation"));
+        }
+        if (nbt.contains("uuid", Tag.TAG_INT_ARRAY)) {
+            this.setUUID(nbt.getUUID("uuid"));
+        }
+        if (nbt.contains("effects", Tag.TAG_LIST)) {
+            for (Tag item : nbt.getList("effects", Tag.TAG_STRING)) {
+                this.addLinkEffect(LinkEffect.get(new ResourceLocation(((StringTag) item).getAsString())));
             }
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<INBT> {
-
-        private LazyOptional<ILinkData> instance = LazyOptional.of(() -> LINK_DATA.getDefaultInstance());
-
-        @Override
-        public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-            if (cap.equals(LINK_DATA) && LINK_DATA != null) {
-                return instance.cast();
-            }
-            return LazyOptional.empty();
+    @Override
+    public CompoundTag writeToShareTag(CompoundTag nbt) {
+        CompoundTag tag = new CompoundTag();
+        if (nbt != null) {
+            tag = nbt.copy();
         }
+        tag.put("link_data", this.serializeNBT());
+        return tag;
+    }
 
-        @Override
-        public INBT serializeNBT() {
-            return LINK_DATA.getStorage().writeNBT(LINK_DATA, instance.orElse(LINK_DATA.getDefaultInstance()), null);
+    @Override
+    public void readFromShareTag(CompoundTag nbt) {
+        if (nbt != null && nbt.contains("link_data", Tag.TAG_COMPOUND)) {
+            this.deserializeNBT(nbt.getCompound("link_data"));
         }
-
-        @Override
-        public void deserializeNBT(INBT nbt) {
-            LINK_DATA.getStorage().readNBT(LINK_DATA, instance.orElse(LINK_DATA.getDefaultInstance()), null, nbt);
-        }
-
     }
 
 }

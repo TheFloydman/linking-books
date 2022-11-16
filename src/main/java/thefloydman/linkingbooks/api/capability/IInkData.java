@@ -22,7 +22,7 @@ package thefloydman.linkingbooks.api.capability;
 import java.awt.Color;
 import java.util.Set;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public interface IInkData {
 

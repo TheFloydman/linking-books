@@ -19,57 +19,49 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.capability;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import thefloydman.linkingbooks.api.capability.IColorCapability;
-import thefloydman.linkingbooks.api.capability.ILinkData;
 
-public class LinkingBookCapabilityProvider implements ICapabilitySerializable<INBT> {
+public class LinkingBookCapabilityProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
-    private LazyOptional<IColorCapability> bookColor = LazyOptional
-            .of(() -> ColorCapability.COLOR.getDefaultInstance());
-    private LazyOptional<ILinkData> linkData = LazyOptional.of(() -> LinkData.LINK_DATA.getDefaultInstance());
+    private LazyOptional<LinkData> linkData = LazyOptional.of(LinkData::new);
 
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        if (cap.equals(LinkData.LINK_DATA) && LinkData.LINK_DATA != null) {
+        if (cap.equals(Capabilities.LINK_DATA) && Capabilities.LINK_DATA != null) {
             return this.linkData.cast();
-        } else if (cap.equals(ColorCapability.COLOR) && ColorCapability.COLOR != null) {
-            return this.bookColor.cast();
         }
         return LazyOptional.empty();
     }
 
     @Override
-    public INBT serializeNBT() {
-        INBT colorNBT = ColorCapability.COLOR.getStorage().writeNBT(ColorCapability.COLOR,
-                this.bookColor.orElse(ColorCapability.COLOR.getDefaultInstance()), null);
-        INBT linkNBT = LinkData.LINK_DATA.getStorage().writeNBT(LinkData.LINK_DATA,
-                this.linkData.orElse(LinkData.LINK_DATA.getDefaultInstance()), null);
-        CompoundNBT compound = new CompoundNBT();
-        compound.put("color", colorNBT);
-        compound.put("link_data", linkNBT);
+    public CompoundTag serializeNBT() {
+        CompoundTag compound = new CompoundTag();
+        LinkData linkCap = this.linkData.orElse(null);
+        if (linkCap != null) {
+            compound.put("link_data", linkCap.serializeNBT());
+        }
         return compound;
     }
 
     @Override
-    public void deserializeNBT(INBT nbt) {
-        if (nbt.getType().equals(CompoundNBT.TYPE)) {
-            CompoundNBT compound = (CompoundNBT) nbt;
-            if (compound.contains("color", NBT.TAG_INT)) {
-                ColorCapability.COLOR.getStorage().readNBT(ColorCapability.COLOR,
-                        this.bookColor.orElse(ColorCapability.COLOR.getDefaultInstance()), null, compound.get("color"));
-            }
-            if (compound.contains("link_data", NBT.TAG_COMPOUND)) {
-                LinkData.LINK_DATA.getStorage().readNBT(LinkData.LINK_DATA,
-                        this.linkData.orElse(LinkData.LINK_DATA.getDefaultInstance()), null, compound.get("link_data"));
-            }
+    public void deserializeNBT(CompoundTag nbt) {
+        if (nbt.contains("link_data", Tag.TAG_COMPOUND)) {
+            linkData = LazyOptional.of(() -> getLinkData(nbt));
         }
+    }
+
+    private LinkData getLinkData(CompoundTag nbt) {
+        LinkData cap = new LinkData();
+        if (nbt.contains("link_data", Tag.TAG_COMPOUND)) {
+            cap.deserializeNBT(nbt.getCompound("link_data"));
+        }
+        return cap;
     }
 
 }

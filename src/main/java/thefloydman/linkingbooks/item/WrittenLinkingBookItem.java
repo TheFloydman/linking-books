@@ -23,26 +23,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import thefloydman.linkingbooks.api.capability.IColorCapability;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.capability.ColorCapability;
-import thefloydman.linkingbooks.capability.LinkData;
+import thefloydman.linkingbooks.capability.Capabilities;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.util.LinkingUtils;
-
-import net.minecraft.item.Item.Properties;
 
 public class WrittenLinkingBookItem extends LinkingBookItem {
 
@@ -51,24 +47,23 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack heldStack = player.getItemInHand(hand);
         if (!world.isClientSide() && !player.isShiftKeyDown()) {
-            ILinkData linkData = heldStack.getCapability(LinkData.LINK_DATA).orElse(null);
-            IColorCapability color = heldStack.getCapability(ColorCapability.COLOR).orElse(null);
-            if (linkData != null && color != null) {
-                LinkingUtils.openLinkingBookGui((ServerPlayerEntity) player, true, color.getColor(), linkData,
-                        world.dimension().location());
+            ILinkData linkData = heldStack.getCapability(Capabilities.LINK_DATA).orElse(null);
+            if (linkData != null) {
+                LinkingUtils.openLinkingBookGui((ServerPlayer) player, true, LinkingBookItem.getColor(heldStack, 0),
+                        linkData, world.dimension().location());
             }
         }
-        return ActionResult.pass(heldStack);
+        return InteractionResultHolder.pass(heldStack);
     }
 
     @Override
-    public Entity createEntity(World world, Entity itemEntity, ItemStack stack) {
+    public Entity createEntity(Level world, Entity itemEntity, ItemStack stack) {
         LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
         entity.setPos(itemEntity.getX(), itemEntity.getY(), itemEntity.getZ());
-        entity.yRot = itemEntity.yRot;
+        entity.setYRot(itemEntity.getYRot());
         entity.setDeltaMovement(itemEntity.getDeltaMovement());
         return entity;
     }
@@ -79,19 +74,19 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
-        ILinkData linkData = stack.getCapability(LinkData.LINK_DATA).orElse(null);
+        ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
         if (linkData != null) {
-            tooltip.add(new StringTextComponent("ï¿½eAge: ï¿½9ï¿½o" + linkData.getDimension().toString()));
-            tooltip.add(new StringTextComponent("ï¿½ePosition: ï¿½9ï¿½o(" + linkData.getPosition().getX() + ", "
+            tooltip.add(new TextComponent("§eAge: §9§o" + linkData.getDimension().toString()));
+            tooltip.add(new TextComponent("§ePosition: §9§o(" + linkData.getPosition().getX() + ", "
                     + linkData.getPosition().getY() + ", " + linkData.getPosition().getZ() + ")"));
             Set<LinkEffect> linkEffects = new HashSet<LinkEffect>(linkData.getLinkEffects());
             if (!linkEffects.isEmpty()) {
-                tooltip.add(new StringTextComponent("ï¿½eLink Effects:"));
+                tooltip.add(new TextComponent("§eLink Effects:"));
                 for (LinkEffect effect : linkEffects) {
-                    tooltip.add(new StringTextComponent("    ï¿½9ï¿½o"
-                            + new TranslationTextComponent("linkEffect." + effect.getRegistryName().getNamespace() + "."
+                    tooltip.add(new TextComponent("    §9§o"
+                            + new TranslatableComponent("linkEffect." + effect.getRegistryName().getNamespace() + "."
                                     + effect.getRegistryName().getPath()).getString()));
                 }
             }

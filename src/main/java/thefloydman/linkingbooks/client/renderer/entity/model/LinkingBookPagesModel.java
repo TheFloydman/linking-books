@@ -22,28 +22,45 @@ package thefloydman.linkingbooks.client.renderer.entity.model;
 import java.util.Arrays;
 import java.util.List;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 
 public class LinkingBookPagesModel extends EntityModel<LinkingBookEntity> {
 
-    private final ModelRenderer pagesRight = new ModelRenderer(64, 32, 0, 10).addBox(0.0F, -4.0F, -0.99F, 5.0F, 8.0F,
-            1.0F);
-    private final ModelRenderer pagesLeft = new ModelRenderer(64, 32, 12, 10).addBox(0.0F, -4.0F, -0.01F, 5.0F, 8.0F,
-            1.0F);
-    private final List<ModelRenderer> allModels = Arrays.asList(this.pagesRight, this.pagesLeft);
+    private final ModelPart pagesRight;
+    private final ModelPart pagesLeft;
+    private final List<ModelPart> allModels;
 
-    public LinkingBookPagesModel() {
+    public LinkingBookPagesModel(ModelPart model) {
         super(RenderType::entitySolid);
+        this.pagesRight = model.getChild("right_pages");
+        this.pagesLeft = model.getChild("left_pages");
+        this.allModels = Arrays.asList(this.pagesRight, this.pagesLeft);
     }
 
-    public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn,
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+        partdefinition.addOrReplaceChild("right_pages",
+                CubeListBuilder.create().texOffs(0, 10).addBox(0.0F, -4.0F, -0.99F, 5.0F, 8.0F, 1.0F), PartPose.ZERO);
+        partdefinition.addOrReplaceChild("left_pages",
+                CubeListBuilder.create().texOffs(12, 10).addBox(0.0F, -4.0F, -0.01F, 5.0F, 8.0F, 1.0F), PartPose.ZERO);
+        return LayerDefinition.create(meshdefinition, 64, 32);
+    }
+
+    @Override
+    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
             float red, float green, float blue, float alpha) {
         this.allModels.forEach((model) -> {
             model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
@@ -51,11 +68,11 @@ public class LinkingBookPagesModel extends EntityModel<LinkingBookEntity> {
     }
 
     public void setBookState(float openAmount) {
-        float radians = MathHelper.clamp((float) Math.PI / 2.0F * openAmount, 0.0F, (float) Math.PI / 2.0F);
+        float radians = Mth.clamp((float) Math.PI / 2.0F * openAmount, 0.0F, (float) Math.PI / 2.0F);
         this.pagesRight.yRot = radians;
         this.pagesLeft.yRot = -radians;
-        this.pagesRight.x = MathHelper.sin(radians);
-        this.pagesLeft.x = MathHelper.sin(radians);
+        this.pagesRight.x = Mth.sin(radians);
+        this.pagesLeft.x = Mth.sin(radians);
     }
 
     @Override

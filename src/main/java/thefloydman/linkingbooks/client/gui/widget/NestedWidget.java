@@ -22,42 +22,43 @@ package thefloydman.linkingbooks.client.gui.widget;
 import java.nio.FloatBuffer;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Matrix4f;
 
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldVertexBufferUploader;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 
-public abstract class NestedWidget extends Widget {
+public abstract class NestedWidget extends AbstractWidget {
 
     public float zLevel = 0.0F;
     protected final List<NestedWidget> children = Lists.newArrayList();
-    protected final List<IGuiEventListener> listeners = Lists.newArrayList();
+    protected final List<GuiEventListener> listeners = Lists.newArrayList();
 
-    public NestedWidget(int x, int y, int width, int height, ITextComponent narration) {
+    public NestedWidget(int x, int y, int width, int height, Component narration) {
         super(x, y, width, height, narration);
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }
 
-    public void renderChildren(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderChildren(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         for (NestedWidget widget : this.children) {
             widget.render(matrixStack, mouseX, mouseY, partialTicks);
         }
@@ -86,7 +87,7 @@ public abstract class NestedWidget extends Widget {
         return widget;
     }
 
-    public void addListener(IGuiEventListener listener) {
+    public void addListener(GuiEventListener listener) {
         this.listeners.add(listener);
     }
 
@@ -96,7 +97,7 @@ public abstract class NestedWidget extends Widget {
     /**
      * Z-sensitive fill method.
      */
-    public void zFill(final MatrixStack matrixStack, int xStart, int yStart, int xEnd, int yEnd, final int color) {
+    public void zFill(final PoseStack matrixStack, int xStart, int yStart, int xEnd, int yEnd, final int color) {
 
         if (xStart < xEnd) {
             int endUpdated = xStart;
@@ -115,23 +116,24 @@ public abstract class NestedWidget extends Widget {
         final float blue = (color & 0xFF) / 255.0f;
         final float alpha = (color >> 24 & 0xFF) / 255.0f;
 
-        final BufferBuilder bufferBuilder = Tessellator.getInstance().getBuilder();
+        final BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         Matrix4f matrix = matrixStack.last().pose();
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         bufferBuilder.vertex(matrix, xStart, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
         bufferBuilder.vertex(matrix, xEnd, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
         bufferBuilder.vertex(matrix, xEnd, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
         bufferBuilder.vertex(matrix, xStart, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
         bufferBuilder.end();
-        WorldVertexBufferUploader.end(bufferBuilder);
+        BufferUploader.end(bufferBuilder);
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
 
-    public void point(final MatrixStack matrixStack, int x, int y, final int color) {
+    public void point(final PoseStack matrixStack, int x, int y, final int color) {
         this.zFill(matrixStack, x, y, x + 1, y + 1, color);
     }
 
@@ -139,11 +141,15 @@ public abstract class NestedWidget extends Widget {
      * Returns a positive difference if the zLevel needs to be raised and a negative
      * difference if it should be lowered.
      */
-    public static float zDifference(MatrixStack matrixStack, float zLevel) {
+    public static float zDifference(PoseStack matrixStack, float zLevel) {
         FloatBuffer floatBuffer = FloatBuffer.allocate(16);
         matrixStack.last().pose().store(floatBuffer);
         float currentZ = floatBuffer.get(10);
-        return zLevel - currentZ < 0 ? zLevel - MathHelper.abs(currentZ) : zLevel + MathHelper.abs(currentZ);
+        return zLevel - currentZ < 0 ? zLevel - Mth.abs(currentZ) : zLevel + Mth.abs(currentZ);
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput foo) {
     }
 
 }

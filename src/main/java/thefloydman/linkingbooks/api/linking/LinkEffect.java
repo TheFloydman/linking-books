@@ -22,15 +22,15 @@ package thefloydman.linkingbooks.api.linking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 
 public abstract class LinkEffect extends ForgeRegistryEntry<LinkEffect> {
 
+    public static IForgeRegistry<LinkEffect> registry;
     public static final Logger LOGGER = LogManager.getLogger();
 
     /**
@@ -80,7 +80,6 @@ public abstract class LinkEffect extends ForgeRegistryEntry<LinkEffect> {
      * Convenience method that retrieves a LinkEffect from the appropriate registry.
      */
     public static LinkEffect get(ResourceLocation resource) {
-        IForgeRegistry<LinkEffect> registry = GameRegistry.findRegistry(LinkEffect.class);
         if (registry == null) {
             LOGGER.info("Cannot find LinkEffect registry. Returning null LinkEffect.");
             return null;

@@ -19,41 +19,41 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.pathfinding.PathType;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoubleBlockHalf;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import thefloydman.linkingbooks.tileentity.MarkerSwitchTileEntity;
-import thefloydman.linkingbooks.tileentity.ModTileEntityTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
+import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
-public class MarkerSwitchBlock extends HorizontalBlock {
+public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
@@ -64,18 +64,18 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     static {
         VoxelShape bottom = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
         VoxelShape top = Block.box(2.0D, 1.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-        SHAPE_BOTTOM = VoxelShapes.or(bottom, top);
+        SHAPE_BOTTOM = Shapes.or(bottom, top);
         SHAPE_TOP = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
     }
 
     protected MarkerSwitchBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
-                .setValue(POWERED, false).setValue(HALF, DoubleBlockHalf.LOWER).setValue(OPEN, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false)
+                .setValue(HALF, DoubleBlockHalf.LOWER).setValue(OPEN, false));
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return SHAPE_BOTTOM;
         }
@@ -83,7 +83,7 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public VoxelShape getInteractionShape(BlockState state, IBlockReader world, BlockPos pos) {
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter world, BlockPos pos) {
         if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return SHAPE_BOTTOM;
         }
@@ -91,7 +91,7 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return SHAPE_BOTTOM;
         }
@@ -99,7 +99,7 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, POWERED, HALF, OPEN);
     }
 
@@ -109,39 +109,38 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+    public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
         return false;
     }
 
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player,
-            Hand handIn, BlockRayTraceResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn,
+            BlockHitResult hit) {
         if (!world.isClientSide() && !player.isShiftKeyDown()) {
             state = state.cycle(POWERED);
             world.setBlock(pos, state, 10);
             world.updateNeighborsAt(pos, this);
             world.updateNeighborsAt(pos.relative(state.getValue(FACING).getOpposite()), this);
-            world.updateNeighborsAt(pos.relative(state.getValue(FACING).getCounterClockWise().getOpposite()),
-                    this);
+            world.updateNeighborsAt(pos.relative(state.getValue(FACING).getCounterClockWise().getOpposite()), this);
             BlockPos otherPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos.above();
             world.updateNeighborsAt(otherPos, this);
             world.updateNeighborsAt(otherPos.relative(state.getValue(FACING).getOpposite()), this);
             world.updateNeighborsAt(otherPos.relative(state.getValue(FACING).getCounterClockWise().getOpposite()),
                     this);
-            world.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundCategory.BLOCKS, 0.5F, 0.5F);
-            return ActionResultType.CONSUME;
+            world.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.5F, 0.5F);
+            return InteractionResult.CONSUME;
         }
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         world.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
@@ -149,7 +148,7 @@ public class MarkerSwitchBlock extends HorizontalBlock {
      * See DoorBlock.neighborChanged().
      */
     @Override
-    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos,
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos,
             boolean notify) {
         BlockPos otherPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos.above();
         BlockState otherState = world.getBlockState(otherPos);
@@ -162,16 +161,14 @@ public class MarkerSwitchBlock extends HorizontalBlock {
                 world.setBlock(pos, state.setValue(OPEN, true), 10);
                 world.setBlock(otherPos, otherState.setValue(OPEN, true), 10);
                 if (state.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
-                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 0.5F,
-                            0.5F);
+                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_OPEN, SoundSource.BLOCKS, 0.5F, 0.5F);
                 }
             } else {
                 boolean changed = state.getValue(OPEN) == true;
                 world.setBlock(pos, state.setValue(OPEN, false), 10);
                 world.setBlock(otherPos, otherState.setValue(OPEN, false), 10);
                 if (state.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
-                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundCategory.BLOCKS, 0.5F,
-                            0.5F);
+                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.5F, 0.5F);
                 }
             }
 
@@ -182,13 +179,13 @@ public class MarkerSwitchBlock extends HorizontalBlock {
      * See DoorBlock.updatePostPlacement().
      */
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, IWorld world,
+    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world,
             BlockPos pos, BlockPos posFrom) {
         DoubleBlockHalf doubleBlockHalf = state.getValue(HALF);
         if (direction.getAxis() == Direction.Axis.Y
                 && doubleBlockHalf == DoubleBlockHalf.LOWER == (direction == Direction.UP)) {
-            return newState.is(this) && newState.getValue(HALF) != doubleBlockHalf ? (state
-                    .setValue(FACING, newState.getValue(FACING)).setValue(POWERED, newState.getValue(POWERED)))
+            return newState.is(this) && newState.getValue(HALF) != doubleBlockHalf
+                    ? (state.setValue(FACING, newState.getValue(FACING)).setValue(POWERED, newState.getValue(POWERED)))
                     : Blocks.AIR.defaultBlockState();
         } else {
             return doubleBlockHalf == DoubleBlockHalf.LOWER && direction == Direction.DOWN
@@ -198,14 +195,14 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public int getSignal(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction direction) {
+    public int getSignal(BlockState state, BlockGetter blockAccess, BlockPos pos, Direction direction) {
         return direction != Direction.UP && direction != Direction.DOWN
                 && (direction == state.getValue(FACING) || direction == state.getValue(FACING).getCounterClockWise())
                 && state.getValue(POWERED) ? 15 : 0;
     }
 
     @Override
-    public int getDirectSignal(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction direction) {
+    public int getDirectSignal(BlockState state, BlockGetter blockAccess, BlockPos pos, Direction direction) {
         return state.getValue(POWERED)
                 && (direction == state.getValue(FACING) || direction == state.getValue(FACING).getCounterClockWise())
                         ? 15
@@ -218,7 +215,7 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public void playerWillDestroy(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         if (!world.isClientSide() && player.isCreative()) {
             /* Start copy from DoublePlantBlock.removeBottomHalf() */
             DoubleBlockHalf doubleblockhalf = state.getValue(HALF);
@@ -236,23 +233,19 @@ public class MarkerSwitchBlock extends HorizontalBlock {
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return BlockEntityTypes.MARKER_SWITCH.get().create(pos, state);
     }
 
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return ModTileEntityTypes.MARKER_SWITCH.get().create();
-    }
-
-    @Override
-    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock() && state.getValue(HALF) == DoubleBlockHalf.LOWER && !world.isClientSide()) {
-            TileEntity tileEntity = world.getBlockEntity(pos);
-            if (tileEntity instanceof MarkerSwitchTileEntity) {
-                MarkerSwitchTileEntity markerTE = (MarkerSwitchTileEntity) tileEntity;
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock() && state.getValue(HALF) == DoubleBlockHalf.LOWER
+                && !world.isClientSide()) {
+            BlockEntity tileEntity = world.getBlockEntity(pos);
+            if (tileEntity instanceof MarkerSwitchBlockEntity) {
+                MarkerSwitchBlockEntity markerTE = (MarkerSwitchBlockEntity) tileEntity;
                 if (markerTE.hasItem()) {
-                    InventoryHelper.dropContents(world, pos, markerTE);
+                    Containers.dropContents(world, pos, (Container) markerTE);
                     world.updateNeighbourForOutputSignal(pos, this);
                 }
                 super.onRemove(state, world, pos, newState, isMoving);

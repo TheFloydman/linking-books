@@ -23,32 +23,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.saveddata.SavedData;
 import thefloydman.linkingbooks.api.capability.ILinkData;
+import thefloydman.linkingbooks.capability.Capabilities;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.util.Reference;
 
-public class LinkingBooksSavedData extends WorldSavedData {
+public class LinkingBooksSavedData extends SavedData {
 
-    private Map<UUID, CompoundNBT> linkingPanelImages = new HashMap<UUID, CompoundNBT>();
-    private Map<BlockPos, ILinkData> linkingPortals = new HashMap<BlockPos, ILinkData>();
+    public Map<UUID, CompoundTag> linkingPanelImages = new HashMap<UUID, CompoundTag>();
+    public Map<BlockPos, ILinkData> linkingPortals = new HashMap<BlockPos, ILinkData>();
 
-    public LinkingBooksSavedData() {
-        super(Reference.MOD_ID);
-    }
-
-    public LinkingBooksSavedData(String s) {
-        super(s);
-    }
-
-    public boolean addLinkingPanelImage(UUID uuid, CompoundNBT image) {
+    public boolean addLinkingPanelImage(UUID uuid, CompoundTag image) {
         if (this.linkingPanelImages.containsKey(uuid)) {
             return false;
         }
@@ -66,7 +57,7 @@ public class LinkingBooksSavedData extends WorldSavedData {
         return true;
     }
 
-    public CompoundNBT getLinkingPanelImage(UUID uuid) {
+    public CompoundTag getLinkingPanelImage(UUID uuid) {
         return this.linkingPanelImages.get(uuid);
     }
 
@@ -89,44 +80,45 @@ public class LinkingBooksSavedData extends WorldSavedData {
         return this.linkingPortals.get(pos);
     }
 
-    @Override
-    public void load(CompoundNBT nbt) {
-        if (nbt.contains("linkingPanelImages", NBT.TAG_LIST)) {
-            ListNBT list = nbt.getList("linkingPanelImages", NBT.TAG_COMPOUND);
-            for (INBT item : list) {
-                CompoundNBT compound = (CompoundNBT) item;
-                if (compound.contains("uuid", NBT.TAG_INT_ARRAY)) {
+    public static LinkingBooksSavedData load(CompoundTag nbt) {
+        LinkingBooksSavedData data = new LinkingBooksSavedData();
+        if (nbt.contains("linkingPanelImages", Tag.TAG_LIST)) {
+            ListTag list = nbt.getList("linkingPanelImages", Tag.TAG_COMPOUND);
+            for (Tag item : list) {
+                CompoundTag compound = (CompoundTag) item;
+                if (compound.contains("uuid", Tag.TAG_INT_ARRAY)) {
                     UUID uuid = compound.getUUID("uuid");
-                    linkingPanelImages.put(uuid, compound);
+                    data.linkingPanelImages.put(uuid, compound);
                 }
             }
         }
-        if (nbt.contains("linking_portals", NBT.TAG_LIST)) {
-            ListNBT list = nbt.getList("linking_portals", NBT.TAG_COMPOUND);
-            for (INBT item : list) {
-                CompoundNBT compound = (CompoundNBT) item;
-                BlockPos pos = NBTUtil.readBlockPos(compound.getCompound("portal_pos"));
-                ILinkData linkData = ModItems.WRITTEN_LINKING_BOOK.get().getDefaultInstance()
-                        .getCapability(LinkData.LINK_DATA).orElse(null);
-                LinkData.LINK_DATA.readNBT(linkData, null, compound.getCompound("link_data"));
-                this.linkingPortals.put(pos, linkData);
+        if (nbt.contains("linking_portals", Tag.TAG_LIST)) {
+            ListTag list = nbt.getList("linking_portals", Tag.TAG_COMPOUND);
+            for (Tag item : list) {
+                CompoundTag compound = (CompoundTag) item;
+                BlockPos pos = NbtUtils.readBlockPos(compound.getCompound("portal_pos"));
+                ILinkData linkData = ModItems.BLACK_WRITTEN_LINKING_BOOK.get().getDefaultInstance()
+                        .getCapability(Capabilities.LINK_DATA).orElse(null);
+                ((LinkData) linkData).deserializeNBT(compound.getCompound("link_data"));
+                data.linkingPortals.put(pos, linkData);
             }
         }
+        return data;
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
-        ListNBT imageList = new ListNBT();
+    public CompoundTag save(CompoundTag nbt) {
+        ListTag imageList = new ListTag();
         linkingPanelImages.forEach((uuid, image) -> {
             image.putUUID("uuid", uuid);
             imageList.add(image);
         });
         nbt.put("linkingPanelImages", imageList);
-        ListNBT portalList = new ListNBT();
+        ListTag portalList = new ListTag();
         this.linkingPortals.forEach((pos, linkData) -> {
-            CompoundNBT compound = new CompoundNBT();
-            compound.put("portal_pos", NBTUtil.writeBlockPos(pos));
-            compound.put("link_data", LinkData.LINK_DATA.getStorage().writeNBT(LinkData.LINK_DATA, linkData, null));
+            CompoundTag compound = new CompoundTag();
+            compound.put("portal_pos", NbtUtils.writeBlockPos(pos));
+            compound.put("link_data", ((LinkData) linkData).serializeNBT());
             portalList.add(compound);
         });
         nbt.put("linking_portals", portalList);

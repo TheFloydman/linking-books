@@ -19,19 +19,16 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.item.crafting;
 
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import thefloydman.linkingbooks.util.Reference;
 
 public class ModRecipeSerializers {
 
-    public static final DeferredRegister<IRecipeSerializer<?>> RECIPES = DeferredRegister
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister
             .create(ForgeRegistries.RECIPE_SERIALIZERS, Reference.MOD_ID);
-
-    public static final RegistryObject<BlankLinkingBookRecipe.Serializer> BLANK_LINKING_BOOK = RECIPES
-            .register(Reference.RecipeSerializerNames.BLANK_LINKING_BOOK, BlankLinkingBookRecipe.Serializer::new);
 
     public static final RegistryObject<LinkEffectRecipe.Serializer> LINK_EFFECT = RECIPES
             .register(Reference.RecipeSerializerNames.LINK_EFFECT, LinkEffectRecipe.Serializer::new);

@@ -17,12 +17,15 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.tileentity;
+package thefloydman.linkingbooks.blockentity;
 
-public class LinkingLecternTileEntity extends LinkingBookHolderTileEntity {
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 
-    public LinkingLecternTileEntity() {
-        super(ModTileEntityTypes.LINKING_LECTERN.get());
+public class LinkTranslatorBlockEntity extends LinkingBookHolderBlockEntity {
+
+    public LinkTranslatorBlockEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.LINK_TRANSLATOR.get(), pos, state);
     }
 
 }
