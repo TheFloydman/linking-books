@@ -19,19 +19,28 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.linking;
 
+import com.google.gson.JsonObject;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.registries.ForgeRegistries;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 
-public class PotionLinkEffect extends LinkEffect {
+/**
+ * Applies a MobEffect to the linking entity when the link has completed.
+ */
+public class MobEffectLinkEffect extends LinkEffect {
 
+    public static final String TAG_EFFECT = "effect";
+    public static final String TAG_TICKS = "ticks";
     private MobEffect effect;
     private int ticks;
 
-    public PotionLinkEffect(MobEffect effect, int ticks) {
+    public MobEffectLinkEffect(MobEffect effect, int ticks) {
         this.effect = effect;
         this.ticks = ticks;
     }
@@ -40,6 +49,20 @@ public class PotionLinkEffect extends LinkEffect {
     public void onLinkEnd(Entity entity, ILinkData linkData) {
         if (entity instanceof LivingEntity) {
             ((LivingEntity) entity).addEffect(new MobEffectInstance(this.effect, ticks));
+        }
+    }
+
+    public static class Type extends LinkEffect.Type {
+
+        @Override
+        public LinkEffect fromJson(JsonObject json) {
+            if (json.has(TAG_EFFECT) && json.has(TAG_TICKS)) {
+                MobEffect effect = ForgeRegistries.MOB_EFFECTS
+                        .getValue(new ResourceLocation(json.get(TAG_EFFECT).getAsString()));
+                int ticks = json.get(TAG_TICKS).getAsInt();
+                return new MobEffectLinkEffect(effect, ticks);
+            }
+            return null;
         }
     }
 

@@ -20,6 +20,7 @@
 package thefloydman.linkingbooks.util;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,12 +44,11 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
 import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
@@ -95,7 +95,7 @@ public class LinkingUtils {
             resultItem = ModItems.YELLOW_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
         }
 
-        ILinkData linkData = resultItem.getCapability(Capabilities.LINK_DATA).orElse(null);
+        ILinkData linkData = resultItem.getCapability(ModCapabilities.LINK_DATA).orElse(null);
         if (linkData == null) {
             return ItemStack.EMPTY;
         }
@@ -121,12 +121,12 @@ public class LinkingUtils {
             LOGGER.info(
                     "An attempt has been made to directly link an entity from the client. Only do this from the server.");
         } else if (linkData == null) {
-            LOGGER.info("An null ILinkInfo has been supplied. Link failed.");
+            LOGGER.info("A null ILinkInfo has been supplied. Link failed.");
         } else if (linkData.getDimension() == null) {
-            LOGGER.info("ILinkInfo::getDimension returned null. Link failed.");
+            LOGGER.info("ILinkData.getDimension() returned null. Link failed.");
         } else if (linkData.getPosition() == null) {
-            LOGGER.info("ILinkInfo::getPosition returned null. Link failed.");
-        } else if (!linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())
+            LOGGER.info("ILinkData.getPosition() returned null. Link failed.");
+        } else if (!linkData.getLinkEffectsAsRL().contains(new ResourceLocation("linkingbooks:intraage_linking"))
                 && world.dimension().location().equals(linkData.getDimension())) {
             if (entity instanceof ServerPlayer) {
                 ServerPlayer player = (ServerPlayer) entity;
@@ -144,7 +144,9 @@ public class LinkingUtils {
                 return false;
             }
 
-            for (LinkEffect effect : linkData.getLinkEffects()) {
+            Set<LinkEffect> linkEffects = linkData.getLinkEffectsAsLE();
+
+            for (LinkEffect effect : linkEffects) {
                 if (!effect.canStartLink(entity, linkData)) {
                     if (entity instanceof ServerPlayer) {
                         ServerPlayer player = (ServerPlayer) entity;
@@ -157,7 +159,7 @@ public class LinkingUtils {
                 }
             }
 
-            for (LinkEffect effect : linkData.getLinkEffects()) {
+            for (LinkEffect effect : linkEffects) {
                 effect.onLinkStart(entity, linkData);
             }
 
@@ -189,7 +191,8 @@ public class LinkingUtils {
                     player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
                     tookExperience = true;
                 }
-                if (holdingBook && !linkData.getLinkEffects().contains(LinkEffects.TETHERED.get())) {
+                if (holdingBook
+                        && !linkData.getLinkEffectsAsRL().contains(Reference.getAsResourceLocation("tethered"))) {
                     LinkingBookEntity book = new LinkingBookEntity(world, player.getMainHandItem().copy());
                     Vec3 lookVec = player.getLookAngle();
                     book.setPos(player.getX() + (lookVec.x() / 4.0D), player.getY() + 1.0D,
@@ -213,7 +216,7 @@ public class LinkingUtils {
                 serverWorld.addFreshEntity(entityCopy);
                 serverWorld.addDuringTeleport(entityCopy);
             }
-            for (LinkEffect effect : linkData.getLinkEffects()) {
+            for (LinkEffect effect : linkEffects) {
                 if (!effect.canFinishLink(entity, linkData)) {
                     if (entity instanceof ServerPlayer) {
                         ServerPlayer player = (ServerPlayer) entity;
@@ -242,7 +245,7 @@ public class LinkingUtils {
                     return false;
                 }
             }
-            for (LinkEffect effect : linkData.getLinkEffects()) {
+            for (LinkEffect effect : linkEffects) {
                 effect.onLinkEnd(entity, linkData);
             }
             return true;
@@ -275,7 +278,7 @@ public class LinkingUtils {
             extraData.writeInt(color);
             linkData.write(extraData);
             boolean canLink = !currentDimension.equals(linkData.getDimension())
-                    || linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get());
+                    || linkData.getLinkEffectsAsRL().contains(Reference.getAsResourceLocation("intraage_linking"));
             extraData.writeBoolean(canLink);
             LinkingBooksSavedData savedData = player.getServer().getLevel(Level.OVERWORLD).getDataStorage()
                     .computeIfAbsent(LinkingBooksSavedData::load, LinkingBooksSavedData::new, Reference.MOD_ID);

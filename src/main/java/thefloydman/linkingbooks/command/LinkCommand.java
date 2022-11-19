@@ -29,10 +29,10 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
-import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
 public class LinkCommand {
@@ -55,7 +55,7 @@ public class LinkCommand {
                                     .dimension().location());
                             linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
                             linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
-                            linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                            linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                             return LinkingUtils.linkEntities(
                                     new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData, false);
                         })))
@@ -68,7 +68,7 @@ public class LinkCommand {
                                             DimensionArgument.getDimension(context, DIMENSION).dimension().location());
                                     linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
                                     linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
-                                    linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                                    linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                                     return LinkingUtils.linkEntities(
                                             new ArrayList<>(EntityArgument.getEntities(context, ENTITIES)), linkData,
                                             false);
@@ -81,7 +81,7 @@ public class LinkCommand {
                                     DimensionArgument.getDimension(context, DIMENSION).dimension().location());
                             linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
                             linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
-                            linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                            linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                             return LinkingUtils.linkEntities(
                                     new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())),
                                     linkData, false);
@@ -93,7 +93,7 @@ public class LinkCommand {
                             context.getSource().getPlayerOrException().getCommandSenderWorld().dimension().location());
                     linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
                     linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
-                    linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                    linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                     return LinkingUtils.linkEntities(
                             new ArrayList<>(Lists.newArrayList(context.getSource().getPlayerOrException())), linkData,
                             false);
@@ -105,7 +105,7 @@ public class LinkCommand {
                             linkData.setDimension(EntityArgument.getEntity(context, ENTITY).getCommandSenderWorld()
                                     .dimension().location());
                             linkData.setPosition(EntityArgument.getEntity(context, ENTITY).blockPosition());
-                            linkData.addLinkEffect(LinkEffects.INTRAAGE_LINKING.get());
+                            linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                             int i = 0;
                             for (Entity entity : EntityArgument.getEntities(context, ENTITIES)) {
                                 linkData.setRotation(entity.getYRot());

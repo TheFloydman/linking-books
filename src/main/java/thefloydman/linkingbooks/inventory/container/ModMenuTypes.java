@@ -17,13 +17,22 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.linking;
+package thefloydman.linkingbooks.inventory.container;
 
-import thefloydman.linkingbooks.api.linking.LinkEffect;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.util.Reference.ContainerNames;
 
-public class TetheredLinkEffect extends LinkEffect {
+public class ModMenuTypes {
 
-    public TetheredLinkEffect() {
-    }
+    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
+            Reference.MOD_ID);
+
+    public static final RegistryObject<MenuType<LinkingBookContainer>> LINKING_BOOK = MENU_TYPES
+            .register(ContainerNames.LINKING_BOOK, () -> IForgeMenuType.create(LinkingBookContainer::new));
 
 }

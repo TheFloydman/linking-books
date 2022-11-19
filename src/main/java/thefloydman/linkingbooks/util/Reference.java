@@ -122,10 +122,9 @@ public class Reference {
         public static final String LINK_EFFECT = "link_effect";
     }
 
-    public static class LinkEffectNames {
-        public static final String POISON_EFFECT = "poison_effect";
-        public static final String INTRAAGE_LINKING = "intraage_linking";
-        public static final String TETHERED = "tethered";
+    public static class LinkEffectTypeNames {
+        public static final String MOB_EFFECT = "mob_effect";
+        public static final String BASIC = "basic";
     }
 
     public static class Resources {

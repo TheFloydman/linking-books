@@ -22,6 +22,8 @@ package thefloydman.linkingbooks.api.linking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.JsonObject;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -29,8 +31,7 @@ import thefloydman.linkingbooks.api.capability.ILinkData;
 
 public abstract class LinkEffect {
 
-    public static IForgeRegistry<LinkEffect> registry;
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final String TAG_TYPE = "type";
 
     /**
      * Fires before entity changes dimensions and before onLinkStart has been called
@@ -75,15 +76,31 @@ public abstract class LinkEffect {
     public void onLinkEnd(Entity entity, ILinkData linkData) {
     }
 
-    /**
-     * Convenience method that retrieves a LinkEffect from the appropriate registry.
-     */
-    public static LinkEffect get(ResourceLocation resource) {
-        if (registry == null) {
-            LOGGER.info("Cannot find LinkEffect registry. Returning null LinkEffect.");
-            return null;
+    public static abstract class Type {
+
+        public static final Logger LOGGER = LogManager.getLogger();
+        public static IForgeRegistry<LinkEffect.Type> registry;
+
+        /**
+         * Convenience method that retrieves a LinkEffect.Type from the appropriate
+         * registry.
+         */
+        public static LinkEffect.Type get(ResourceLocation resource) {
+            if (registry == null) {
+                LOGGER.info("Cannot find Link Effect Type registry. Returning null Link Effect Type.");
+                return null;
+            }
+            return registry.getValue(resource);
         }
-        return registry.getValue(resource);
+
+        /**
+         * Deserializer to translate a Link Effect JSON file into a Link Effect object.
+         * 
+         * @param json The JSON object from the file in the datapack.
+         * @return A Link Effect of this type.
+         */
+        public abstract LinkEffect fromJson(JsonObject json);
+
     }
 
 }

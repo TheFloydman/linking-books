@@ -38,7 +38,7 @@ public class LinkingBookContainer extends AbstractContainerMenu {
     public CompoundTag linkingPanelImage = new CompoundTag();
 
     public LinkingBookContainer(int windowId, Inventory playerInventory) {
-        super(MenuTypes.LINKING_BOOK.get(), windowId);
+        super(ModMenuTypes.LINKING_BOOK.get(), windowId);
     }
 
     public LinkingBookContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {

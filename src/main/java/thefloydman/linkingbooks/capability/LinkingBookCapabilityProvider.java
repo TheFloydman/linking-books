@@ -33,7 +33,7 @@ public class LinkingBookCapabilityProvider implements ICapabilityProvider, INBTS
 
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        if (cap.equals(Capabilities.LINK_DATA) && Capabilities.LINK_DATA != null) {
+        if (cap.equals(ModCapabilities.LINK_DATA) && ModCapabilities.LINK_DATA != null) {
             return this.linkData.cast();
         }
         return LazyOptional.empty();

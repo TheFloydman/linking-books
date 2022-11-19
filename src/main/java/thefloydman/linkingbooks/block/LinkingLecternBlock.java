@@ -33,9 +33,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.blockentity.LinkingLecternBlockEntity;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
@@ -49,7 +49,7 @@ public class LinkingLecternBlock extends LecternBlock implements EntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return BlockEntityTypes.LINKING_LECTERN.get().create(pos, state);
+        return ModBlockEntityTypes.LINKING_LECTERN.get().create(pos, state);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class LinkingLecternBlock extends LecternBlock implements EntityBlock {
                 ItemStack stack = tileEntity.getBook();
                 Item item = stack.getItem();
                 if (item instanceof WrittenLinkingBookItem) {
-                    ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
+                    ILinkData linkData = stack.getCapability(ModCapabilities.LINK_DATA).orElse(null);
                     if (linkData != null) {
                         LinkingUtils.openLinkingBookGui((ServerPlayer) player, false,
                                 LinkingBookItem.getColor(stack, 0), linkData, world.dimension().location());

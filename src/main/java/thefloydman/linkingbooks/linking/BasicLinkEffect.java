@@ -17,22 +17,24 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.inventory.container;
+package thefloydman.linkingbooks.linking;
 
-import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.ContainerNames;
+import com.google.gson.JsonObject;
 
-public class MenuTypes {
+import thefloydman.linkingbooks.api.linking.LinkEffect;
 
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
-            Reference.MOD_ID);
+/**
+ * A Link Effect only containing a name.
+ *
+ */
+public class BasicLinkEffect extends LinkEffect {
 
-    public static final RegistryObject<MenuType<LinkingBookContainer>> LINKING_BOOK = CONTAINERS
-            .register(ContainerNames.LINKING_BOOK, () -> IForgeMenuType.create(LinkingBookContainer::new));
+    public static class Type extends LinkEffect.Type {
+
+        @Override
+        public LinkEffect fromJson(JsonObject json) {
+            return new BasicLinkEffect();
+        }
+    }
 
 }

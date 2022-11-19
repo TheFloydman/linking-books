@@ -26,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.registries.ForgeRegistries;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.capability.LinkingBookCapabilityProvider;
 import thefloydman.linkingbooks.util.Reference;
 
@@ -101,7 +101,7 @@ public abstract class LinkingBookItem extends Item {
     @Override
     public CompoundTag getShareTag(ItemStack stack) {
         CompoundTag nbt = stack.getTag();
-        ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
+        ILinkData linkData = stack.getCapability(ModCapabilities.LINK_DATA).orElse(null);
         if (linkData != null) {
             CompoundTag tag = linkData.writeToShareTag(nbt);
             return tag;
@@ -113,7 +113,7 @@ public abstract class LinkingBookItem extends Item {
     public void readShareTag(ItemStack stack, CompoundTag nbt) {
         stack.setTag(nbt);
         if (nbt != null) {
-            ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
+            ILinkData linkData = stack.getCapability(ModCapabilities.LINK_DATA).orElse(null);
             if (linkData != null) {
                 linkData.readFromShareTag(nbt);
             }

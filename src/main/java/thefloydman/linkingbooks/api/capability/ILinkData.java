@@ -46,13 +46,19 @@ public interface ILinkData {
 
     public UUID getUUID();
 
-    public void setLinkEffects(Set<LinkEffect> effects);
+    public void setLinkEffectsRL(Set<ResourceLocation> effects);
 
-    public Set<LinkEffect> getLinkEffects();
+    public void setLinkEffectsLE(Set<LinkEffect> effects);
+
+    public Set<ResourceLocation> getLinkEffectsAsRL();
+
+    public Set<LinkEffect> getLinkEffectsAsLE();
+
+    public boolean addLinkEffect(ResourceLocation effect);
 
     public boolean addLinkEffect(LinkEffect effect);
 
-    public boolean removeLinkEffect(LinkEffect effect);
+    public boolean removeLinkEffect(ResourceLocation effect);
 
     public FriendlyByteBuf write(FriendlyByteBuf buffer);
 

@@ -17,13 +17,16 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.linking;
+package thefloydman.linkingbooks.capability;
 
-import thefloydman.linkingbooks.api.linking.LinkEffect;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import thefloydman.linkingbooks.api.capability.ILinkData;
 
-public class IntraAgeLinkingLinkEffect extends LinkEffect {
+public class ModCapabilities {
 
-    public IntraAgeLinkingLinkEffect() {
-    }
+    public static final Capability<ILinkData> LINK_DATA = CapabilityManager.get(new CapabilityToken<>() {
+    });
 
 }

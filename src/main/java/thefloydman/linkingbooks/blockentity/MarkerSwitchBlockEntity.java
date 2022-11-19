@@ -36,7 +36,7 @@ public class MarkerSwitchBlockEntity extends BlockEntity implements IItemHandler
     private ItemStack item = ItemStack.EMPTY;
 
     public MarkerSwitchBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.MARKER_SWITCH.get(), pos, state);
+        super(ModBlockEntityTypes.MARKER_SWITCH.get(), pos, state);
     }
 
     /**

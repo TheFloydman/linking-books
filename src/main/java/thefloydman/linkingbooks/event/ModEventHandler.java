@@ -31,7 +31,7 @@ import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
@@ -52,10 +52,10 @@ public class ModEventHandler {
      */
     @SubscribeEvent
     public static void createNewRegistries(NewRegistryEvent event) {
-        RegistryBuilder<LinkEffect> linkEffectRegistryBuilder = new RegistryBuilder<LinkEffect>();
-        linkEffectRegistryBuilder.setName(Reference.getAsResourceLocation("linkeffects"));
-        event.create(linkEffectRegistryBuilder, (foo) -> {
-            LinkEffect.registry = foo;
+        RegistryBuilder<LinkEffect.Type> linkEffectTypeRegistryBuilder = new RegistryBuilder<LinkEffect.Type>();
+        linkEffectTypeRegistryBuilder.setName(Reference.getAsResourceLocation("linkeffecttypes"));
+        event.create(linkEffectTypeRegistryBuilder, (foo) -> {
+            LinkEffect.Type.registry = foo;
         });
     }
 
@@ -66,9 +66,9 @@ public class ModEventHandler {
         event.registerEntityRenderer(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
 
         // Block entities
-        event.registerBlockEntityRenderer(BlockEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityTypes.LINK_TRANSLATOR.get(), LinkTranslatorRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityTypes.MARKER_SWITCH.get(), MarkerSwitchRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.LINKING_LECTERN.get(), LinkingLecternRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.LINK_TRANSLATOR.get(), LinkTranslatorRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.MARKER_SWITCH.get(), MarkerSwitchRenderer::new);
     }
 
     @SubscribeEvent

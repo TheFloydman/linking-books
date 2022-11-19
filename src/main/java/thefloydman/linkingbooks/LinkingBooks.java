@@ -31,20 +31,19 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import thefloydman.linkingbooks.block.ModBlocks;
-import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluidTypes;
 import thefloydman.linkingbooks.fluid.ModFluids;
-import thefloydman.linkingbooks.inventory.container.MenuTypes;
+import thefloydman.linkingbooks.inventory.container.ModMenuTypes;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.crafting.ModRecipeSerializers;
-import thefloydman.linkingbooks.linking.LinkEffects;
+import thefloydman.linkingbooks.linking.LinkEffectTypes;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.util.Reference;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(Reference.MOD_ID)
 public class LinkingBooks {
 
@@ -58,10 +57,10 @@ public class LinkingBooks {
         ModFluidTypes.FLUID_TYPES.register(eventBus);
         ModFluids.FLUIDS.register(eventBus);
         ModEntityTypes.ENTITIES.register(eventBus);
-        BlockEntityTypes.TILE_ENTITIES.register(eventBus);
-        MenuTypes.CONTAINERS.register(eventBus);
-        LinkEffects.LINK_EFFECTS.register(eventBus);
+        ModBlockEntityTypes.TILE_ENTITIES.register(eventBus);
+        ModMenuTypes.MENU_TYPES.register(eventBus);
         ModRecipeSerializers.RECIPES.register(eventBus);
+        LinkEffectTypes.LINK_EFFECT_TYPES.register(eventBus);
 
         // Register the setup methods.
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
@@ -85,7 +84,7 @@ public class LinkingBooks {
 
         event.enqueueWork(() -> {
             // Register containers.
-            MenuScreens.register(MenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
+            MenuScreens.register(ModMenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
         });
 
     }

@@ -27,7 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.util.LinkingUtils;
@@ -69,7 +69,7 @@ public class LinkingBookEntity extends ObjectEntity {
                         this.remove(RemovalReason.DISCARDED);
                         return InteractionResult.SUCCESS;
                     } else {
-                        ILinkData linkData = bookStack.getCapability(Capabilities.LINK_DATA).orElse(null);
+                        ILinkData linkData = bookStack.getCapability(ModCapabilities.LINK_DATA).orElse(null);
                         if (linkData != null) {
                             LinkingUtils.openLinkingBookGui(serverPlayer, false, LinkingBookItem.getColor(bookStack, 0),
                                     linkData, serverPlayer.getCommandSenderWorld().dimension().location());
