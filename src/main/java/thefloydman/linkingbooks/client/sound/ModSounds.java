@@ -17,28 +17,27 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.linking;
+package thefloydman.linkingbooks.client.sound;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.LinkEffectNames;
 
-public class LinkEffects {
+public class ModSounds {
 
-    public static final DeferredRegister<LinkEffect> LINK_EFFECTS = DeferredRegister
-            .create(new ResourceLocation("linkingbooks:linkeffects"), Reference.MOD_ID);
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS,
+            Reference.MOD_ID);
 
-    public static final RegistryObject<PotionLinkEffect> POISON_EFFECT = LINK_EFFECTS
-            .register(LinkEffectNames.POISON_EFFECT, () -> new PotionLinkEffect(MobEffects.POISON, 20 * 10));
+    public static final RegistryObject<SoundEvent> PAGEFLIP_FORWARD = SOUNDS.register(
+            Reference.SoundNames.PAGEFLIP_FORWARD,
+            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_FORWARD)));
 
-    public static final RegistryObject<IntraAgeLinkingLinkEffect> INTRAAGE_LINKING = LINK_EFFECTS
-            .register(LinkEffectNames.INTRAAGE_LINKING, IntraAgeLinkingLinkEffect::new);
+    public static final RegistryObject<SoundEvent> PAGEFLIP_BACK = SOUNDS.register(Reference.SoundNames.PAGEFLIP_BACK,
+            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_BACK)));
 
-    public static final RegistryObject<TetheredLinkEffect> TETHERED = LINK_EFFECTS.register(LinkEffectNames.TETHERED,
-            TetheredLinkEffect::new);
+    public static final RegistryObject<SoundEvent> BOOK_CLOSE = SOUNDS.register(Reference.SoundNames.BOOK_CLOSE,
+            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.BOOK_CLOSE)));
 
 }

@@ -38,6 +38,7 @@ public class ItemGroups {
         @Override
         public void fillItemList(NonNullList<ItemStack> items) {
             super.fillItemList(items);
+            items.add(ModItems.GUIDEBOOK.get().getDefaultInstance());
             items.add(ModItems.BLACK_BLANK_LINKING_BOOK.get().getDefaultInstance());
             items.add(ModItems.BLUE_BLANK_LINKING_BOOK.get().getDefaultInstance());
             items.add(ModItems.BROWN_BLANK_LINKING_BOOK.get().getDefaultInstance());

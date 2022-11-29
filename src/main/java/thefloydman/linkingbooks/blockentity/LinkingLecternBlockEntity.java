@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class LinkingLecternBlockEntity extends LinkingBookHolderBlockEntity {
 
     public LinkingLecternBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.LINKING_LECTERN.get(), pos, state);
+        super(ModBlockEntityTypes.LINKING_LECTERN.get(), pos, state);
     }
 
 }

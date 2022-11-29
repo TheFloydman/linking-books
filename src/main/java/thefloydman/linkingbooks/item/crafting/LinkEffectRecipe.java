@@ -41,9 +41,9 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 
@@ -51,10 +51,11 @@ public class LinkEffectRecipe implements CraftingRecipe {
 
     private final ResourceLocation id;
     private final NonNullList<Ingredient> recipeInputs;
-    private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
+    private Set<ResourceLocation> linkEffects = new HashSet<ResourceLocation>();
     private ItemStack outputStack = ItemStack.EMPTY;
 
-    public LinkEffectRecipe(ResourceLocation id, NonNullList<Ingredient> recipeInput, Set<LinkEffect> linkEffects) {
+    public LinkEffectRecipe(ResourceLocation id, NonNullList<Ingredient> recipeInput,
+            Set<ResourceLocation> linkEffects) {
         this.linkEffects = linkEffects;
         this.recipeInputs = recipeInput;
         this.id = id;
@@ -68,7 +69,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
                         ModItems.PINK_WRITTEN_LINKING_BOOK.get(), ModItems.PURPLE_WRITTEN_LINKING_BOOK.get(),
                         ModItems.RED_WRITTEN_LINKING_BOOK.get(), ModItems.WHITE_WRITTEN_LINKING_BOOK.get(),
                         ModItems.YELLOW_WRITTEN_LINKING_BOOK.get() });
-        for (int i = 0; i < writtenBooks.size() && pos == -1; i++) {
+        for (int i = 0; i < writtenBooks.size() && pos < 0; i++) {
             pos = recipeInput.indexOf(Ingredient.of(writtenBooks.get(i)));
         }
         if (pos > -1) {
@@ -76,7 +77,7 @@ public class LinkEffectRecipe implements CraftingRecipe {
         }
     }
 
-    public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>>
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>
             implements RecipeSerializer<LinkEffectRecipe> {
 
         @Override
@@ -87,10 +88,10 @@ public class LinkEffectRecipe implements CraftingRecipe {
                 throw new JsonParseException(
                         "Too many additional ingredients for written linking book recipe. The max is 8");
             } else {
-                Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
+                Set<ResourceLocation> linkEffects = new HashSet<ResourceLocation>();
                 JsonArray jsonArray = GsonHelper.getAsJsonArray(json, "link_effects");
                 for (JsonElement element : jsonArray) {
-                    linkEffects.add(LinkEffect.get(new ResourceLocation(element.getAsString())));
+                    linkEffects.add(new ResourceLocation(element.getAsString()));
                 }
                 return new LinkEffectRecipe(id, ingredients, linkEffects);
             }
@@ -105,10 +106,10 @@ public class LinkEffectRecipe implements CraftingRecipe {
                 ingredients.set(j, Ingredient.fromNetwork(buffer));
             }
 
-            Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
+            Set<ResourceLocation> linkEffects = new HashSet<ResourceLocation>();
             int quantity = buffer.readInt();
             for (int j = 0; j < quantity; j++) {
-                linkEffects.add(LinkEffect.get(new ResourceLocation(buffer.readUtf())));
+                linkEffects.add(new ResourceLocation(buffer.readUtf()));
             }
 
             return new LinkEffectRecipe(id, ingredients, linkEffects);
@@ -123,8 +124,8 @@ public class LinkEffectRecipe implements CraftingRecipe {
             }
 
             buffer.writeInt(recipe.linkEffects.size());
-            for (LinkEffect effect : recipe.linkEffects) {
-                buffer.writeUtf(effect.getRegistryName().toString());
+            for (ResourceLocation effect : recipe.linkEffects) {
+                buffer.writeUtf(effect.toString());
             }
         }
     }
@@ -192,9 +193,9 @@ public class LinkEffectRecipe implements CraftingRecipe {
             }
         }
         if (!writtenBook.isEmpty()) {
-            ILinkData linkData = writtenBook.getCapability(Capabilities.LINK_DATA).orElse(null);
+            ILinkData linkData = writtenBook.getCapability(ModCapabilities.LINK_DATA).orElse(null);
             if (linkData != null) {
-                for (LinkEffect effect : this.linkEffects) {
+                for (ResourceLocation effect : this.linkEffects) {
                     if (!linkData.addLinkEffect(effect)) {
                         return ItemStack.EMPTY;
                     }

@@ -35,7 +35,7 @@ import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.util.Reference.TileEntityNames;
 
-public class BlockEntityTypes {
+public class ModBlockEntityTypes {
 
     public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister
             .create(ForgeRegistries.BLOCK_ENTITIES, Reference.MOD_ID);

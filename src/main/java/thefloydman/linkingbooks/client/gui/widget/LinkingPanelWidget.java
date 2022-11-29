@@ -47,9 +47,10 @@ public class LinkingPanelWidget extends NestedWidget {
     DynamicTexture linkingPanelImage = null;
     Minecraft client = Minecraft.getInstance();
 
-    public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, Component narration,
+    public LinkingPanelWidget(String id, int x, int y, float zLevel, int width, int height, Component narration,
             boolean holdingBook, ILinkData linkData, boolean canLink, CompoundTag linkingPanelImageTag) {
-        super(x, y, width, height, narration);
+        super(id, x, y, width, height, narration);
+        this.zLevel = zLevel;
         this.holdingBook = holdingBook;
         this.linkData = linkData;
         this.canLink = canLink;
@@ -66,24 +67,24 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         if (!this.visible) {
             return;
         }
         int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
-        this.zFill(matrixStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
+        this.zFill(poseStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
 
         if (this.canLink) {
             if (this.linkingPanelImage != null) {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.setShaderTexture(0, this.linkingPanelImage.getId());
-                this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                this.blit(poseStack, this.x, this.y, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
                         this.linkingPanelImage.getPixels().getHeight());
             }
         }
 
-        this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
+        this.renderChildren(poseStack, mouseX, mouseY, partialTicks);
     }
 
     @Override

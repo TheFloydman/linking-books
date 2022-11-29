@@ -1,0 +1,5 @@
+{
+	"type": "linkingbooks:mob_effect",
+	"effect": "minecraft:poison",
+	"ticks": 200
+}

@@ -22,6 +22,7 @@ package thefloydman.linkingbooks.capability;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +35,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
+import thefloydman.linkingbooks.linking.LinkEffectManager;
 import thefloydman.linkingbooks.util.Reference;
 
 public class LinkData implements ILinkData, INBTSerializable<CompoundTag> {
@@ -43,7 +45,7 @@ public class LinkData implements ILinkData, INBTSerializable<CompoundTag> {
             : Reference.server.overworld().getSharedSpawnPos();
     private float rotation = 0.0F;
     private UUID uuid = UUID.randomUUID();
-    private Set<LinkEffect> linkEffects = new HashSet<LinkEffect>();
+    private Set<ResourceLocation> linkEffects = new HashSet<ResourceLocation>();
 
     @Override
     public void setDimension(ResourceLocation dimension) {
@@ -86,23 +88,39 @@ public class LinkData implements ILinkData, INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void setLinkEffects(Set<LinkEffect> effects) {
+    public void setLinkEffectsRL(Set<ResourceLocation> effects) {
         this.linkEffects = effects;
     }
 
     @Override
-    public Set<LinkEffect> getLinkEffects() {
+    public void setLinkEffectsLE(Set<LinkEffect> effects) {
+        this.setLinkEffectsRL(
+                effects.stream().map(effect -> LinkEffectManager.getKey(effect)).collect(Collectors.toSet()));
+    }
+
+    @Override
+    public Set<ResourceLocation> getLinkEffectsAsRL() {
         return this.linkEffects;
     }
 
     @Override
-    public boolean addLinkEffect(LinkEffect effect) {
-        return this.getLinkEffects().add(effect);
+    public Set<LinkEffect> getLinkEffectsAsLE() {
+        return this.linkEffects.stream().map(resource -> LinkEffectManager.get(resource)).collect(Collectors.toSet());
     }
 
     @Override
-    public boolean removeLinkEffect(LinkEffect effect) {
-        return this.getLinkEffects().remove(effect);
+    public boolean addLinkEffect(ResourceLocation effect) {
+        return this.linkEffects.add(effect);
+    }
+
+    @Override
+    public boolean addLinkEffect(LinkEffect effect) {
+        return this.linkEffects.add(LinkEffectManager.getKey(effect));
+    }
+
+    @Override
+    public boolean removeLinkEffect(ResourceLocation effect) {
+        return this.linkEffects.remove(effect);
     }
 
     @Override
@@ -126,8 +144,8 @@ public class LinkData implements ILinkData, INBTSerializable<CompoundTag> {
                 NbtUtils.writeBlockPos(this.getPosition() == null ? new BlockPos(0, 0, 0) : this.getPosition()));
         nbt.putFloat("rotation", this.getRotation());
         ListTag effectsList = new ListTag();
-        for (LinkEffect effect : this.getLinkEffects()) {
-            effectsList.add(StringTag.valueOf(effect.getRegistryName().toString()));
+        for (ResourceLocation effect : this.getLinkEffectsAsRL()) {
+            effectsList.add(StringTag.valueOf(effect.toString()));
         }
         nbt.putUUID("uuid", this.getUUID());
         nbt.put("effects", effectsList);
@@ -150,7 +168,7 @@ public class LinkData implements ILinkData, INBTSerializable<CompoundTag> {
         }
         if (nbt.contains("effects", Tag.TAG_LIST)) {
             for (Tag item : nbt.getList("effects", Tag.TAG_STRING)) {
-                this.addLinkEffect(LinkEffect.get(new ResourceLocation(((StringTag) item).getAsString())));
+                this.addLinkEffect(new ResourceLocation(((StringTag) item).getAsString()));
             }
         }
     }

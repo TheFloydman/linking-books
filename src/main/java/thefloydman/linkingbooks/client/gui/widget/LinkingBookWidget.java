@@ -49,12 +49,14 @@ public class LinkingBookWidget extends NestedWidget {
 
     public int color = DyeColor.GREEN.getFireworkColor();
 
-    public LinkingBookWidget(int x, int y, float zLevel, int width, int height, Component narration,
+    public LinkingBookWidget(String id, int x, int y, float zLevel, int width, int height, Component narration,
             boolean holdingBook, int color, ILinkData linkData, boolean canLink, CompoundTag linkingPanelImage) {
-        super(x, y, width, height, narration);
+        super(id, x, y, width, height, narration);
+        this.zLevel = zLevel;
         this.color = color;
-        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget(this.x + 155, this.y + 41, 0.0F, 64, 42,
-                new TextComponent("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
+        NestedWidget linkingPanel = this
+                .addChild(new LinkingPanelWidget("linking panel", this.x + 155, this.y + 41, zLevel + 1.0F, 64, 42,
+                        new TextComponent("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
         for (GuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }

@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+    	"#linkingbooks:blank_linking_books",
+        "#linkingbooks:written_linking_books"
+    ]
+}

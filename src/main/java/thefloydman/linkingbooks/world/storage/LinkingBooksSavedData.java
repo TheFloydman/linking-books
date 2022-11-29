@@ -30,7 +30,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.saveddata.SavedData;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.capability.LinkData;
 import thefloydman.linkingbooks.item.ModItems;
 
@@ -98,7 +98,7 @@ public class LinkingBooksSavedData extends SavedData {
                 CompoundTag compound = (CompoundTag) item;
                 BlockPos pos = NbtUtils.readBlockPos(compound.getCompound("portal_pos"));
                 ILinkData linkData = ModItems.BLACK_WRITTEN_LINKING_BOOK.get().getDefaultInstance()
-                        .getCapability(Capabilities.LINK_DATA).orElse(null);
+                        .getCapability(ModCapabilities.LINK_DATA).orElse(null);
                 ((LinkData) linkData).deserializeNBT(compound.getCompound("link_data"));
                 data.linkingPortals.put(pos, linkData);
             }

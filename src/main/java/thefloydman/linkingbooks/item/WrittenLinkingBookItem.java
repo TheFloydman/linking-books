@@ -26,6 +26,7 @@ import java.util.Set;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,8 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
@@ -50,7 +50,7 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack heldStack = player.getItemInHand(hand);
         if (!world.isClientSide() && !player.isShiftKeyDown()) {
-            ILinkData linkData = heldStack.getCapability(Capabilities.LINK_DATA).orElse(null);
+            ILinkData linkData = heldStack.getCapability(ModCapabilities.LINK_DATA).orElse(null);
             if (linkData != null) {
                 LinkingUtils.openLinkingBookGui((ServerPlayer) player, true, LinkingBookItem.getColor(heldStack, 0),
                         linkData, world.dimension().location());
@@ -76,18 +76,18 @@ public class WrittenLinkingBookItem extends LinkingBookItem {
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
-        ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
+        ILinkData linkData = stack.getCapability(ModCapabilities.LINK_DATA).orElse(null);
         if (linkData != null) {
             tooltip.add(new TextComponent("§eAge: §9§o" + linkData.getDimension().toString()));
             tooltip.add(new TextComponent("§ePosition: §9§o(" + linkData.getPosition().getX() + ", "
                     + linkData.getPosition().getY() + ", " + linkData.getPosition().getZ() + ")"));
-            Set<LinkEffect> linkEffects = new HashSet<LinkEffect>(linkData.getLinkEffects());
+            Set<ResourceLocation> linkEffects = new HashSet<ResourceLocation>(linkData.getLinkEffectsAsRL());
             if (!linkEffects.isEmpty()) {
                 tooltip.add(new TextComponent("§eLink Effects:"));
-                for (LinkEffect effect : linkEffects) {
+                for (ResourceLocation effect : linkEffects) {
                     tooltip.add(new TextComponent("    §9§o"
-                            + new TranslatableComponent("linkEffect." + effect.getRegistryName().getNamespace() + "."
-                                    + effect.getRegistryName().getPath()).getString()));
+                            + new TranslatableComponent("linkEffect." + effect.getNamespace() + "." + effect.getPath())
+                                    .getString()));
                 }
             }
         }

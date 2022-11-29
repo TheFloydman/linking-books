@@ -40,10 +40,10 @@ public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookContai
     @Override
     protected void init() {
         super.init();
-        NestedWidget linkingBook = this.addRenderableWidget(
-                new LinkingBookWidget(this.leftPos, this.topPos, 0.0F, this.imageWidth, this.imageHeight,
-                        new TextComponent("Linking Book"), this.getMenu().holdingBook, this.getMenu().bookColor,
-                        this.getMenu().linkData, this.getMenu().canLink, this.getMenu().linkingPanelImage));
+        NestedWidget linkingBook = this.addRenderableWidget(new LinkingBookWidget("linking book", this.leftPos,
+                this.topPos, 100.0F, this.imageWidth, this.imageHeight, new TextComponent("Linking Book"),
+                this.getMenu().holdingBook, this.getMenu().bookColor, this.getMenu().linkData, this.getMenu().canLink,
+                this.getMenu().linkingPanelImage));
         linkingBook.addListener(this);
     }
 

@@ -17,13 +17,25 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.linking;
+package thefloydman.linkingbooks.client.gui.widget;
 
-import thefloydman.linkingbooks.api.linking.LinkEffect;
+import net.minecraft.network.chat.Component;
 
-public class TetheredLinkEffect extends LinkEffect {
+public class RecipeWidget extends NestedWidget {
 
-    public TetheredLinkEffect() {
+    public long creationTime;
+
+    public RecipeWidget(String id, int x, int y, int width, int height, Component narration, long cyleLenngth) {
+        super(id, x, y, width, height, narration);
+        this.creationTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void restore(NestedWidget backup) {
+        FormattedPageWidget old = FormattedPageWidget.class.cast(backup);
+        if (old != null) {
+            this.creationTime = old.creationTime;
+        }
     }
 
 }

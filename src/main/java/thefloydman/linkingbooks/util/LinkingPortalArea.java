@@ -31,6 +31,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -39,7 +40,6 @@ import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.block.LinkingPortalBlock;
 import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
-import thefloydman.linkingbooks.linking.LinkEffects;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 public class LinkingPortalArea {
@@ -173,7 +173,7 @@ public class LinkingPortalArea {
     public static void tryMakeLinkingPortalWithConstantAxis(Level world, BlockPos pos, Axis constantAxis,
             ILinkData linkData, LinkTranslatorBlockEntity blockEntity) {
         if (world.dimension().location().equals(linkData.getDimension())
-                && !linkData.getLinkEffects().contains(LinkEffects.INTRAAGE_LINKING.get())) {
+                && !linkData.getLinkEffectsAsRL().contains(new ResourceLocation("linkingbooks:intraage_linking"))) {
             return;
         }
         Set<BlockPos> portalPositions = LinkingPortalArea

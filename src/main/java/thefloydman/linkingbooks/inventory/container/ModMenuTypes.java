@@ -17,16 +17,22 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.capability;
+package thefloydman.linkingbooks.inventory.container;
 
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import thefloydman.linkingbooks.api.capability.ILinkData;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.util.Reference.ContainerNames;
 
-public class Capabilities {
+public class ModMenuTypes {
 
-    public static final Capability<ILinkData> LINK_DATA = CapabilityManager.get(new CapabilityToken<>() {
-    });
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS,
+            Reference.MOD_ID);
+
+    public static final RegistryObject<MenuType<LinkingBookContainer>> LINKING_BOOK = CONTAINERS
+            .register(ContainerNames.LINKING_BOOK, () -> IForgeMenuType.create(LinkingBookContainer::new));
 
 }

@@ -17,22 +17,23 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.inventory.container;
+package thefloydman.linkingbooks.linking;
 
-import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.ContainerNames;
+import thefloydman.linkingbooks.util.Reference.LinkEffectTypeNames;
 
-public class MenuTypes {
+public class LinkEffectTypes {
 
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS,
-            Reference.MOD_ID);
+    public static final DeferredRegister<LinkEffect.Type> LINK_EFFECT_TYPES = DeferredRegister
+            .create(Reference.getAsResourceLocation("linkeffecttypes"), Reference.MOD_ID);
 
-    public static final RegistryObject<MenuType<LinkingBookContainer>> LINKING_BOOK = CONTAINERS
-            .register(ContainerNames.LINKING_BOOK, () -> IForgeMenuType.create(LinkingBookContainer::new));
+    public static final RegistryObject<BasicLinkEffect.Type> BASIC = LINK_EFFECT_TYPES
+            .register(LinkEffectTypeNames.BASIC, BasicLinkEffect.Type::new);
+
+    public static final RegistryObject<MobEffectLinkEffect.Type> MOB_EFFECT = LINK_EFFECT_TYPES
+            .register(LinkEffectTypeNames.MOB_EFFECT, MobEffectLinkEffect.Type::new);
 
 }

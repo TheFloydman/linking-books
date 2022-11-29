@@ -45,9 +45,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
@@ -81,7 +81,7 @@ public class LinkTranslatorBlock extends HorizontalDirectionalBlock implements E
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return BlockEntityTypes.LINK_TRANSLATOR.get().create(pos, state);
+        return ModBlockEntityTypes.LINK_TRANSLATOR.get().create(pos, state);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class LinkTranslatorBlock extends HorizontalDirectionalBlock implements E
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
                         LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
                         if (translator.hasBook()) {
-                            ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA)
+                            ILinkData linkData = translator.getBook().getCapability(ModCapabilities.LINK_DATA)
                                     .orElse(null);
                             LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }
@@ -117,7 +117,7 @@ public class LinkTranslatorBlock extends HorizontalDirectionalBlock implements E
                 ItemStack stack = blockEntity.getBook();
                 Item item = stack.getItem();
                 if (item instanceof WrittenLinkingBookItem) {
-                    ILinkData linkData = stack.getCapability(Capabilities.LINK_DATA).orElse(null);
+                    ILinkData linkData = stack.getCapability(ModCapabilities.LINK_DATA).orElse(null);
                     if (linkData != null) {
                         LinkingUtils.openLinkingBookGui((ServerPlayer) player, false,
                                 LinkingBookItem.getColor(stack, 0), linkData, world.dimension().location());
@@ -169,7 +169,7 @@ public class LinkTranslatorBlock extends HorizontalDirectionalBlock implements E
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
                         LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
                         if (translator.hasBook()) {
-                            ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA)
+                            ILinkData linkData = translator.getBook().getCapability(ModCapabilities.LINK_DATA)
                                     .orElse(null);
                             LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }

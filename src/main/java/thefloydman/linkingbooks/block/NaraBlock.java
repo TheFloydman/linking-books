@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
-import thefloydman.linkingbooks.capability.Capabilities;
+import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 
 public class NaraBlock extends Block {
@@ -49,7 +49,7 @@ public class NaraBlock extends Block {
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
                         LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
                         if (translator.hasBook()) {
-                            ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA).orElse(null);
+                            ILinkData linkData = translator.getBook().getCapability(ModCapabilities.LINK_DATA).orElse(null);
                             LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }
                     }
@@ -69,7 +69,7 @@ public class NaraBlock extends Block {
                         if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
                             LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
                             if (translator.hasBook()) {
-                                ILinkData linkData = translator.getBook().getCapability(Capabilities.LINK_DATA)
+                                ILinkData linkData = translator.getBook().getCapability(ModCapabilities.LINK_DATA)
                                         .orElse(null);
                                 LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData,
                                         translator);

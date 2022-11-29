@@ -51,7 +51,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
-import thefloydman.linkingbooks.blockentity.BlockEntityTypes;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 
 public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
@@ -234,7 +234,7 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return BlockEntityTypes.MARKER_SWITCH.get().create(pos, state);
+        return ModBlockEntityTypes.MARKER_SWITCH.get().create(pos, state);
     }
 
     @Override
