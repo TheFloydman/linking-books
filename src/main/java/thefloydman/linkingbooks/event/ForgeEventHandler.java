@@ -150,6 +150,9 @@ public class ForgeEventHandler {
         Reference.server = event.getServer();
     }
 
+    /**
+     * For loading/unloading data.
+     */
     @SubscribeEvent
     public static void addReloadListener(AddReloadListenerEvent event) {
         event.addListener(new LinkEffectManager());

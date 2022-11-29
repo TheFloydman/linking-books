@@ -21,8 +21,10 @@ package thefloydman.linkingbooks.client.gui.widget;
 
 import java.nio.FloatBuffer;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -32,6 +34,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -45,12 +48,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public abstract class NestedWidget extends AbstractWidget {
 
+    protected final String id;
     public float zLevel = 0.0F;
-    protected final List<NestedWidget> children = Lists.newArrayList();
+    protected final Map<String, NestedWidget> children = Maps.newHashMap();
     protected final List<GuiEventListener> listeners = Lists.newArrayList();
+    protected final Minecraft minecraft;
 
-    public NestedWidget(int x, int y, int width, int height, Component narration) {
+    public NestedWidget(String id, int x, int y, int width, int height, Component narration) {
         super(x, y, width, height, narration);
+        this.id = id;
+        this.minecraft = Minecraft.getInstance();
     }
 
     @Override
@@ -59,7 +66,7 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     public void renderChildren(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        for (NestedWidget widget : this.children) {
+        for (NestedWidget widget : this.children.values()) {
             widget.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
@@ -71,7 +78,7 @@ public abstract class NestedWidget extends AbstractWidget {
 
     public boolean onMouseClickChildren(double mouseX, double mouseY, int button) {
         boolean eatenGeneral = false;
-        for (NestedWidget widget : this.children) {
+        for (NestedWidget widget : this.children.values()) {
             boolean eatenChild = widget.mouseClicked(mouseX, mouseY, button);
             eatenGeneral = eatenChild == true ? eatenChild : eatenGeneral;
         }
@@ -83,7 +90,7 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     public <T extends NestedWidget> T addChild(T widget) {
-        this.children.add(widget);
+        this.children.put(widget.getId(), widget);
         return widget;
     }
 
@@ -97,7 +104,7 @@ public abstract class NestedWidget extends AbstractWidget {
     /**
      * Z-sensitive fill method.
      */
-    public void zFill(final PoseStack matrixStack, int xStart, int yStart, int xEnd, int yEnd, final int color) {
+    public void zFill(final PoseStack poseStack, int xStart, int yStart, int xEnd, int yEnd, final int color) {
 
         if (xStart < xEnd) {
             int endUpdated = xStart;
@@ -121,7 +128,7 @@ public abstract class NestedWidget extends AbstractWidget {
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        Matrix4f matrix = matrixStack.last().pose();
+        Matrix4f matrix = poseStack.last().pose();
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         bufferBuilder.vertex(matrix, xStart, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
         bufferBuilder.vertex(matrix, xEnd, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
@@ -149,6 +156,25 @@ public abstract class NestedWidget extends AbstractWidget {
 
     @Override
     public void updateNarration(NarrationElementOutput foo) {
+    }
+
+    /**
+     * Used to restore important information when the main GUI is resized, like the
+     * text in a text field.
+     */
+    public void restore(NestedWidget backup) {
+    }
+
+    public void restoreChildren(NestedWidget backup) {
+        for (NestedWidget element : this.children.values()) {
+            element.restore(backup.children.get(element.id));
+            element.restoreChildren(backup.children.get(element.id));
+        }
+
+    }
+
+    public String getId() {
+        return this.id;
     }
 
 }

@@ -55,6 +55,7 @@ public class Reference {
 
     public static class ItemNames {
         public static final String INK_BUCKET = "ink_bucket";
+        public static final String GUIDEBOOK = "guidebook";
         public static final String BLACK_BLANK_LINKING_BOOK = "black_blank_linking_book";
         public static final String BLUE_BLANK_LINKING_BOOK = "blue_blank_linking_book";
         public static final String BROWN_BLANK_LINKING_BOOK = "brown_blank_linking_book";
@@ -125,6 +126,12 @@ public class Reference {
     public static class LinkEffectTypeNames {
         public static final String MOB_EFFECT = "mob_effect";
         public static final String BASIC = "basic";
+    }
+
+    public static class SoundNames {
+        public static final String PAGEFLIP_FORWARD = "pageflip_forward";
+        public static final String PAGEFLIP_BACK = "pageflip_back";
+        public static final String BOOK_CLOSE = "book_close";
     }
 
     public static class Resources {

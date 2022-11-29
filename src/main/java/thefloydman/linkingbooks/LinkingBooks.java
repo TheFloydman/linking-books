@@ -33,6 +33,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
+import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.fluid.ModFluidTypes;
@@ -54,12 +55,13 @@ public class LinkingBooks {
         final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModBlocks.BLOCKS.register(eventBus);
         ModItems.ITEMS.register(eventBus);
+        ModRecipeSerializers.RECIPES.register(eventBus);
         ModFluidTypes.FLUID_TYPES.register(eventBus);
         ModFluids.FLUIDS.register(eventBus);
         ModEntityTypes.ENTITIES.register(eventBus);
         ModBlockEntityTypes.TILE_ENTITIES.register(eventBus);
         ModMenuTypes.MENU_TYPES.register(eventBus);
-        ModRecipeSerializers.RECIPES.register(eventBus);
+        ModSounds.SOUNDS.register(eventBus);
         LinkEffectTypes.LINK_EFFECT_TYPES.register(eventBus);
 
         // Register the setup methods.

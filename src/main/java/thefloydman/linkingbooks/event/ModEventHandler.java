@@ -23,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,6 +40,7 @@ import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkTranslatorRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.MarkerSwitchRenderer;
+import thefloydman.linkingbooks.client.resources.guidebook.GuidebookManager;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.ModItems;
@@ -102,6 +104,15 @@ public class ModEventHandler {
                 ModItems.ORANGE_WRITTEN_LINKING_BOOK.get(), ModItems.PINK_WRITTEN_LINKING_BOOK.get(),
                 ModItems.PURPLE_WRITTEN_LINKING_BOOK.get(), ModItems.RED_WRITTEN_LINKING_BOOK.get(),
                 ModItems.WHITE_WRITTEN_LINKING_BOOK.get(), ModItems.YELLOW_WRITTEN_LINKING_BOOK.get());
+    }
+
+    /**
+     * For loading/unloading assets.
+     */
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void addReloadListener(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new GuidebookManager());
     }
 
 }

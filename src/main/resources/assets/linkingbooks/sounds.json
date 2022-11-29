@@ -1,0 +1,14 @@
+{
+  "pageflip_forward": {
+    "subtitle": "linkingbooks.subtitle.pageflip_forward",
+    "sounds": [ "linkingbooks:pageflip_forward" ]
+  },
+  "pageflip_back": {
+    "subtitle": "linkingbooks.subtitle.pageflip_back",
+    "sounds": [ "linkingbooks:pageflip_back" ]
+  },
+  "book_close": {
+    "subtitle": "linkingbooks.subtitle.book_close",
+    "sounds": [ "linkingbooks:book_close" ]
+  }
+}

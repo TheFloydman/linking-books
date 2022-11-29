@@ -1,0 +1,103 @@
+/*******************************************************************************
+ * Linking Books
+ * Copyright (C) 2021  TheFloydman
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You can reach TheFloydman on Discord at Floydman#7171.
+ *******************************************************************************/
+package thefloydman.linkingbooks.client.gui.widget;
+
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+
+public class PageChangeWidget extends NestedWidget {
+
+    private static final ResourceLocation ARROW_TEXTURE = new ResourceLocation("minecraft:textures/gui/book.png");
+    private final Type TYPE;
+
+    public PageChangeWidget(String id, int x, int y, Component narration, Type type) {
+        super(id, x, y, 18, 10, narration);
+        this.TYPE = type;
+    }
+
+    @Override
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        if (!this.visible)
+            return;
+        poseStack.pushPose();
+        if (this.isInside(mouseX, mouseY)) {
+            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
+                    DestFactor.ZERO);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, ARROW_TEXTURE);
+            blit(poseStack, this.x, this.y, 1, TYPE.xHover, TYPE.yHover, this.getWidth(), this.getHeight(), 256, 256);
+        } else {
+            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
+                    DestFactor.ZERO);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, 1.0F);
+            RenderSystem.setShaderTexture(0, ARROW_TEXTURE);
+            blit(poseStack, this.x, this.y, 1, TYPE.xUp, TYPE.yUp, this.getWidth(), this.getHeight(), 256, 256);
+        }
+        poseStack.popPose();
+        this.renderChildren(poseStack, mouseX, mouseY, partialTicks);
+    }
+
+    public enum Type {
+        PREVIOUS(3, 207, 26, 207),
+        NEXT(3, 194, 26, 194);
+
+        public final int xUp;
+        public final int yUp;
+        public final int xHover;
+        public final int yHover;
+
+        Type(int xUp, int yUp, int xHover, int yHover) {
+            this.xUp = xUp;
+            this.yUp = yUp;
+            this.xHover = xHover;
+            this.yHover = yHover;
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        if (!this.isInside(x, y) || !this.visible)
+            return false;
+        for (GuiEventListener listener : this.listeners) {
+            if (listener instanceof BookWidget) {
+                BookWidget book = (BookWidget) listener;
+                switch (this.TYPE) {
+                    case PREVIOUS:
+                        book.previousPage();
+                        break;
+                    default:
+                        book.nextPage();
+                        break;
+                }
+            }
+        }
+        return true;
+    }
+
+}
