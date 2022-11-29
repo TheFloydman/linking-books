@@ -35,7 +35,6 @@ public class ModConfig {
     }
 
     public final IntValue linkingCostExperienceLevels;
-    public final IntValue linkingPanelChunkLoadRadius;
 
     ModConfig(ForgeConfigSpec.Builder builder) {
 
@@ -43,11 +42,6 @@ public class ModConfig {
                 .comment("How many experience levels it costs to use a linking book. Stacks with points option.")
                 .translation("linkingbooks.config.linkingcost_levels")
                 .defineInRange("linkingCostLevels", 0, 0, Integer.MAX_VALUE);
-
-        this.linkingPanelChunkLoadRadius = builder
-                .comment("The radius of chunks to load when a linking panel is rendering.")
-                .translation("linkingbooks.config.panel_chunk_load_radius")
-                .defineInRange("linkingPanelChunkLoadRadius", 4, 0, Integer.MAX_VALUE);
 
     }
 
