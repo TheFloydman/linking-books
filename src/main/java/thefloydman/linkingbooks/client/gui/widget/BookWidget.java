@@ -31,6 +31,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -47,31 +48,35 @@ public class BookWidget extends NestedWidget {
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_cover.png");
     private static final ResourceLocation PAPER_TEXTURE = Reference
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
-    private List<FormattedPageWidget> pages = Lists.newArrayList();
+    private List<VerticalCollectionWidget> pages = Lists.newArrayList();
     private PageChangeWidget previousArrow;
     private PageChangeWidget nextArrow;
     private int currentSpread = 0;
     private int color = new Color(80, 111, 203).getRGB();
 
-    public BookWidget(String id, int x, int y, float zLevel, int width, int height, Component narration, Font font,
-            List<List<Object>> pages) {
-        super(id, x, y, width, height, narration);
+    public BookWidget(String id, int x, int y, float z, int width, int height, Component narration, Screen parentScreen,
+            float scale, Font font, List<List<Object>> pages) {
+        super(id, x, y, z, width, height, narration, parentScreen, scale);
         int marginLeftX = 20;
         int marginRightX = 10;
-        int marginY = 16;
+        int marginY = 14;
+        float iteratedZ = z;
         for (int i = 0; i < pages.size(); i++) {
             List<Object> page = pages.get(i);
             int localX = i % 2 == 0 ? x + marginLeftX : x + (width / 2) + marginRightX;
-            FormattedPageWidget child = this.addChild(new FormattedPageWidget("guidebook page " + i, localX,
-                    y + marginY, (width / 2) - marginLeftX - marginRightX, (height / 2) - (marginY * 2),
-                    Component.literal("Page " + i), font, page));
-            child.visible = false;
+            VerticalCollectionWidget child = this.addChild(new VerticalCollectionWidget("guidebook page " + i, localX,
+                    y + marginY, iteratedZ++, (width / 2) - marginLeftX - marginRightX, (height / 2) - (marginY * 2),
+                    Component.literal("Page " + i), parentScreen, 1.0F, font, page));
+            child.setVisible(false);
             this.pages.add(child);
         }
-        this.previousArrow = this.addChild(new PageChangeWidget("back arrow", this.x + 16,
-                this.y + this.getHeight() - 33, Component.literal("Previous Page"), PageChangeWidget.Type.PREVIOUS));
+        iteratedZ += 100.0F;
+        this.previousArrow = this
+                .addChild(new PageChangeWidget("back arrow", this.x + 16, this.y + this.getHeight() - 21, iteratedZ++,
+                        Component.literal("Previous Page"), parentScreen, 1.0F, PageChangeWidget.Type.PREVIOUS));
         this.nextArrow = this.addChild(new PageChangeWidget("forward arrow", this.x + this.getWidth() - 18 - 16,
-                this.y + this.getHeight() - 33, Component.literal("Next Page"), PageChangeWidget.Type.NEXT));
+                this.y + this.getHeight() - 21, iteratedZ++, Component.literal("Next Page"), parentScreen, 1.0F,
+                PageChangeWidget.Type.NEXT));
         previousArrow.addListener(this);
         nextArrow.addListener(this);
         updateVisible();
@@ -79,27 +84,23 @@ public class BookWidget extends NestedWidget {
 
     @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (!this.visible) {
-            return;
+        if (this.getVisible()) {
+            matrixStack.pushPose();
+            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
+                    DestFactor.ZERO);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, COVER_TEXTURE);
+            float[] color = new Color(this.color).getRGBColorComponents(null);
+            RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
+                    Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
+            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
+            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
+            matrixStack.popPose();
         }
-        matrixStack.pushPose();
-
-        RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
-                DestFactor.ZERO);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, COVER_TEXTURE);
-        float[] color = new Color(this.color).getRGBColorComponents(null);
-        RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
-                Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
-        this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
-        this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
-
-        matrixStack.popPose();
-
-        this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     public void previousPage() {
@@ -123,13 +124,13 @@ public class BookWidget extends NestedWidget {
     private void updateVisible() {
         for (int i = 0; i < this.pages.size(); i++) {
             if (i == currentSpread * 2 || i == currentSpread * 2 + 1) {
-                this.pages.get(i).visible = true;
+                this.pages.get(i).setVisible(true);
             } else {
-                this.pages.get(i).visible = false;
+                this.pages.get(i).setVisible(false);
             }
         }
-        this.previousArrow.visible = currentSpread > 0;
-        this.nextArrow.visible = currentSpread * 2 + 1 < this.pages.size() - 1;
+        this.previousArrow.setVisible(currentSpread > 0);
+        this.nextArrow.setVisible(currentSpread * 2 + 1 < this.pages.size() - 1);
     }
 
     @Override

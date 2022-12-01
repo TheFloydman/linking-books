@@ -113,6 +113,7 @@ public class Reference {
 
     public static class ContainerNames {
         public static final String LINKING_BOOK = "linking_book";
+        public static final String GUIDEBOOK = "guidebook";
     }
 
     public static class CapabilityNames {

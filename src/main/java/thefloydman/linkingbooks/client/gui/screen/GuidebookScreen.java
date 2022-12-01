@@ -24,31 +24,32 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import thefloydman.linkingbooks.client.gui.widget.BookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 import thefloydman.linkingbooks.client.resources.guidebook.GuidebookManager;
 import thefloydman.linkingbooks.client.sound.ModSounds;
+import thefloydman.linkingbooks.inventory.container.GuidebookMenuType;
 
-public class GuidebookScreen extends Screen {
+public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> {
 
-    public GuidebookScreen(Component narration) {
-        super(narration);
+    public GuidebookScreen(GuidebookMenuType menuType, Inventory intentory, Component narration) {
+        super(menuType, intentory, narration);
+        this.imageWidth = 256;
+        this.imageHeight = 180;
     }
 
     @Override
     protected void init() {
         super.init();
-        int width = 256;
-        int height = 192;
-        int left = (this.width - width) / 2;
-        int top = (this.height - height) / 2;
-        this.addRenderableWidget(
-                new BookWidget("guidebook", left, top, 0.0F, width, height, Component.literal("Guidebook"), this.font,
-                        GuidebookManager.getPages().values().stream().collect(Collectors.toList())));
+        this.addRenderableWidget(new BookWidget("guidebook", this.leftPos, this.topPos, 100.0F, this.imageWidth,
+                this.imageHeight, Component.literal("Guidebook"), this, 1.0F, this.font,
+                GuidebookManager.getPages().values().stream().collect(Collectors.toList())));
     }
 
     @Override
@@ -72,6 +73,14 @@ public class GuidebookScreen extends Screen {
             }
         }
 
+    }
+
+    @Override
+    protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
+    }
+
+    @Override
+    protected void renderBg(PoseStack p_97787_, float p_97788_, int p_97789_, int p_97790_) {
     }
 
 }

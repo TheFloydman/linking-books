@@ -47,7 +47,7 @@ import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.config.ModConfig;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
-import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
+import thefloydman.linkingbooks.inventory.container.LinkingBookMenuType;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.network.packets.TakeScreenshotForLinkingBookMessage;
@@ -272,7 +272,7 @@ public class LinkingUtils {
     public static void openLinkingBookGui(ServerPlayer player, boolean holdingBook, int color, ILinkData linkData,
             ResourceLocation currentDimension) {
         NetworkHooks.openScreen(player, new SimpleMenuProvider((id, playerInventory, playerEntity) -> {
-            return new LinkingBookContainer(id, playerInventory);
+            return new LinkingBookMenuType(id, playerInventory);
         }, Component.literal("")), extraData -> {
             extraData.writeBoolean(holdingBook);
             extraData.writeInt(color);

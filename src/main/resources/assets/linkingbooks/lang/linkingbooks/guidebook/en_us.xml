@@ -47,14 +47,13 @@
 		<p><style bold="true" underline="true">Written Linking Books</style></p>
 		<p>Once a linking book has been written, you can use it anywhere to link to the place shown in the linking panel. When you do, in most cases the book will not be transported with you.</p>
 		<p>Linking books do not drop like most other items. Instead of a spinning book item, you'll see a physical book in the world. These books can be damaged and should be kept in your inventory or an appropriate display for safe-keeping.</p>
-		<p>Regular linking books also have a peculiar restriction: They cannot be used within the same <style italic="true">Age</style>, or dimension.</p> You will encounter a grayed-out linking panel if it cannot be used in that moment.
-		<p>By default, linking costs XP. Refer to your local or server config for more details.</p>
+		<p>Regular linking books also have a peculiar restriction: They cannot be used within the same <style italic="true">Age</style>, or dimension. You will encounter a grayed-out linking panel if it cannot be used in that moment.</p>
 	</page>
 	<page title="Link Effects">
 		<p><style bold="true" underline="true">Link Effects</style></p>
 		<p>There are also ways to alter a linking panel in such a way that it changes the normal behavior. Add a written linking book and the required ingredients to a crafting grid to apply these effects.</p>
 		<p><style underline="true">IntraAge Linking:</style> Allows you to link within the same Age. Requires an <style bold="true">ender pearl</style>.</p>
-		<p><style underline="true">Tethering:</style> When you are holding it, the linking book travels with you. Requires a <style bold="true">lead</style>.</p>
+		<p><style underline="true">Tethered:</style> When you are holding it, the linking book travels with you. Requires a <style bold="true">lead</style>.</p>
 		<p><style underline="true">Poison 200:</style> Applies poison to the linking entity for 200 ticks (about 10 seconds). Requires <style bold="true">nether wart</style> and a <style bold="true">spider eye</style>.</p>
 	</page>
 	<page title="Linking Lecterns">
@@ -128,7 +127,7 @@
 			<ingredient tag="forge:cobblestone"/>
 			<ingredient item="linkingbooks:marker_switch"/>
 		</recipe>
-		<p>Marker switches are unique in that they don't only output a redstone signal through their two back sides; they also open a secret compartment that can hold one item when a redstone signal reaches underneath.</p>
+		<p>Marker switches are unique in that they don't only output a redstone signal through their two back sides; they also open a secret compartment with space for one item when a redstone signal reaches underneath.</p>
 	</page>
 	<page title="Decorative Blocks">
 		<p><style bold="true" underline="true">Decorative Blocks</style></p>
