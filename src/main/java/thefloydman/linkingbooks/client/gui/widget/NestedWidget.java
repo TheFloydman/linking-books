@@ -38,6 +38,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -53,21 +54,29 @@ public abstract class NestedWidget extends AbstractWidget {
     protected final Map<String, NestedWidget> children = Maps.newHashMap();
     protected final List<GuiEventListener> listeners = Lists.newArrayList();
     protected final Minecraft minecraft;
+    protected final Screen parentScreen;
+    protected float scale;
 
-    public NestedWidget(String id, int x, int y, int width, int height, Component narration) {
+    public NestedWidget(String id, int x, int y, float z, int width, int height, Component narration,
+            Screen parentScreen, float scale) {
         super(x, y, width, height, narration);
+        this.zLevel = z;
         this.id = id;
+        this.parentScreen = parentScreen;
+        this.scale = scale;
         this.minecraft = Minecraft.getInstance();
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        if (this.getVisible()) {
+            this.renderChildren(poseStack, mouseX, mouseY, partialTicks);
+        }
     }
 
-    public void renderChildren(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderChildren(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         for (NestedWidget widget : this.children.values()) {
-            widget.render(matrixStack, mouseX, mouseY, partialTicks);
+            widget.render(poseStack, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -86,7 +95,8 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     public boolean isInside(double x, double y) {
-        return x >= this.x && x < this.x + this.width && y >= this.y && y < this.y + this.height;
+        return this.getVisible() && x >= this.x && x < this.x + this.width * this.scale && y >= this.y
+                && y < this.y + this.height * this.scale;
     }
 
     public <T extends NestedWidget> T addChild(T widget) {
@@ -176,6 +186,17 @@ public abstract class NestedWidget extends AbstractWidget {
 
     public String getId() {
         return this.id;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+        for (NestedWidget element : this.children.values()) {
+            element.setVisible(visible);
+        }
+    }
+
+    public boolean getVisible() {
+        return this.visible;
     }
 
 }

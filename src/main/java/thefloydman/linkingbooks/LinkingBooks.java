@@ -36,6 +36,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
+import thefloydman.linkingbooks.client.gui.screen.GuidebookScreen;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
 import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.config.ModConfig;
@@ -90,6 +91,7 @@ public class LinkingBooks {
         event.enqueueWork(() -> {
             // Register containers.
             MenuScreens.register(ModMenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
+            MenuScreens.register(ModMenuTypes.GUIDEBOOK.get(), GuidebookScreen::new);
 
             // Register ItemColors.
             ItemColors itemColors = Minecraft.getInstance().getItemColors();

@@ -19,12 +19,40 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.client.gui.widget;
 
+import java.util.List;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class ParagraphWidget extends NestedWidget {
 
-    public ParagraphWidget(String id, int x, int y, int width, int height, Component narration) {
-        super(id, x, y, width, height, narration);
+    public List<Component> lines;
+    public int lineSpacing;
+    public Font font;
+
+    public ParagraphWidget(String id, int x, int y, float z, int width, int height, Component narration,
+            Screen parentScreen, float scale, List<Component> lines, int lineSpacing, Font font) {
+        super(id, x, y, z, width, height, narration, parentScreen, scale);
+        this.lines = lines;
+        this.lineSpacing = lineSpacing;
+        this.font = font;
+    }
+
+    @Override
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        if (this.getVisible()) {
+            poseStack.pushPose();
+            poseStack.scale(this.scale, this.scale, 1.0F);
+            float currentY = this.y;
+            for (int k = 0; k < this.lines.size(); k++) {
+                currentY = this.y + (lineSpacing * k);
+                this.font.draw(poseStack, this.lines.get(k), this.x / this.scale, currentY / this.scale, 0);
+            }
+            poseStack.popPose();
+        }
     }
 
 }

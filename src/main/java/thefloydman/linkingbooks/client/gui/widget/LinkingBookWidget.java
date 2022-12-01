@@ -27,6 +27,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -49,14 +50,14 @@ public class LinkingBookWidget extends NestedWidget {
 
     public int color = DyeColor.GREEN.getFireworkColor();
 
-    public LinkingBookWidget(String id, int x, int y, float zLevel, int width, int height, Component narration,
-            boolean holdingBook, int color, ILinkData linkData, boolean canLink, CompoundTag linkingPanelImage) {
-        super(id, x, y, width, height, narration);
-        this.zLevel = zLevel;
+    public LinkingBookWidget(String id, int x, int y, float z, int width, int height, Component narration,
+            Screen parentScreen, float scale, boolean holdingBook, int color, ILinkData linkData, boolean canLink,
+            CompoundTag linkingPanelImage) {
+        super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.color = color;
-        NestedWidget linkingPanel = this
-                .addChild(new LinkingPanelWidget("linking panel", this.x + 155, this.y + 41, zLevel + 1.0F, 64, 42,
-                        new TextComponent("Linking Panel"), holdingBook, linkData, canLink, linkingPanelImage));
+        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.x + 155, this.y + 41,
+                (int) (z + 1.0F), 64, 42, new TextComponent("Linking Panel"), parentScreen, this.scale, holdingBook,
+                linkData, canLink, linkingPanelImage));
         for (GuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }
@@ -64,27 +65,23 @@ public class LinkingBookWidget extends NestedWidget {
 
     @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (!this.visible) {
-            return;
+        if (this.getVisible()) {
+            matrixStack.pushPose();
+            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
+                    DestFactor.ZERO);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, COVER_TEXTURE);
+            float[] color = new Color(this.color).getRGBColorComponents(null);
+            RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
+                    Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
+            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
+            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
+            matrixStack.popPose();
         }
-        matrixStack.pushPose();
-
-        RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
-                DestFactor.ZERO);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, COVER_TEXTURE);
-        float[] color = new Color(this.color).getRGBColorComponents(null);
-        RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
-                Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
-        this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
-        this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
-
-        matrixStack.popPose();
-
-        this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }
 
 }
