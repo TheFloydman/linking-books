@@ -48,7 +48,7 @@ public class BookWidget extends NestedWidget {
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_cover.png");
     private static final ResourceLocation PAPER_TEXTURE = Reference
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
-    private List<VerticalCollectionWidget> pages = Lists.newArrayList();
+    private List<GuiBookPageWidget> pages = Lists.newArrayList();
     private PageChangeWidget previousArrow;
     private PageChangeWidget nextArrow;
     private int currentSpread = 0;
@@ -64,7 +64,7 @@ public class BookWidget extends NestedWidget {
         for (int i = 0; i < pages.size(); i++) {
             List<Object> page = pages.get(i);
             int localX = i % 2 == 0 ? x + marginLeftX : x + (width / 2) + marginRightX;
-            VerticalCollectionWidget child = this.addChild(new VerticalCollectionWidget("guidebook page " + i, localX,
+            GuiBookPageWidget child = this.addChild(new GuiBookPageWidget("guidebook page " + i, localX,
                     y + marginY, iteratedZ++, (width / 2) - marginLeftX - marginRightX, (height / 2) - (marginY * 2),
                     Component.literal("Page " + i), parentScreen, 1.0F, font, page));
             child.setVisible(false);

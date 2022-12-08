@@ -17,22 +17,25 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.client.resources.guidebook;
+package thefloydman.linkingbooks.client.gui.book;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 
-public class GuidebookImage {
+public abstract class GuiBookElement<T extends NestedWidget> {
 
-    public ResourceLocation resourceLocation;
-    public float scale;
-    public int sourceWidth;
-    public int sourceHeight;
+    private final String name;
 
-    public GuidebookImage(ResourceLocation resourceLocation, float scale, int sourceWidth, int sourceHeight) {
-        this.resourceLocation = resourceLocation;
-        this.scale = scale;
-        this.sourceWidth = sourceWidth;
-        this.sourceHeight = sourceHeight;
+    public GuiBookElement(String name) {
+        this.name = name;
+    }
+
+    public abstract T getAsWidget(String id, int x, int y, float z, int width, int height, Screen parentScreen,
+            float scale, Font font);
+
+    public String getName() {
+        return this.name;
     }
 
 }

@@ -12,34 +12,29 @@
 		<p><style bold="true" underline="true">Linking Panels</style></p>
 		<p>Linking panels are the images you see near the front of every linking book, and they're the first thing you'll need to craft if you want to make blank linking books.</p>
 		<p>The default recipe for linking panels is shaped and requires any kind of black dye surrounded by 8 pieces of paper in a standard 3x3 crafting grid:</p>
-		<recipe>
-			<ingredient item="minecraft:paper"/>
-			<ingredient item="minecraft:paper"/>
-			<ingredient item="minecraft:paper"/>
-			<ingredient item="minecraft:paper"/>
-			<ingredient tag="forge:dyes/black"/>
-			<ingredient item="minecraft:paper"/>
-			<ingredient item="minecraft:paper"/>
-			<ingredient item="minecraft:paper"/>
-			<ingredient item="minecraft:paper"/>
-			<ingredient item="linkingbooks:linking_panel"/>
-		</recipe>
+		<recipe src="linkingbooks:linking_panel"/>
 	</page>
 	<page title="Blank Linking Books">
 		<p><style bold="true" underline="true">Blank Linking Books</style></p>
 		<p>Once you have a linking panel, you're ready to craft your first linking book. You can do so in any 2x2 or 3x3 standard crafting grid. Placement doesn't matter:</p>
-		<recipe>
-			<ingredient/>
-			<ingredient/>
-			<ingredient/>
-			<ingredient tag="forge:dyes"/>
-			<ingredient item="minecraft:leather"/>
-			<ingredient item="linkingbooks:linking_panel"/>
-			<ingredient/>
-			<ingredient/>
-			<ingredient/>
-			<ingredient tag="linkingbooks:blank_linking_books"/>
-		</recipe>
+		<recipes>
+			<rec src="linkingbooks:black_blank_linking_book"/>
+			<rec src="linkingbooks:blue_blank_linking_book"/>
+			<rec src="linkingbooks:brown_blank_linking_book"/>
+			<rec src="linkingbooks:cyan_blank_linking_book"/>
+			<rec src="linkingbooks:gray_blank_linking_book"/>
+			<rec src="linkingbooks:green_blank_linking_book"/>
+			<rec src="linkingbooks:light_blue_blank_linking_book"/>
+			<rec src="linkingbooks:light_gray_blank_linking_book"/>
+			<rec src="linkingbooks:lime_blank_linking_book"/>
+			<rec src="linkingbooks:magenta_blank_linking_book"/>
+			<rec src="linkingbooks:orange_blank_linking_book"/>
+			<rec src="linkingbooks:pink_blank_linking_book"/>
+			<rec src="linkingbooks:purple_blank_linking_book"/>
+			<rec src="linkingbooks:red_blank_linking_book"/>
+			<rec src="linkingbooks:white_blank_linking_book"/>
+			<rec src="linkingbooks:yellow_blank_linking_book"/>
+		</recipes>
 		<p>The color dye you use will determine the color of the resulting linking book.</p>
 		<p>When you use a blank linking book, you turn it into a written linking book that is permanently tied to the coordinates it was written at. So be careful not to use it unlesss you're certain you want to form a link.</p>
 	</page>
@@ -61,48 +56,15 @@
 		<p>When you want to keep your linking book safe and make it easy to use, you need a linking lectern. They look similar to their vanilla counterparts but only work with linking books.</p>
 		<img src="linkingbooks:textures/gui/guidebook/linking_lectern.png" scale="1.0" width="1920" height="720"/>
 		<p><style bold="true">Sneak-right-click</style> to insert or remove a written linking book.</p>
-		<recipe>
-			<ingredient/>
-			<ingredient tag="minecraft:wooden_slabs"/>
-			<ingredient/>
-			<ingredient/>
-			<ingredient tag="forge:bookshelves"/>
-			<ingredient/>
-			<ingredient tag="minecraft:wooden_slabs"/>
-			<ingredient tag="minecraft:wooden_slabs"/>
-			<ingredient tag="minecraft:wooden_slabs"/>
-			<ingredient item="linkingbooks:linking_lectern"/>
-		</recipe>
+		<recipe src="linkingbooks:linking_lectern"/>
 	</page>
 	<page title="Linking Portals - Part One">
 		<p><style bold="true" underline="true">Linking Portals</style></p>
 		<p>Linking books can also be used as portals! There are several parts to get right, though.</p>
 		<p>First, you will need to craft <style bold="true">nara</style>, a super-dense material, with cobblestone and lava:</p>
-		<recipe>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient item="minecraft:lava_bucket"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient item="linkingbooks:nara"/>
-		</recipe>
+		<recipe src="linkingbooks:nara"/>
 		<p>Then use nara and redstone to craft a <style bold="true">link translator</style>:</p>
-		<recipe>
-			<ingredient item="linkingbooks:nara"/>
-			<ingredient item="linkingbooks:nara"/>
-			<ingredient item="linkingbooks:nara"/>
-			<ingredient item="linkingbooks:nara"/>
-			<ingredient item="minecraft:redstone"/>
-			<ingredient/>
-			<ingredient item="linkingbooks:nara"/>
-			<ingredient item="linkingbooks:nara"/>
-			<ingredient item="linkingbooks:nara"/>
-			<ingredient item="linkingbooks:link_translator"/>
-		</recipe>
+		<recipe src="linkingbooks:link_translator"/>
 	</page>
 	<page title="Linking Portals - Part Two">
 		<img src="linkingbooks:textures/gui/guidebook/linking_portal.png" scale="1.0" width="3840" height="1440"/>
@@ -115,35 +77,13 @@
 		<p><style bold="true" underline="true">Marker Switches</style></p>
 		<p>Atrus, son of Gehn, was a skilled engineer and craftsman. On Myst Island, his longtime refuge and prison, he installed several large switches to protect his most valuable Ages.</p>
 		<p>You can craft these same switches yourself with a lever, planks, and cobblestone:</p>
-		<recipe>
-			<ingredient/>
-			<ingredient item="minecraft:lever"/>
-			<ingredient/>
-			<ingredient tag="minecraft:planks"/>
-			<ingredient tag="minecraft:planks"/>
-			<ingredient tag="minecraft:planks"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient tag="forge:cobblestone"/>
-			<ingredient item="linkingbooks:marker_switch"/>
-		</recipe>
+		<recipe src="linkingbooks:marker_switch"/>
 		<p>Marker switches are unique in that they don't only output a redstone signal through their two back sides; they also open a secret compartment with space for one item when a redstone signal reaches underneath.</p>
 	</page>
 	<page title="Decorative Blocks">
 		<p><style bold="true" underline="true">Decorative Blocks</style></p>
 		<p>You also have access to purely decorative blocks. Currently, <style italic="true">Linking Books</style> only provides <style bold="true">bookshelf stairs</style>:</p>
-		<recipe>
-			<ingredient tag="forge:bookshelves"/>
-			<ingredient/>
-			<ingredient/>
-			<ingredient tag="forge:bookshelves"/>
-			<ingredient tag="forge:bookshelves"/>
-			<ingredient/>
-			<ingredient tag="forge:bookshelves"/>
-			<ingredient tag="forge:bookshelves"/>
-			<ingredient tag="forge:bookshelves"/>
-			<ingredient item="linkingbooks:bookshelf_stairs" quantity="3"/>
-		</recipe>
+		<recipe src="linkingbooks:bookshelf_stairs"/>
 		<p>You'll notice you only get 3 stairs out of this recipe as opposed to the 4 for vanilla stairs. This is to ensure you receive the correct number of books back when breaking them.</p>
 	</page>
 </book>

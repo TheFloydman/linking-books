@@ -28,7 +28,7 @@ import thefloydman.linkingbooks.util.Reference.LinkEffectTypeNames;
 public class LinkEffectTypes {
 
     public static final DeferredRegister<LinkEffect.Type> LINK_EFFECT_TYPES = DeferredRegister
-            .create(Reference.getAsResourceLocation("linkeffecttypes"), Reference.MOD_ID);
+            .create(Reference.RegistryNames.LINK_EFFECT_TYPES, Reference.MOD_ID);
 
     public static final RegistryObject<BasicLinkEffect.Type> BASIC = LINK_EFFECT_TYPES
             .register(LinkEffectTypeNames.BASIC, BasicLinkEffect.Type::new);

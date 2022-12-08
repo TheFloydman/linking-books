@@ -43,8 +43,8 @@ public class RecipeWidget extends NestedWidget {
             Screen parentScreen, float scale, List<List<ItemStack>> ingredients) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         for (int i = 0; i < ingredients.size(); i++) {
-            int gridX = i == 9 ? 91 : (int) (3.0F + ((i % 3.0F) * 20.0F));
-            int gridY = i == 9 ? 23 : (int) (3.0F + (Mth.fastFloor(i / 3.0F) * 20.0F));
+            int gridX = i == ingredients.size() - 1 ? 91 : (int) (3.0F + ((i % 3.0F) * 20.0F));
+            int gridY = i == ingredients.size() - 1 ? 23 : (int) (3.0F + (Mth.fastFloor(i / 3.0F) * 20.0F));
             this.addChild(new ItemStackWidget(id + "ingr" + i, (int) (this.x + gridX * this.scale),
                     (int) (this.y + gridY * this.scale), z++, 16, 16, Component.literal("Ingredient"), parentScreen,
                     scale, ingredients.get(i)));

@@ -126,7 +126,8 @@ public class LinkingUtils {
             LOGGER.info("ILinkData.getDimension() returned null. Link failed.");
         } else if (linkData.getPosition() == null) {
             LOGGER.info("ILinkData.getPosition() returned null. Link failed.");
-        } else if (!linkData.getLinkEffectsAsRL().contains(new ResourceLocation("linkingbooks:intraage_linking"))
+        } else if (!ModConfig.COMMON.alwaysAllowIntraAgeLinking.get()
+                && !linkData.getLinkEffectsAsRL().contains(new ResourceLocation("linkingbooks:intraage_linking"))
                 && world.dimension().location().equals(linkData.getDimension())) {
             if (entity instanceof ServerPlayer) {
                 ServerPlayer player = (ServerPlayer) entity;
@@ -181,14 +182,14 @@ public class LinkingUtils {
                 ServerPlayer player = (ServerPlayer) entity;
                 // Deduct experience levels if a cost has been set in config.
                 if (!player.isCreative()) {
-                    if (player.experienceLevel < ModConfig.COMMON.linkingCostExperienceLevels.get()) {
+                    if (player.experienceLevel < ModConfig.COMMON.linkingCostLevels.get()) {
                         player.closeContainer();
                         player.doCloseContainer();
                         player.displayClientMessage(
                                 Component.translatable("message.linkingbooks.insufficient_experience"), true);
                         return false;
                     }
-                    player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get() * -1);
+                    player.giveExperienceLevels(ModConfig.COMMON.linkingCostLevels.get() * -1);
                     tookExperience = true;
                 }
                 if (holdingBook
@@ -221,7 +222,7 @@ public class LinkingUtils {
                     if (entity instanceof ServerPlayer) {
                         ServerPlayer player = (ServerPlayer) entity;
                         if (tookExperience) {
-                            player.giveExperienceLevels(ModConfig.COMMON.linkingCostExperienceLevels.get());
+                            player.giveExperienceLevels(ModConfig.COMMON.linkingCostLevels.get());
                         }
                         serverWorld.getServer().execute(() -> {
                             player.teleportTo((ServerLevel) world, originalPos.x, originalPos.y, originalPos.z,
@@ -277,7 +278,8 @@ public class LinkingUtils {
             extraData.writeBoolean(holdingBook);
             extraData.writeInt(color);
             linkData.write(extraData);
-            boolean canLink = !currentDimension.equals(linkData.getDimension())
+            boolean canLink = ModConfig.COMMON.alwaysAllowIntraAgeLinking.get()
+                    || !currentDimension.equals(linkData.getDimension())
                     || linkData.getLinkEffectsAsRL().contains(Reference.getAsResourceLocation("intraage_linking"));
             extraData.writeBoolean(canLink);
             LinkingBooksSavedData savedData = player.getServer().getLevel(Level.OVERWORLD).getDataStorage()

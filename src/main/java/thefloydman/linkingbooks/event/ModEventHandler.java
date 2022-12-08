@@ -33,6 +33,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.api.linking.LinkEffect;
 import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
+import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
@@ -40,7 +41,6 @@ import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkTranslatorRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.LinkingLecternRenderer;
 import thefloydman.linkingbooks.client.renderer.tileentity.MarkerSwitchRenderer;
-import thefloydman.linkingbooks.client.resources.guidebook.GuidebookManager;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.item.LinkingBookItem;
 import thefloydman.linkingbooks.item.ModItems;
@@ -55,9 +55,9 @@ public class ModEventHandler {
     @SubscribeEvent
     public static void createNewRegistries(NewRegistryEvent event) {
         RegistryBuilder<LinkEffect.Type> linkEffectTypeRegistryBuilder = new RegistryBuilder<LinkEffect.Type>();
-        linkEffectTypeRegistryBuilder.setName(Reference.getAsResourceLocation("linkeffecttypes"));
-        event.create(linkEffectTypeRegistryBuilder, (foo) -> {
-            LinkEffect.Type.registry = foo;
+        linkEffectTypeRegistryBuilder.setName(Reference.RegistryNames.LINK_EFFECT_TYPES);
+        event.create(linkEffectTypeRegistryBuilder, (registry) -> {
+            LinkEffect.Type.registry = registry;
         });
     }
 
@@ -112,7 +112,7 @@ public class ModEventHandler {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void addReloadListener(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(new GuidebookManager());
+        event.registerReloadListener(new GuiBookManager());
     }
 
 }
