@@ -45,8 +45,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.item.LinkingBookItem;
@@ -54,6 +54,7 @@ import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.LinkingUtils;
 
+@SuppressWarnings("deprecation")
 public class LinkTranslatorBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
     public static final BooleanProperty HAS_BOOK = BlockStateProperties.HAS_BOOK;

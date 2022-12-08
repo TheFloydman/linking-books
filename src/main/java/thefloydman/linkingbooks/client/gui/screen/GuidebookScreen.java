@@ -31,9 +31,9 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
+import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.gui.widget.BookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
-import thefloydman.linkingbooks.client.resources.guidebook.GuidebookManager;
 import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.inventory.container.GuidebookContainer;
 
@@ -50,7 +50,7 @@ public class GuidebookScreen extends AbstractContainerScreen<GuidebookContainer>
         super.init();
         this.addRenderableWidget(new BookWidget("guidebook", this.leftPos, this.topPos, 100.0F, this.imageWidth,
                 this.imageHeight, new TextComponent("Guidebook"), this, 1.0F, this.font,
-                GuidebookManager.getPages().values().stream().collect(Collectors.toList())));
+                GuiBookManager.getPages().values().stream().collect(Collectors.toList())));
     }
 
     @Override

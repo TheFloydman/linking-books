@@ -44,10 +44,10 @@ import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 /**
- * Much of this code is copied from
- * {@link net.minecraft.block.NetherPortalBlock}.
+ * Much of this code is based on {@link net.minecraft.block.NetherPortalBlock}.
  *
  */
+@SuppressWarnings("deprecation")
 public class LinkingPortalBlock extends Block {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;

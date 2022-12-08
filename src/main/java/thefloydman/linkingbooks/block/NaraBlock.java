@@ -31,6 +31,7 @@ import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
 import thefloydman.linkingbooks.capability.ModCapabilities;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 
+@SuppressWarnings("deprecation")
 public class NaraBlock extends Block {
 
     public NaraBlock(Properties properties) {
@@ -49,7 +50,8 @@ public class NaraBlock extends Block {
                     if (blockEntity != null && blockEntity instanceof LinkTranslatorBlockEntity) {
                         LinkTranslatorBlockEntity translator = (LinkTranslatorBlockEntity) blockEntity;
                         if (translator.hasBook()) {
-                            ILinkData linkData = translator.getBook().getCapability(ModCapabilities.LINK_DATA).orElse(null);
+                            ILinkData linkData = translator.getBook().getCapability(ModCapabilities.LINK_DATA)
+                                    .orElse(null);
                             LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);
                         }
                     }

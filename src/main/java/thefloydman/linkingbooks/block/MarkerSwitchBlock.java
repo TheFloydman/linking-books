@@ -53,6 +53,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
 import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 
+@SuppressWarnings("deprecation")
 public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;

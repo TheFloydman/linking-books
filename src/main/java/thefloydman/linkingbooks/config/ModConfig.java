@@ -22,6 +22,7 @@ package thefloydman.linkingbooks.config;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 public class ModConfig {
@@ -34,9 +35,15 @@ public class ModConfig {
         COMMON = specPair.getLeft();
     }
 
+    public final BooleanValue alwaysAllowIntraAgeLinking;
     public final IntValue linkingCostExperienceLevels;
 
     ModConfig(ForgeConfigSpec.Builder builder) {
+
+        this.alwaysAllowIntraAgeLinking = builder.comment(
+                "Whether to allow linking within the same dimension, even with books that don't have the IntraAge Link Effect applied.")
+                .translation("linkingbooks.config.always_allow_intraage_linking")
+                .define("alwaysAllowIntraAgeLinking", false);
 
         this.linkingCostExperienceLevels = builder
                 .comment("How many experience levels it costs to use a linking book. Stacks with points option.")

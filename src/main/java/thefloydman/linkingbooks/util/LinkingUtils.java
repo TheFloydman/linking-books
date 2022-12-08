@@ -127,7 +127,8 @@ public class LinkingUtils {
             LOGGER.info("ILinkData.getDimension() returned null. Link failed.");
         } else if (linkData.getPosition() == null) {
             LOGGER.info("ILinkData.getPosition() returned null. Link failed.");
-        } else if (!linkData.getLinkEffectsAsRL().contains(new ResourceLocation("linkingbooks:intraage_linking"))
+        } else if (!ModConfig.COMMON.alwaysAllowIntraAgeLinking.get()
+                && !linkData.getLinkEffectsAsRL().contains(new ResourceLocation("linkingbooks:intraage_linking"))
                 && world.dimension().location().equals(linkData.getDimension())) {
             if (entity instanceof ServerPlayer) {
                 ServerPlayer player = (ServerPlayer) entity;
@@ -279,7 +280,8 @@ public class LinkingUtils {
             extraData.writeBoolean(holdingBook);
             extraData.writeInt(color);
             linkData.write(extraData);
-            boolean canLink = !currentDimension.equals(linkData.getDimension())
+            boolean canLink = ModConfig.COMMON.alwaysAllowIntraAgeLinking.get()
+                    || !currentDimension.equals(linkData.getDimension())
                     || linkData.getLinkEffectsAsRL().contains(Reference.getAsResourceLocation("intraage_linking"));
             extraData.writeBoolean(canLink);
             LinkingBooksSavedData savedData = player.getServer().getLevel(Level.OVERWORLD).getDataStorage()

@@ -39,6 +39,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
+@SuppressWarnings("deprecation")
 public class ItemStackWidget extends NestedWidget {
 
     protected List<ItemStack> itemStacks;
@@ -46,15 +47,15 @@ public class ItemStackWidget extends NestedWidget {
     public long changeTime = 2000L; // 2 seconds
 
     public ItemStackWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale, List<ItemStack> itemStack) {
+            Screen parentScreen, float scale, List<ItemStack> itemStacks) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
-        this.itemStacks = itemStack;
+        this.itemStacks = itemStacks;
         this.creationTime = System.currentTimeMillis();
     }
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        if (this.getVisible()) {
+        if (this.getVisible() && this.itemStacks.size() > 0) {
             int changeIndex = Mth.fastFloor((System.currentTimeMillis() - this.creationTime) / this.changeTime);
             ItemStack stack = this.itemStacks.get(changeIndex % this.itemStacks.size());
             if (stack.isEmpty())
@@ -99,9 +100,6 @@ public class ItemStackWidget extends NestedWidget {
             }
             poseStack.popPose();
         }
-    }
-
-    public void renderTooltip(PoseStack poseStack, int mouseX, int mouseY, ItemStack stack) {
     }
 
     @Override
