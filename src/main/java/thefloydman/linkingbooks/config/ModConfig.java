@@ -22,6 +22,7 @@ package thefloydman.linkingbooks.config;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 public class ModConfig {
@@ -34,26 +35,20 @@ public class ModConfig {
         COMMON = specPair.getLeft();
     }
 
-    public final IntValue linkingCostExperienceLevels;
-    public final IntValue linkingPanelChunkLoadRadius;
-    public final IntValue linkingPanelChunkRenderDistance;
+    public final BooleanValue alwaysAllowIntraAgeLinking;
+    public final IntValue linkingCostLevels;
 
     ModConfig(ForgeConfigSpec.Builder builder) {
 
-        this.linkingCostExperienceLevels = builder
+        this.alwaysAllowIntraAgeLinking = builder.comment(
+                "Whether to allow linking within the same dimension, even with books that don't have the IntraAge Link Effect applied.")
+                .translation("linkingbooks.config.always_allow_intraage_linking")
+                .define("alwaysAllowIntraAgeLinking", false);
+
+        this.linkingCostLevels = builder
                 .comment("How many experience levels it costs to use a linking book. Stacks with points option.")
-                .translation("linkingbooks.configgui.linkingcost_levels")
+                .translation("linkingbooks.config.linkingcost_levels")
                 .defineInRange("linkingCostLevels", 0, 0, Integer.MAX_VALUE);
-
-        this.linkingPanelChunkLoadRadius = builder
-                .comment("The radius of chunks to load when a linking panel is rendering.")
-                .translation("linkingbooks.configgui.panel_chunk_load_radius")
-                .defineInRange("linkingPanelChunkLoadRadius", 4, 0, Integer.MAX_VALUE);
-
-        this.linkingPanelChunkRenderDistance = builder
-                .comment("The maximum render distance (in chunks) of a linking panel.")
-                .translation("linkingbooks.configgui.panel_chunk_render_distance")
-                .defineInRange("linkingPanelChunkRenderDistance", 4, 0, Integer.MAX_VALUE);
 
     }
 

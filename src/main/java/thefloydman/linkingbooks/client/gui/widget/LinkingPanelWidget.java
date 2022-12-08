@@ -26,6 +26,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.nbt.CompoundTag;
@@ -47,9 +48,10 @@ public class LinkingPanelWidget extends NestedWidget {
     DynamicTexture linkingPanelImage = null;
     Minecraft client = Minecraft.getInstance();
 
-    public LinkingPanelWidget(int x, int y, float zLevel, int width, int height, Component narration,
-            boolean holdingBook, ILinkData linkData, boolean canLink, CompoundTag linkingPanelImageTag) {
-        super(x, y, width, height, narration);
+    public LinkingPanelWidget(String id, int x, int y, float z, int width, int height, Component narration,
+            Screen parentScreen, float scale, boolean holdingBook, ILinkData linkData, boolean canLink,
+            CompoundTag linkingPanelImageTag) {
+        super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.holdingBook = holdingBook;
         this.linkData = linkData;
         this.canLink = canLink;
@@ -66,24 +68,21 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (!this.visible) {
-            return;
-        }
-        int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
-        this.zFill(matrixStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        if (this.getVisible()) {
+            int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
+            this.zFill(poseStack, this.x, this.y, this.x + this.width, this.y + this.height, panelColor);
 
-        if (this.canLink) {
-            if (this.linkingPanelImage != null) {
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderTexture(0, this.linkingPanelImage.getId());
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                this.blit(matrixStack, this.x, this.y, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
-                        this.linkingPanelImage.getPixels().getHeight());
+            if (this.canLink) {
+                if (this.linkingPanelImage != null) {
+                    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                    RenderSystem.setShaderTexture(0, this.linkingPanelImage.getId());
+                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                    this.blit(poseStack, this.x, this.y, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
+                            this.linkingPanelImage.getPixels().getHeight());
+                }
             }
         }
-
-        this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override

@@ -19,23 +19,35 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.inventory.container;
 
-import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.ContainerNames;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
-public class ModMenuTypes {
+public class GuidebookMenuType extends AbstractContainerMenu {
 
-    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
-            Reference.MOD_ID);
+    public GuidebookMenuType(int windowId, Inventory playerInventory) {
+        super(ModMenuTypes.GUIDEBOOK.get(), windowId);
+    }
 
-    public static final RegistryObject<MenuType<LinkingBookMenuType>> LINKING_BOOK = MENU_TYPES
-            .register(ContainerNames.LINKING_BOOK, () -> IForgeMenuType.create(LinkingBookMenuType::new));
+    public GuidebookMenuType(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
+        this(windowId, playerInventory);
+    }
 
-    public static final RegistryObject<MenuType<GuidebookMenuType>> GUIDEBOOK = MENU_TYPES
-            .register(ContainerNames.GUIDEBOOK, () -> IForgeMenuType.create(GuidebookMenuType::new));
+    @Override
+    public boolean stillValid(Player player) {
+        return true;
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
+        return null;
+    }
 
 }

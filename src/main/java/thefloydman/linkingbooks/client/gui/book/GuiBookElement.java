@@ -17,23 +17,25 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.linking;
+package thefloydman.linkingbooks.client.gui.book;
 
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.LinkEffectTypeNames;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 
-public class LinkEffectTypes {
+public abstract class GuiBookElement<T extends NestedWidget> {
 
-    public static final DeferredRegister<LinkEffect.Type> LINK_EFFECT_TYPES = DeferredRegister
-            .create(Reference.RegistryNames.LINK_EFFECT_TYPES, Reference.MOD_ID);
+    private final String name;
 
-    public static final RegistryObject<BasicLinkEffect.Type> BASIC = LINK_EFFECT_TYPES
-            .register(LinkEffectTypeNames.BASIC, BasicLinkEffect.Type::new);
+    public GuiBookElement(String name) {
+        this.name = name;
+    }
 
-    public static final RegistryObject<MobEffectLinkEffect.Type> MOB_EFFECT = LINK_EFFECT_TYPES
-            .register(LinkEffectTypeNames.MOB_EFFECT, MobEffectLinkEffect.Type::new);
+    public abstract T getAsWidget(String id, int x, int y, float z, int width, int height, Screen parentScreen,
+            float scale, Font font);
+
+    public String getName() {
+        return this.name;
+    }
 
 }

@@ -26,23 +26,23 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
-import thefloydman.linkingbooks.inventory.container.LinkingBookContainer;
+import thefloydman.linkingbooks.inventory.container.LinkingBookMenuType;
 
-public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookContainer> {
+public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookMenuType> {
 
-    public LinkingBookScreen(LinkingBookContainer container, Inventory inventory, Component narration) {
+    public LinkingBookScreen(LinkingBookMenuType container, Inventory inventory, Component narration) {
         super(container, inventory, narration);
         this.imageWidth = 256;
-        this.imageHeight = 192;
+        this.imageHeight = 180;
     }
 
     @Override
     protected void init() {
         super.init();
-        NestedWidget linkingBook = this.addRenderableWidget(
-                new LinkingBookWidget(this.leftPos, this.topPos, 0.0F, this.imageWidth, this.imageHeight,
-                        Component.literal("Linking Book"), this.getMenu().holdingBook, this.getMenu().bookColor,
-                        this.getMenu().linkData, this.getMenu().canLink, this.getMenu().linkingPanelImage));
+        NestedWidget linkingBook = this.addRenderableWidget(new LinkingBookWidget("linking book", this.leftPos,
+                this.topPos, 100.0F, this.imageWidth, this.imageHeight, Component.literal("Linking Book"), this, 1.0F,
+                this.getMenu().holdingBook, this.getMenu().bookColor, this.getMenu().linkData, this.getMenu().canLink,
+                this.getMenu().linkingPanelImage));
         linkingBook.addListener(this);
     }
 

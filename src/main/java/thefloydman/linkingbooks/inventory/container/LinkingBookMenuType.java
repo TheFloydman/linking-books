@@ -29,7 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import thefloydman.linkingbooks.api.capability.ILinkData;
 import thefloydman.linkingbooks.capability.LinkData;
 
-public class LinkingBookContainer extends AbstractContainerMenu {
+public class LinkingBookMenuType extends AbstractContainerMenu {
 
     public boolean holdingBook = false;
     public int bookColor = DyeColor.GREEN.getFireworkColor();
@@ -37,11 +37,11 @@ public class LinkingBookContainer extends AbstractContainerMenu {
     public boolean canLink = false;
     public CompoundTag linkingPanelImage = new CompoundTag();
 
-    public LinkingBookContainer(int windowId, Inventory playerInventory) {
+    public LinkingBookMenuType(int windowId, Inventory playerInventory) {
         super(ModMenuTypes.LINKING_BOOK.get(), windowId);
     }
 
-    public LinkingBookContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
+    public LinkingBookMenuType(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
         this(windowId, playerInventory);
         this.holdingBook = extraData.readBoolean();
         this.bookColor = extraData.readInt();

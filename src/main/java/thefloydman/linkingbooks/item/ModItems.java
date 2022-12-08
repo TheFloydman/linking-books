@@ -33,6 +33,9 @@ public class ModItems {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Reference.MOD_ID);
 
+    public static final RegistryObject<Item> GUIDEBOOK = ITEMS.register(Reference.ItemNames.GUIDEBOOK,
+            () -> new GuidebookItem(new Item.Properties().stacksTo(16)));
+
     public static final RegistryObject<Item> BLACK_BLANK_LINKING_BOOK = ITEMS.register(
             Reference.ItemNames.BLACK_BLANK_LINKING_BOOK,
             () -> new BlankLinkingBookItem(new Item.Properties().stacksTo(16)));

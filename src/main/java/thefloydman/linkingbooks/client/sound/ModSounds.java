@@ -17,25 +17,27 @@
  *
  * You can reach TheFloydman on Discord at Floydman#7171.
  *******************************************************************************/
-package thefloydman.linkingbooks.inventory.container;
+package thefloydman.linkingbooks.client.sound;
 
-import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.ContainerNames;
 
-public class ModMenuTypes {
+public class ModSounds {
 
-    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS,
             Reference.MOD_ID);
 
-    public static final RegistryObject<MenuType<LinkingBookMenuType>> LINKING_BOOK = MENU_TYPES
-            .register(ContainerNames.LINKING_BOOK, () -> IForgeMenuType.create(LinkingBookMenuType::new));
+    public static final RegistryObject<SoundEvent> PAGEFLIP_FORWARD = SOUNDS.register(
+            Reference.SoundNames.PAGEFLIP_FORWARD,
+            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_FORWARD)));
 
-    public static final RegistryObject<MenuType<GuidebookMenuType>> GUIDEBOOK = MENU_TYPES
-            .register(ContainerNames.GUIDEBOOK, () -> IForgeMenuType.create(GuidebookMenuType::new));
+    public static final RegistryObject<SoundEvent> PAGEFLIP_BACK = SOUNDS.register(Reference.SoundNames.PAGEFLIP_BACK,
+            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_BACK)));
+
+    public static final RegistryObject<SoundEvent> BOOK_CLOSE = SOUNDS.register(Reference.SoundNames.BOOK_CLOSE,
+            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.BOOK_CLOSE)));
 
 }
