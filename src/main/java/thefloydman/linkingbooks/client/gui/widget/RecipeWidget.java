@@ -44,9 +44,9 @@ public class RecipeWidget extends NestedWidget {
         for (int i = 0; i < ingredients.size(); i++) {
             int gridX = i == ingredients.size() - 1 ? 91 : (int) (3.0F + ((i % 3.0F) * 20.0F));
             int gridY = i == ingredients.size() - 1 ? 23 : (int) (3.0F + (Mth.fastFloor(i / 3.0F) * 20.0F));
-            this.addChild(new ItemStackWidget(id + "ingr" + i, (int) (this.x + gridX * this.scale),
-                    (int) (this.y + gridY * this.scale), z++, 16, 16, Component.literal("Ingredient"), parentScreen,
-                    scale, ingredients.get(i)));
+            this.addChild(new ItemStackWidget(id + "ingr" + i, (int) (this.getX() + gridX * this.scale),
+                    (int) (this.getY() + gridY * this.scale), z++, 16, 16, Component.literal("Ingredient"),
+                    parentScreen, scale, ingredients.get(i)));
         }
     }
 
@@ -61,8 +61,8 @@ public class RecipeWidget extends NestedWidget {
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, CRAFTING_TEXTURE);
-            blit(poseStack, (int) (this.x / this.scale), (int) (this.y / this.scale), 1, 0, 0, this.width, this.height,
-                    256, 256);
+            blit(poseStack, (int) (this.getX() / this.scale), (int) (this.getY() / this.scale), 1, 0, 0, this.width,
+                    this.height, 256, 256);
             this.renderChildren(poseStack, mouseX, mouseY, partialTicks);
             poseStack.popPose();
         }

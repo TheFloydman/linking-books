@@ -22,7 +22,7 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -103,8 +103,8 @@ public class LinkTranslatorRenderer implements BlockEntityRenderer<LinkTranslato
                     translate[2] = 0.4D;
             }
             matrixStack.translate(translate[0], translate[1], translate[2]);
-            matrixStack.mulPose(Vector3f.YP.rotation((float) Math.PI * rotation / 2.0F));
-            matrixStack.mulPose(Vector3f.XP.rotation((float) Math.PI));
+            matrixStack.mulPose(Axis.YP.rotation((float) Math.PI * rotation / 2.0F));
+            matrixStack.mulPose(Axis.XP.rotation((float) Math.PI));
             matrixStack.scale(0.75F, 0.75F, 0.75F);
             VertexConsumer vertexBuilder = buffer.getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
             this.coverModel.renderToBuffer(matrixStack, vertexBuilder, arg4, arg5, this.color[0], this.color[1],

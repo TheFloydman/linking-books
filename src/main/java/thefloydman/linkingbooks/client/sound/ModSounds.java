@@ -29,14 +29,16 @@ public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS,
             Reference.MOD_ID);
 
-    public static final RegistryObject<SoundEvent> PAGEFLIP_FORWARD = SOUNDS.register(
-            Reference.SoundNames.PAGEFLIP_FORWARD,
-            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_FORWARD)));
+    public static final RegistryObject<SoundEvent> PAGEFLIP_FORWARD = SOUNDS
+            .register(Reference.SoundNames.PAGEFLIP_FORWARD, () -> SoundEvent
+                    .createVariableRangeEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_FORWARD)));
 
     public static final RegistryObject<SoundEvent> PAGEFLIP_BACK = SOUNDS.register(Reference.SoundNames.PAGEFLIP_BACK,
-            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_BACK)));
+            () -> SoundEvent
+                    .createVariableRangeEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_BACK)));
 
     public static final RegistryObject<SoundEvent> BOOK_CLOSE = SOUNDS.register(Reference.SoundNames.BOOK_CLOSE,
-            () -> new SoundEvent(Reference.getAsResourceLocation(Reference.SoundNames.BOOK_CLOSE)));
+            () -> SoundEvent
+                    .createVariableRangeEvent(Reference.getAsResourceLocation(Reference.SoundNames.BOOK_CLOSE)));
 
 }

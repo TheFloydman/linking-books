@@ -57,7 +57,7 @@ public class ImageWidget extends NestedWidget {
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, this.resourceLocation);
-            blit(poseStack, this.x, this.y, 1, this.sourceX, this.sourceY, (int) (this.width * this.scale),
+            blit(poseStack, this.getX(), this.getY(), 1, this.sourceX, this.sourceY, (int) (this.width * this.scale),
                     (int) (this.height * this.scale), (int) (this.width * this.scale),
                     (int) (this.height * this.scale));
             poseStack.popPose();

@@ -36,12 +36,12 @@ public class GuiBookPageWidget extends NestedWidget {
             Screen parentScreen, Float scale, Font font, List<Object> elements) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         int lineSpacing = 6;
-        int currentY = (int) (this.y / this.scale);
+        int currentY = (int) (this.getY() / this.scale);
         for (int i = 0; i < elements.size(); i++) {
             Object element = elements.get(i);
             if (element instanceof GuiBookElement) {
                 GuiBookElement<?> guiBookElement = (GuiBookElement<?>) element;
-                NestedWidget widget = guiBookElement.getAsWidget(this.id + guiBookElement.getName() + i, this.x,
+                NestedWidget widget = guiBookElement.getAsWidget(this.id + guiBookElement.getName() + i, this.getX(),
                         currentY, z + 1.0F, this.width, 0, parentScreen, 0.5F, font);
                 this.addChild(widget);
                 currentY += widget.getHeight() * 0.5F + lineSpacing;

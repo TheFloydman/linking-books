@@ -52,7 +52,7 @@ public class LinkCommand {
                             ILinkData linkData = new LinkData();
                             linkData.setDimension(context.getSource().getPlayerOrException().getCommandSenderWorld()
                                     .dimension().location());
-                            linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
+                            linkData.setPosition(BlockPosArgument.getSpawnablePos(context, POSITION));
                             linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
                             linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                             return LinkingUtils.linkEntities(
@@ -65,7 +65,7 @@ public class LinkCommand {
                                     ILinkData linkData = new LinkData();
                                     linkData.setDimension(
                                             DimensionArgument.getDimension(context, DIMENSION).dimension().location());
-                                    linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
+                                    linkData.setPosition(BlockPosArgument.getSpawnablePos(context, POSITION));
                                     linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
                                     linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                                     return LinkingUtils.linkEntities(
@@ -78,7 +78,7 @@ public class LinkCommand {
                             ILinkData linkData = new LinkData();
                             linkData.setDimension(
                                     DimensionArgument.getDimension(context, DIMENSION).dimension().location());
-                            linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
+                            linkData.setPosition(BlockPosArgument.getSpawnablePos(context, POSITION));
                             linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
                             linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                             return LinkingUtils.linkEntities(
@@ -90,7 +90,7 @@ public class LinkCommand {
                     ILinkData linkData = new LinkData();
                     linkData.setDimension(
                             context.getSource().getPlayerOrException().getCommandSenderWorld().dimension().location());
-                    linkData.setPosition(BlockPosArgument.getLoadedBlockPos(context, POSITION));
+                    linkData.setPosition(BlockPosArgument.getSpawnablePos(context, POSITION));
                     linkData.setRotation(context.getSource().getPlayerOrException().getYRot());
                     linkData.addLinkEffect(new ResourceLocation("linkingbooks:intraage_linking"));
                     return LinkingUtils.linkEntities(

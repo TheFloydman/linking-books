@@ -45,10 +45,10 @@ public class ParagraphWidget extends NestedWidget {
         if (this.getVisible()) {
             poseStack.pushPose();
             poseStack.scale(this.scale, this.scale, 1.0F);
-            float currentY = this.y;
+            float currentY = this.getY();
             for (int k = 0; k < this.lines.size(); k++) {
-                currentY = this.y + (lineSpacing * k);
-                this.font.draw(poseStack, this.lines.get(k), this.x / this.scale, currentY / this.scale, 0);
+                currentY = this.getY() + (lineSpacing * k);
+                this.font.draw(poseStack, this.lines.get(k), this.getX() / this.scale, currentY / this.scale, 0);
             }
             poseStack.popPose();
         }

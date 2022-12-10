@@ -63,18 +63,18 @@ public class BookWidget extends NestedWidget {
         for (int i = 0; i < pages.size(); i++) {
             List<Object> page = pages.get(i);
             int localX = i % 2 == 0 ? x + marginLeftX : x + (width / 2) + marginRightX;
-            GuiBookPageWidget child = this.addChild(new GuiBookPageWidget("guidebook page " + i, localX,
-                    y + marginY, iteratedZ++, (width / 2) - marginLeftX - marginRightX, (height / 2) - (marginY * 2),
+            GuiBookPageWidget child = this.addChild(new GuiBookPageWidget("guidebook page " + i, localX, y + marginY,
+                    iteratedZ++, (width / 2) - marginLeftX - marginRightX, (height / 2) - (marginY * 2),
                     Component.literal("Page " + i), parentScreen, 1.0F, font, page));
             child.setVisible(false);
             this.pages.add(child);
         }
         iteratedZ += 100.0F;
-        this.previousArrow = this
-                .addChild(new PageChangeWidget("back arrow", this.x + 16, this.y + this.getHeight() - 21, iteratedZ++,
+        this.previousArrow = this.addChild(
+                new PageChangeWidget("back arrow", this.getX() + 16, this.getY() + this.getHeight() - 21, iteratedZ++,
                         Component.literal("Previous Page"), parentScreen, 1.0F, PageChangeWidget.Type.PREVIOUS));
-        this.nextArrow = this.addChild(new PageChangeWidget("forward arrow", this.x + this.getWidth() - 18 - 16,
-                this.y + this.getHeight() - 21, iteratedZ++, Component.literal("Next Page"), parentScreen, 1.0F,
+        this.nextArrow = this.addChild(new PageChangeWidget("forward arrow", this.getX() + this.getWidth() - 18 - 16,
+                this.getY() + this.getHeight() - 21, iteratedZ++, Component.literal("Next Page"), parentScreen, 1.0F,
                 PageChangeWidget.Type.NEXT));
         previousArrow.addListener(this);
         nextArrow.addListener(this);
@@ -93,10 +93,10 @@ public class BookWidget extends NestedWidget {
             float[] color = new Color(this.color).getRGBColorComponents(null);
             RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
                     Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
-            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
-            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
             this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
             matrixStack.popPose();
         }

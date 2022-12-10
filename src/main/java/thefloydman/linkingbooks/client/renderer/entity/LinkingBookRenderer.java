@@ -22,7 +22,7 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -71,9 +71,9 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
         matrixStack.pushPose();
 
         matrixStack.scale(0.75F, 0.75F, 0.75F);
-        matrixStack.mulPose(Vector3f.XP.rotation((float) Math.PI));
-        matrixStack.mulPose(Vector3f.YP.rotation((yaw / 360.0F * (float) Math.PI * 2.0F) - ((float) Math.PI / 2.0F)));
-        matrixStack.mulPose(Vector3f.ZP.rotation((float) Math.PI / 2 * 3));
+        matrixStack.mulPose(Axis.XP.rotation((float) Math.PI));
+        matrixStack.mulPose(Axis.YP.rotation((yaw / 360.0F * (float) Math.PI * 2.0F) - ((float) Math.PI / 2.0F)));
+        matrixStack.mulPose(Axis.ZP.rotation((float) Math.PI / 2 * 3));
 
         VertexConsumer vertexBuilder = buffer.getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
 

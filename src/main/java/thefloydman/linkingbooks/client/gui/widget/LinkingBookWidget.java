@@ -53,9 +53,9 @@ public class LinkingBookWidget extends NestedWidget {
             CompoundTag linkingPanelImage) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.color = color;
-        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.x + 155, this.y + 41,
-                z + 1.0F, 64, 42, Component.literal("Linking Panel"), parentScreen, this.scale, holdingBook, linkData,
-                canLink, linkingPanelImage));
+        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.getX() + 155,
+                this.getY() + 41, z + 1.0F, 64, 42, Component.literal("Linking Panel"), parentScreen, this.scale,
+                holdingBook, linkData, canLink, linkingPanelImage));
         for (GuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }
@@ -73,10 +73,10 @@ public class LinkingBookWidget extends NestedWidget {
             float[] color = new Color(this.color).getRGBColorComponents(null);
             RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
                     Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
-            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
-            this.blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height);
+            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
             this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
             matrixStack.popPose();
         }

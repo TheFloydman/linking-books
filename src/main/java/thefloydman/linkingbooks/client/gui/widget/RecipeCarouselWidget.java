@@ -47,8 +47,8 @@ public class RecipeCarouselWidget extends NestedWidget {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         for (int i = 0; i < recipes.size(); i++) {
             List<List<ItemStack>> ingredients = recipes.get(i);
-            RecipeWidget recipeWidget = new RecipeWidget(this.id + "recipe" + i, this.x, this.y, z + 1.0F, this.width,
-                    this.height, Component.literal("Recipe"), parentScreen, 0.5F, ingredients);
+            RecipeWidget recipeWidget = new RecipeWidget(this.id + "recipe" + i, this.getX(), this.getY(), z + 1.0F,
+                    this.width, this.height, Component.literal("Recipe"), parentScreen, 0.5F, ingredients);
             this.addChild(recipeWidget);
             int size = ingredients.stream().max(Comparator.comparing(List::size)).get().size();
             this.totalVariations += size;

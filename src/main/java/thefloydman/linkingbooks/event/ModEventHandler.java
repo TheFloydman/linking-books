@@ -18,6 +18,7 @@
  *******************************************************************************/
 package thefloydman.linkingbooks.event;
 
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -25,6 +26,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinit
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.registries.NewRegistryEvent;
@@ -78,7 +80,7 @@ public class ModEventHandler {
     }
 
     @SubscribeEvent
-    public static void register(RegisterLayerDefinitions event) {
+    public static void registerLayerDefinitions(RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.PAGES, LinkingBookPagesModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.COVER, LinkingBookCoverModel::createBodyLayer);
     }
@@ -114,4 +116,37 @@ public class ModEventHandler {
         event.registerReloadListener(new GuiBookManager());
     }
 
+    @SubscribeEvent
+    public static void registerCreativeModeTabs(CreativeModeTabEvent.Register event) {
+        event.registerCreativeModeTab(Reference.CreativeModeTabNames.LINKING_BOOKS, (builder) -> {
+            builder.icon(() -> ModItems.GREEN_WRITTEN_LINKING_BOOK.get().getDefaultInstance());
+            builder.title(Component.literal("Linking Books"));
+            builder.displayItems((enabledFlags, populator, hasPermissions) -> {
+                populator.accept(ModItems.GUIDEBOOK.get());
+                populator.accept(ModItems.LINKING_LECTERN.get());
+                populator.accept(ModItems.NARA.get());
+                populator.accept(ModItems.LINK_TRANSLATOR.get());
+                populator.accept(ModItems.MARKER_SWITCH.get());
+                populator.accept(ModItems.BOOKSHELF_STAIRS.get());
+                populator.accept(ModItems.LINKING_PANEL.get());
+                populator.accept(ModItems.INK_BUCKET.get());
+                populator.accept(ModItems.BLACK_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.BLUE_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.BROWN_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.CYAN_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.GRAY_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.GREEN_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.LIGHT_BLUE_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.LIGHT_GRAY_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.LIME_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.MAGENTA_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.ORANGE_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.PINK_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.PURPLE_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.RED_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.WHITE_BLANK_LINKING_BOOK.get());
+                populator.accept(ModItems.YELLOW_BLANK_LINKING_BOOK.get());
+            });
+        });
+    }
 }

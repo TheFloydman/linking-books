@@ -71,7 +71,7 @@ public class PageChangeWidget extends NestedWidget {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.setShaderTexture(0, ARROW_TEXTURE);
-                blit(poseStack, this.x, this.y, 1, this.type.xHover, this.type.yHover, this.type.width,
+                blit(poseStack, this.getX(), this.getY(), 1, this.type.xHover, this.type.yHover, this.type.width,
                         this.type.height, 256, 256);
             } else {
                 RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
@@ -79,8 +79,8 @@ public class PageChangeWidget extends NestedWidget {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, 1.0F);
                 RenderSystem.setShaderTexture(0, ARROW_TEXTURE);
-                blit(poseStack, this.x, this.y, 1, this.type.xUp, this.type.yUp, this.type.width, this.type.height, 256,
-                        256);
+                blit(poseStack, this.getX(), this.getY(), 1, this.type.xUp, this.type.yUp, this.type.width,
+                        this.type.height, 256, 256);
             }
             poseStack.popPose();
         }

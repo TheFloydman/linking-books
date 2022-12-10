@@ -21,11 +21,12 @@ package thefloydman.linkingbooks.client.gui.widget;
 import java.awt.Color;
 import java.util.List;
 
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
@@ -71,7 +72,7 @@ public class ItemStackWidget extends NestedWidget {
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             PoseStack pStack = RenderSystem.getModelViewStack();
             pStack.pushPose();
-            pStack.translate(this.x + this.scale * 9.0D, this.y + this.scale * 9.0D, itemRenderer.blitOffset);
+            pStack.translate(this.getX() + this.scale * 9.0D, this.getY() + this.scale * 9.0D, itemRenderer.blitOffset);
             pStack.scale(16.0F, -16.0F, 16.0F);
             RenderSystem.applyModelViewMatrix();
             if (!bakedModel.usesBlockLight())
@@ -90,8 +91,8 @@ public class ItemStackWidget extends NestedWidget {
                 poseStack.translate(0.0D, 0.0D, 10.0D);
                 int xOff = 9;
                 int yOff = 6;
-                this.minecraft.font.draw(poseStack, String.valueOf(stack.getCount()), (this.x + xOff) / this.scale,
-                        (this.y + yOff) / this.scale, Color.BLACK.getRGB());
+                this.minecraft.font.draw(poseStack, String.valueOf(stack.getCount()), (this.getX() + xOff) / this.scale,
+                        (this.getY() + yOff) / this.scale, Color.BLACK.getRGB());
                 poseStack.popPose();
             }
             if (this.isInside(mouseX, mouseY)) {

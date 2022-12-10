@@ -19,7 +19,7 @@
 package thefloydman.linkingbooks.client.renderer.tileentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -59,7 +59,7 @@ public class MarkerSwitchRenderer implements BlockEntityRenderer<MarkerSwitchBlo
                 Direction facing = tileEntity.getBlockState().getValue(MarkerSwitchBlock.FACING);
                 float rotation = facing == Direction.EAST || facing == Direction.WEST ? facing.toYRot() + 45.0F
                         : facing.toYRot() - 135.0F;
-                matrixStack.mulPose(Vector3f.YP.rotationDegrees(rotation));
+                matrixStack.mulPose(Axis.YP.rotationDegrees(rotation));
                 int lightAbove = LevelRenderer.getLightColor(tileEntity.getLevel(), tileEntity.getBlockPos().above());
                 this.itemRenderer.renderStatic(itemStack, TransformType.FIXED, lightAbove, OverlayTexture.NO_OVERLAY,
                         matrixStack, buffer, lightAbove);

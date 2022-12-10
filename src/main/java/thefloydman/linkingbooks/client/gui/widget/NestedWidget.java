@@ -22,6 +22,8 @@ import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Matrix4f;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -31,7 +33,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -94,8 +95,8 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     public boolean isInside(double x, double y) {
-        return this.getVisible() && x >= this.x && x < this.x + this.width * this.scale && y >= this.y
-                && y < this.y + this.height * this.scale;
+        return this.getVisible() && x >= this.getX() && x < this.getX() + this.width * this.scale && y >= this.getY()
+                && y < this.getY() + this.height * this.scale;
     }
 
     public <T extends NestedWidget> T addChild(T widget) {
@@ -158,13 +159,13 @@ public abstract class NestedWidget extends AbstractWidget {
      */
     public static float zDifference(PoseStack matrixStack, float zLevel) {
         FloatBuffer floatBuffer = FloatBuffer.allocate(16);
-        matrixStack.last().pose().store(floatBuffer);
+        matrixStack.last().pose().set(floatBuffer);
         float currentZ = floatBuffer.get(10);
         return zLevel - currentZ < 0 ? zLevel - Mth.abs(currentZ) : zLevel + Mth.abs(currentZ);
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput foo) {
+    public void updateWidgetNarration(NarrationElementOutput foo) {
     }
 
     /**

@@ -138,6 +138,10 @@ public class Reference {
         public static final ResourceLocation LINK_EFFECT_TYPES = getAsResourceLocation("linkeffecttypes");
     }
 
+    public static class CreativeModeTabNames {
+        public static final ResourceLocation LINKING_BOOKS = getAsResourceLocation("main");
+    }
+
     public static class Resources {
         public static final ResourceLocation INK_TEXTURE = getAsResourceLocation("block/ink_still");
         public static final ResourceLocation FLOWING_INK_TEXTURE = getAsResourceLocation("block/ink_flow");
