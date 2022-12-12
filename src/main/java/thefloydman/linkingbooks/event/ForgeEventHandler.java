@@ -28,10 +28,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import thefloydman.linkingbooks.api.capability.ILinkData;
@@ -76,12 +76,6 @@ public class ForgeEventHandler {
             entity.push(lookVec.x / 4, lookVec.y / 4, lookVec.z / 4);
             world.addFreshEntity(entity);
         }
-    }
-
-    @SubscribeEvent
-    public static void serverStarting(ServerStartingEvent event) {
-        // Register commands.
-        LinkCommand.register(event.getServer().getCommands().getDispatcher());
     }
 
     @SubscribeEvent
@@ -155,6 +149,11 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public static void addReloadListener(AddReloadListenerEvent event) {
         event.addListener(new LinkEffectManager());
+    }
+
+    @SubscribeEvent
+    public static void registerCommands(RegisterCommandsEvent event) {
+        LinkCommand.register(event.getDispatcher());
     }
 
 }
