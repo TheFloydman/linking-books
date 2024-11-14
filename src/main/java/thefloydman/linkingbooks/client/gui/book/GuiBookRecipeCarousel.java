@@ -21,6 +21,7 @@ package thefloydman.linkingbooks.client.gui.book;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.world.item.crafting.*;
 import org.apache.commons.compress.utils.Lists;
 
 import net.minecraft.client.Minecraft;
@@ -31,10 +32,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import thefloydman.linkingbooks.client.gui.widget.RecipeCarouselWidget;
 
 public class GuiBookRecipeCarousel extends GuiBookElement<RecipeCarouselWidget> {
@@ -50,7 +47,7 @@ public class GuiBookRecipeCarousel extends GuiBookElement<RecipeCarouselWidget> 
 
     @Override
     public RecipeCarouselWidget getAsWidget(String id, int x, int y, float z, int width, int height,
-            Screen parentScreen, float scale, Font font) {
+                                            Screen parentScreen, float scale, Font font) {
 
         Minecraft minecraft = Minecraft.getInstance();
         ClientLevel level = minecraft.level;
@@ -59,16 +56,17 @@ public class GuiBookRecipeCarousel extends GuiBookElement<RecipeCarouselWidget> 
         }
 
         RecipeManager recipeManager = level.getRecipeManager();
-        if (recipeManager == null) {
-            return null;
-        }
 
         int gridWidth = 107;
         int gridHeight = 62;
         List<List<List<ItemStack>>> recipesList = Lists.newArrayList();
         for (ResourceLocation location : this.resourceLocations) {
             List<List<ItemStack>> singleList = Lists.newArrayList();
-            Recipe<?> recipe = recipeManager.byKey(location).orElse(null);
+            RecipeHolder<?> recipeHolder = recipeManager.byKey(location).orElse(null);
+            Recipe<?> recipe = null;
+            if (recipeHolder != null) {
+                recipe = recipeHolder.value();
+            }
             if (recipe != null && recipe.getType() == this.recipeType) {
                 if (this.recipeType == RecipeType.CRAFTING) {
                     NonNullList<Ingredient> ingredients = recipe.getIngredients();
@@ -76,7 +74,7 @@ public class GuiBookRecipeCarousel extends GuiBookElement<RecipeCarouselWidget> 
                         singleList.add(Stream.of(ingredient.getItems()).toList());
                     }
                 }
-                singleList.add(Stream.of(recipe.getResultItem()).toList());
+                singleList.add(Stream.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())).toList());
                 recipesList.add(singleList);
             }
         }

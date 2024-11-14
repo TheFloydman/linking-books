@@ -1,29 +1,8 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
- *
- * This file is part of Linking Books.
- *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
- *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package thefloydman.linkingbooks.client.renderer.entity;
-
-import java.awt.Color;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -34,17 +13,18 @@ import net.minecraft.world.item.ItemStack;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
-import thefloydman.linkingbooks.entity.LinkingBookEntity;
-import thefloydman.linkingbooks.item.LinkingBookItem;
-import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
+import thefloydman.linkingbooks.util.LinkingUtils;
 import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.util.Reference.Resources;
+import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.world.item.WrittenLinkingBookItem;
+
+import java.awt.*;
 
 public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
 
     private LinkingBookCoverModel coverModel;
     private LinkingBookPagesModel pagesModel;
-    private float[] color = { 0.0F, 1.0F, 0.0F };
+    private int color = new Color(0.0F, 1.0F, 0.0F, 1.0F).getRGB();
 
     public LinkingBookRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -56,15 +36,13 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
 
     @Override
     public void render(LinkingBookEntity entity, float yaw, float partialTicks, PoseStack matrixStack,
-            MultiBufferSource buffer, int packedLight) {
+                       MultiBufferSource buffer, int packedLight) {
 
         ItemStack bookStack = entity.getItem();
         if (bookStack != null && !bookStack.isEmpty()) {
             Item item = bookStack.getItem();
-            if (item != null && item instanceof WrittenLinkingBookItem) {
-                if (color != null) {
-                    this.color = new Color(LinkingBookItem.getColor(bookStack, 0)).getRGBColorComponents(this.color);
-                }
+            if (item instanceof WrittenLinkingBookItem) {
+                this.color = LinkingUtils.getLinkingBookColor(bookStack, 0);
             }
         }
 
@@ -75,18 +53,14 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
         matrixStack.mulPose(Axis.YP.rotation((yaw / 360.0F * (float) Math.PI * 2.0F) - ((float) Math.PI / 2.0F)));
         matrixStack.mulPose(Axis.ZP.rotation((float) Math.PI / 2 * 3));
 
-        VertexConsumer vertexBuilder = buffer.getBuffer(this.coverModel.renderType(Resources.LINKING_BOOK_TEXTURE));
+        VertexConsumer vertexBuilder = buffer.getBuffer(this.coverModel.renderType(Reference.Resources.LINKING_BOOK_TEXTURE));
 
         if (entity.hurtTime > 0) {
-            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F,
-                    0.0F, 0.0F, 0.4F);
-            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 0.7F,
-                    0.0F, 0.0F, 0.4F);
+            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, new Color(0.7F, 0.0F, 0.0F, 0.4F).getRGB());
+            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, new Color(0.7F, 0.0F, 0.0F, 0.4F).getRGB());
         } else {
-            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY,
-                    this.color[0], this.color[1], this.color[2], 1.0F);
-            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F,
-                    1.0F, 1.0F, 1.0F);
+            this.coverModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, this.color);
+            this.pagesModel.renderToBuffer(matrixStack, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY);
         }
 
         matrixStack.popPose();

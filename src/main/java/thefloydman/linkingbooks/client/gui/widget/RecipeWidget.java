@@ -23,8 +23,8 @@ import java.util.List;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -39,11 +39,11 @@ public class RecipeWidget extends NestedWidget {
             .getAsResourceLocation("textures/gui/guidebook/crafting.png");
 
     public RecipeWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale, List<List<ItemStack>> ingredients) {
+                        Screen parentScreen, float scale, List<List<ItemStack>> ingredients) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         for (int i = 0; i < ingredients.size(); i++) {
             int gridX = i == ingredients.size() - 1 ? 91 : (int) (3.0F + ((i % 3.0F) * 20.0F));
-            int gridY = i == ingredients.size() - 1 ? 23 : (int) (3.0F + (Mth.fastFloor(i / 3.0F) * 20.0F));
+            int gridY = i == ingredients.size() - 1 ? 23 : (int) (3.0F + (Mth.floor(i / 3.0F) * 20.0F));
             this.addChild(new ItemStackWidget(id + "ingr" + i, (int) (this.getX() + gridX * this.scale),
                     (int) (this.getY() + gridY * this.scale), z++, 16, 16, Component.literal("Ingredient"),
                     parentScreen, scale, ingredients.get(i)));
@@ -51,20 +51,19 @@ public class RecipeWidget extends NestedWidget {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            poseStack.pushPose();
-            poseStack.scale(this.scale, this.scale, 1.0F);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(this.scale, this.scale, 1.0F);
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                     DestFactor.ZERO);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, CRAFTING_TEXTURE);
-            blit(poseStack, (int) (this.getX() / this.scale), (int) (this.getY() / this.scale), 1, 0, 0, this.width,
+            guiGraphics.blit(CRAFTING_TEXTURE, (int) (this.getX() / this.scale), (int) (this.getY() / this.scale), 1, 0, 0, this.width,
                     this.height, 256, 256);
-            this.renderChildren(poseStack, mouseX, mouseY, partialTicks);
-            poseStack.popPose();
+            this.renderChildren(guiGraphics, mouseX, mouseY, partialTicks);
+            guiGraphics.pose().popPose();
         }
     }
 

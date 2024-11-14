@@ -21,16 +21,17 @@ package thefloydman.linkingbooks.client.gui.widget;
 import java.awt.Color;
 import java.util.List;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.ItemDisplayContext;
+import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -47,65 +48,41 @@ public class ItemStackWidget extends NestedWidget {
     public long changeTime = 2000L; // 2 seconds
 
     public ItemStackWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale, List<ItemStack> itemStacks) {
+                           Screen parentScreen, float scale, List<ItemStack> itemStacks) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.itemStacks = itemStacks;
         this.creationTime = System.currentTimeMillis();
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        if (this.getVisible() && this.itemStacks.size() > 0) {
-            int changeIndex = Mth.fastFloor((System.currentTimeMillis() - this.creationTime) / this.changeTime);
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        if (this.getVisible() && !this.itemStacks.isEmpty()) {
+            int changeIndex = Mth.floor((float) (System.currentTimeMillis() - this.creationTime) / this.changeTime);
             ItemStack stack = this.itemStacks.get(changeIndex % this.itemStacks.size());
-            if (stack.isEmpty())
+            if (stack.isEmpty()) {
                 return;
-            poseStack.pushPose();
-            ItemRenderer itemRenderer = this.minecraft.getItemRenderer();
-            BakedModel bakedModel = itemRenderer.getModel(stack, null, null, 0);
-            BufferSource bufferSource = this.minecraft.renderBuffers().bufferSource();
-            this.minecraft.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
-                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            PoseStack pStack = RenderSystem.getModelViewStack();
-            pStack.pushPose();
-            pStack.translate(this.getX() + this.scale * 9.0D, this.getY() + this.scale * 9.0D, itemRenderer.blitOffset);
-            pStack.scale(16.0F, -16.0F, 16.0F);
-            RenderSystem.applyModelViewMatrix();
-            if (!bakedModel.usesBlockLight())
-                GlStateManager.setupGuiFlatDiffuseLighting(new Vector3f(1.0F, 1.0F, -1.0F),
-                        new Vector3f(1.0F, 1.0F, -1.0F));
-            itemRenderer.render(stack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880,
-                    OverlayTexture.NO_OVERLAY, bakedModel);
-            bufferSource.endBatch();
-            RenderSystem.enableDepthTest();
-            if (!bakedModel.usesBlockLight())
-                Lighting.setupFor3DItems();
-            pStack.popPose();
-            RenderSystem.applyModelViewMatrix();
+            }
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(this.getX() + this.scale * 2.0D, this.getY() + this.scale * 2.0D, 150 + this.zLevel);
+            guiGraphics.renderItem(stack, this.getX(), this.getY());
             if (stack.getCount() > 1) {
-                poseStack.pushPose();
-                poseStack.translate(0.0D, 0.0D, 10.0D);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(0.0D, 0.0D, 10.0D);
                 int xOff = 9;
                 int yOff = 6;
-                this.minecraft.font.draw(poseStack, String.valueOf(stack.getCount()), (this.getX() + xOff) / this.scale,
-                        (this.getY() + yOff) / this.scale, Color.BLACK.getRGB());
-                poseStack.popPose();
+                guiGraphics.drawString(this.minecraft.font, String.valueOf(stack.getCount()), (this.getX() + xOff) / this.scale, (this.getY() + yOff) / this.scale, Color.BLACK.getRGB(), false);
+                guiGraphics.pose().popPose();
             }
             if (this.isInside(mouseX, mouseY)) {
-                this.parentScreen.renderTooltip(new PoseStack(), stack.getItem().getName(stack), mouseX, mouseY);
+                guiGraphics.renderTooltip(this.minecraft.font, stack, mouseX, mouseY);
             }
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 
     @Override
     public void restore(NestedWidget backup) {
-        if (backup instanceof ItemStackWidget) {
-            ItemStackWidget old = (ItemStackWidget) backup;
+        if (backup instanceof ItemStackWidget old) {
             this.creationTime = old.creationTime;
         }
     }

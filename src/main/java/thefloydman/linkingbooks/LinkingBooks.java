@@ -1,95 +1,59 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
- *
- * This file is part of Linking Books.
- *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
- *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package thefloydman.linkingbooks;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import thefloydman.linkingbooks.block.ModBlocks;
-import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
-import thefloydman.linkingbooks.client.gui.screen.GuidebookScreen;
-import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
+import org.slf4j.Logger;
+import com.mojang.logging.LogUtils;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.config.ModConfig;
-import thefloydman.linkingbooks.entity.ModEntityTypes;
-import thefloydman.linkingbooks.fluid.ModFluidTypes;
-import thefloydman.linkingbooks.fluid.ModFluids;
-import thefloydman.linkingbooks.inventory.container.ModMenuTypes;
-import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.item.crafting.ModRecipeSerializers;
+import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.linking.LinkEffectTypes;
-import thefloydman.linkingbooks.network.ModNetworkHandler;
 import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.world.entity.ModEntityTypes;
+import thefloydman.linkingbooks.world.inventory.ModMenuTypes;
+import thefloydman.linkingbooks.world.item.ModCreativeModeTabs;
+import thefloydman.linkingbooks.world.item.ModItems;
+import thefloydman.linkingbooks.world.level.block.ModBlocks;
+import thefloydman.linkingbooks.world.level.block.entity.ModBlockEntityTypes;
 
-@Mod(Reference.MOD_ID)
+@Mod(Reference.MODID)
 public class LinkingBooks {
+    // Directly reference a slf4j logger
+    private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public LinkingBooks(IEventBus modEventBus, ModContainer modContainer) {
 
-    public LinkingBooks() {
+        ModDataComponents.DATA_COMPONENTS.register(modEventBus);
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
+        LinkEffectTypes.LINK_EFFECT_TYPES.register(modEventBus);
+        ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        ModMenuTypes.MENU_TYPES.register(modEventBus);
+        ModEntityTypes.ENTITIES.register(modEventBus);
+        ModBlockEntityTypes.TILE_ENTITIES.register(modEventBus);
+        ModSounds.SOUNDS.register(modEventBus);
 
-        final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModBlocks.BLOCKS.register(eventBus);
-        ModItems.ITEMS.register(eventBus);
-        ModRecipeSerializers.RECIPES.register(eventBus);
-        ModFluidTypes.FLUID_TYPES.register(eventBus);
-        ModFluids.FLUIDS.register(eventBus);
-        ModEntityTypes.ENTITIES.register(eventBus);
-        ModBlockEntityTypes.TILE_ENTITIES.register(eventBus);
-        ModMenuTypes.MENU_TYPES.register(eventBus);
-        ModSounds.SOUNDS.register(eventBus);
-        LinkEffectTypes.LINK_EFFECT_TYPES.register(eventBus);
+        NeoForge.EVENT_BUS.register(this);
 
-        // Register the setup methods.
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        modEventBus.addListener(this::commonSetup);
 
-        // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
-
-        // Register configs.
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON, ModConfig.SPEC,
-                Reference.MOD_ID + ".toml");
+        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, ModConfig.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            ModNetworkHandler.registerAllMessages();
-        });
+        // Some common setup code
+        LOGGER.info("HELLO FROM COMMON SETUP");
     }
 
-    private void clientSetup(final FMLClientSetupEvent event) {
-
-        event.enqueueWork(() -> {
-            // Register containers.
-            MenuScreens.register(ModMenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
-            MenuScreens.register(ModMenuTypes.GUIDEBOOK.get(), GuidebookScreen::new);
-        });
-
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        // Do something when the server starts
+        LOGGER.info("HELLO from server starting");
     }
 
 }

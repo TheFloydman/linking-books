@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,7 +34,9 @@ import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.gui.widget.BookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.inventory.container.GuidebookMenuType;
+import thefloydman.linkingbooks.world.inventory.GuidebookMenuType;
+
+import javax.annotation.Nonnull;
 
 public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> {
 
@@ -75,11 +78,11 @@ public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> 
     }
 
     @Override
-    protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
+    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int p_97809_, int p_97810_) {
     }
 
     @Override
-    protected void renderBg(PoseStack p_97787_, float p_97788_, int p_97789_, int p_97790_) {
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float p_97788_, int p_97789_, int p_97790_) {
     }
 
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -33,7 +34,7 @@ public class ParagraphWidget extends NestedWidget {
     public Font font;
 
     public ParagraphWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale, List<Component> lines, int lineSpacing, Font font) {
+                           Screen parentScreen, float scale, List<Component> lines, int lineSpacing, Font font) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.lines = lines;
         this.lineSpacing = lineSpacing;
@@ -41,16 +42,16 @@ public class ParagraphWidget extends NestedWidget {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            poseStack.pushPose();
-            poseStack.scale(this.scale, this.scale, 1.0F);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(this.scale, this.scale, 1.0F);
             float currentY = this.getY();
             for (int k = 0; k < this.lines.size(); k++) {
                 currentY = this.getY() + (lineSpacing * k);
-                this.font.draw(poseStack, this.lines.get(k), this.getX() / this.scale, currentY / this.scale, 0);
+                guiGraphics.drawString(font, this.lines.get(k).getVisualOrderText(), this.getX() / this.scale, currentY / this.scale, 0, false);
             }
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 

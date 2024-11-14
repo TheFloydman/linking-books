@@ -1,5 +1,5 @@
 {
-	"loader": "forge:obj",
+	"loader": "neoforge:obj",
 	"model": "linkingbooks:models/block/marker_switch_handle_on.obj",
 	"emissive_ambient": true,
 	"flip_v": false,

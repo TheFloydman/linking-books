@@ -23,6 +23,7 @@ import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -37,8 +38,8 @@ public class ImageWidget extends NestedWidget {
     public int sourceY;
 
     public ImageWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale, ResourceLocation resourceLocation, int sourceWidth, int sourceHeight,
-            int sourceX, int sourceY) {
+                       Screen parentScreen, float scale, ResourceLocation resourceLocation, int sourceWidth, int sourceHeight,
+                       int sourceX, int sourceY) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.resourceLocation = resourceLocation;
         this.sourceWidth = sourceWidth;
@@ -48,19 +49,18 @@ public class ImageWidget extends NestedWidget {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            poseStack.pushPose();
+            guiGraphics.pose().pushPose();
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                     DestFactor.ZERO);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, this.resourceLocation);
-            blit(poseStack, this.getX(), this.getY(), 1, this.sourceX, this.sourceY, (int) (this.width * this.scale),
+            guiGraphics.blit(this.resourceLocation, this.getX(), this.getY(), 1, this.sourceX, this.sourceY, (int) (this.width * this.scale),
                     (int) (this.height * this.scale), (int) (this.width * this.scale),
                     (int) (this.height * this.scale));
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 

@@ -31,7 +31,7 @@ public abstract class GuiBookElement<T extends NestedWidget> {
     }
 
     public abstract T getAsWidget(String id, int x, int y, float z, int width, int height, Screen parentScreen,
-            float scale, Font font);
+                                  float scale, Font font);
 
     public String getName() {
         return this.name;

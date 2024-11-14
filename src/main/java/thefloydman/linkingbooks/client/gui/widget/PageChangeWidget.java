@@ -21,8 +21,8 @@ package thefloydman.linkingbooks.client.gui.widget;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -31,58 +31,49 @@ import net.minecraft.resources.ResourceLocation;
 
 public class PageChangeWidget extends NestedWidget {
 
-    private static final ResourceLocation ARROW_TEXTURE = new ResourceLocation("minecraft:textures/gui/book.png");
     private final Type type;
 
     public enum Type {
-        PREVIOUS(3, 207, 26, 207, 18, 10),
-        NEXT(3, 194, 26, 194, 18, 10);
+        BACKWARD(
+                ResourceLocation.withDefaultNamespace("widget/page_backward"),
+                ResourceLocation.withDefaultNamespace("widget/page_backward_highlighted")),
+        FORWARD(
+                ResourceLocation.withDefaultNamespace("widget/page_forward"),
+                ResourceLocation.withDefaultNamespace("widget/page_forward_highlighted"));
 
-        public final int xUp;
-        public final int yUp;
-        public final int xHover;
-        public final int yHover;
-        public final int width;
-        public final int height;
+        public final ResourceLocation spriteNormal;
+        public final ResourceLocation spriteHover;
 
-        Type(int xUp, int yUp, int xHover, int yHover, int width, int height) {
-            this.xUp = xUp;
-            this.yUp = yUp;
-            this.xHover = xHover;
-            this.yHover = yHover;
-            this.width = width;
-            this.height = height;
+        Type(ResourceLocation spriteNormal, ResourceLocation spriteHover) {
+            this.spriteNormal = spriteNormal;
+            this.spriteHover = spriteHover;
         }
     }
 
     public PageChangeWidget(String id, int x, int y, float z, Component narration, Screen parentScreen, float scale,
-            Type type) {
-        super(id, x, y, z, type.width, type.height, narration, parentScreen, scale);
+                            Type type) {
+        super(id, x, y, z, 23, 13, narration, parentScreen, scale);
         this.type = type;
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            poseStack.pushPose();
+            guiGraphics.pose().pushPose();
             if (this.isInside(mouseX, mouseY)) {
                 RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                         DestFactor.ZERO);
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                RenderSystem.setShaderTexture(0, ARROW_TEXTURE);
-                blit(poseStack, this.getX(), this.getY(), 1, this.type.xHover, this.type.yHover, this.type.width,
-                        this.type.height, 256, 256);
+                guiGraphics.blitSprite(this.type.spriteHover, this.getX(), this.getY(), 1, 23, 13);
             } else {
                 RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                         DestFactor.ZERO);
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, 1.0F);
-                RenderSystem.setShaderTexture(0, ARROW_TEXTURE);
-                blit(poseStack, this.getX(), this.getY(), 1, this.type.xUp, this.type.yUp, this.type.width,
-                        this.type.height, 256, 256);
+                guiGraphics.blitSprite(this.type.spriteNormal, this.getX(), this.getY(), 1, 23, 13);
             }
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 
@@ -91,10 +82,9 @@ public class PageChangeWidget extends NestedWidget {
         if (!this.isInside(x, y))
             return false;
         for (GuiEventListener listener : this.listeners) {
-            if (listener instanceof BookWidget) {
-                BookWidget book = (BookWidget) listener;
+            if (listener instanceof BookWidget book) {
                 switch (this.type) {
-                    case PREVIOUS:
+                    case BACKWARD:
                         book.previousPage();
                         break;
                     default:

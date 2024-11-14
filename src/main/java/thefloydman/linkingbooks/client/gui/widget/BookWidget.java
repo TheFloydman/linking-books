@@ -21,12 +21,14 @@ package thefloydman.linkingbooks.client.gui.widget;
 import java.awt.Color;
 import java.util.List;
 
+import net.minecraft.client.gui.GuiGraphics;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
 
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -35,8 +37,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.util.Reference;
 
@@ -54,7 +54,7 @@ public class BookWidget extends NestedWidget {
     private int color = new Color(80, 111, 203).getRGB();
 
     public BookWidget(String id, int x, int y, float z, int width, int height, Component narration, Screen parentScreen,
-            float scale, Font font, List<List<Object>> pages) {
+                      float scale, Font font, List<List<Object>> pages) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         int marginLeftX = 20;
         int marginRightX = 10;
@@ -71,34 +71,32 @@ public class BookWidget extends NestedWidget {
         }
         iteratedZ += 100.0F;
         this.previousArrow = this.addChild(
-                new PageChangeWidget("back arrow", this.getX() + 16, this.getY() + this.getHeight() - 21, iteratedZ++,
-                        Component.literal("Previous Page"), parentScreen, 1.0F, PageChangeWidget.Type.PREVIOUS));
-        this.nextArrow = this.addChild(new PageChangeWidget("forward arrow", this.getX() + this.getWidth() - 18 - 16,
+                new PageChangeWidget("back arrow", this.getX() + 12, this.getY() + this.getHeight() - 21, iteratedZ++,
+                        Component.literal("Previous Page"), parentScreen, 1.0F, PageChangeWidget.Type.BACKWARD));
+        this.nextArrow = this.addChild(new PageChangeWidget("forward arrow", this.getX() + this.getWidth() - 18 - 18,
                 this.getY() + this.getHeight() - 21, iteratedZ++, Component.literal("Next Page"), parentScreen, 1.0F,
-                PageChangeWidget.Type.NEXT));
+                PageChangeWidget.Type.FORWARD));
         previousArrow.addListener(this);
         nextArrow.addListener(this);
         updateVisible();
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            matrixStack.pushPose();
+            guiGraphics.pose().pushPose();
             RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                     DestFactor.ZERO);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, COVER_TEXTURE);
             float[] color = new Color(this.color).getRGBColorComponents(null);
             RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
                     Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
-            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
+            guiGraphics.blit(COVER_TEXTURE, this.getX(), this.getY(), 0, 0, this.width, this.height);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
-            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
-            this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
-            matrixStack.popPose();
+            guiGraphics.blit(PAPER_TEXTURE, this.getX(), this.getY(), 0, 0, this.width, this.height);
+            this.renderChildren(guiGraphics, mouseX, mouseY, partialTicks);
+            guiGraphics.pose().popPose();
         }
     }
 

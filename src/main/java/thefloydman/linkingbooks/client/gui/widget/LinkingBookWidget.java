@@ -22,9 +22,11 @@ import java.awt.Color;
 
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -33,9 +35,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import thefloydman.linkingbooks.api.capability.ILinkData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.util.Reference;
 
 @OnlyIn(Dist.CLIENT)
@@ -49,8 +51,8 @@ public class LinkingBookWidget extends NestedWidget {
     public int color = DyeColor.GREEN.getFireworkColor();
 
     public LinkingBookWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale, boolean holdingBook, int color, ILinkData linkData, boolean canLink,
-            CompoundTag linkingPanelImage) {
+                             Screen parentScreen, float scale, boolean holdingBook, int color, LinkData linkData, boolean canLink,
+                             NativeImage linkingPanelImage) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.color = color;
         NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.getX() + 155,
@@ -62,23 +64,21 @@ public class LinkingBookWidget extends NestedWidget {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            matrixStack.pushPose();
+            guiGraphics.pose().pushPose();
             RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
                     DestFactor.ZERO);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, COVER_TEXTURE);
             float[] color = new Color(this.color).getRGBColorComponents(null);
             RenderSystem.setShaderColor(Mth.clamp(color[0], 0.1F, 1.0F), Mth.clamp(color[1], 0.1F, 1.0F),
                     Mth.clamp(color[2], 0.1F, 1.0F), 1.0F);
-            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
+            guiGraphics.blit(COVER_TEXTURE, this.getX(), this.getY(), 0, 0, this.width, this.height);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShaderTexture(0, PAPER_TEXTURE);
-            this.blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height);
-            this.renderChildren(matrixStack, mouseX, mouseY, partialTicks);
-            matrixStack.popPose();
+            guiGraphics.blit(PAPER_TEXTURE, this.getX(), this.getY(), 0, 0, this.width, this.height);
+            this.renderChildren(guiGraphics, mouseX, mouseY, partialTicks);
+            guiGraphics.pose().popPose();
         }
     }
 

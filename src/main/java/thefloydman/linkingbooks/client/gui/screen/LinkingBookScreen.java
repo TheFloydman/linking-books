@@ -20,12 +20,15 @@ package thefloydman.linkingbooks.client.gui.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
-import thefloydman.linkingbooks.inventory.container.LinkingBookMenuType;
+import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
+
+import javax.annotation.Nonnull;
 
 public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookMenuType> {
 
@@ -46,11 +49,11 @@ public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookMenuTy
     }
 
     @Override
-    protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
+    protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int p_97809_, int p_97810_) {
     }
 
     @Override
-    protected void renderBg(PoseStack p_97787_, float p_97788_, int p_97789_, int p_97790_) {
+    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float p_97788_, int p_97789_, int p_97790_) {
     }
 
 }

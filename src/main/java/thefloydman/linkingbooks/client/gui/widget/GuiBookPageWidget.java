@@ -23,8 +23,8 @@ import java.util.List;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.client.gui.book.GuiBookElement;
 
 @OnlyIn(Dist.CLIENT)
@@ -33,18 +33,17 @@ public class GuiBookPageWidget extends NestedWidget {
     public long changeTime = 2000L;
 
     public GuiBookPageWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, Float scale, Font font, List<Object> elements) {
+                             Screen parentScreen, Float scale, Font font, List<Object> elements) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         int lineSpacing = 6;
         int currentY = (int) (this.getY() / this.scale);
         for (int i = 0; i < elements.size(); i++) {
             Object element = elements.get(i);
-            if (element instanceof GuiBookElement) {
-                GuiBookElement<?> guiBookElement = (GuiBookElement<?>) element;
+            if (element instanceof GuiBookElement<?> guiBookElement) {
                 NestedWidget widget = guiBookElement.getAsWidget(this.id + guiBookElement.getName() + i, this.getX(),
                         currentY, z + 1.0F, this.width, 0, parentScreen, 0.5F, font);
                 this.addChild(widget);
-                currentY += widget.getHeight() * 0.5F + lineSpacing;
+                currentY += (int) (widget.getHeight() * 0.5F + lineSpacing);
             }
         }
     }

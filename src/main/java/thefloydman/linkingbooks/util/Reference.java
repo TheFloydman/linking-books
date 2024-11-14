@@ -1,30 +1,12 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
- *
- * This file is part of Linking Books.
- *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
- *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package thefloydman.linkingbooks.util;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 public class Reference {
 
-    public static final String MOD_ID = "linkingbooks";
+    public static final String MODID = "linkingbooks";
     public static MinecraftServer server = null;
 
     /**
@@ -35,7 +17,7 @@ public class Reference {
      *         parameter as the path.
      */
     public static ResourceLocation getAsResourceLocation(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
     public static boolean isModLoaded(String modId) {
@@ -55,38 +37,8 @@ public class Reference {
     public static class ItemNames {
         public static final String INK_BUCKET = "ink_bucket";
         public static final String GUIDEBOOK = "guidebook";
-        public static final String BLACK_BLANK_LINKING_BOOK = "black_blank_linking_book";
-        public static final String BLUE_BLANK_LINKING_BOOK = "blue_blank_linking_book";
-        public static final String BROWN_BLANK_LINKING_BOOK = "brown_blank_linking_book";
-        public static final String CYAN_BLANK_LINKING_BOOK = "cyan_blank_linking_book";
-        public static final String GRAY_BLANK_LINKING_BOOK = "gray_blank_linking_book";
-        public static final String GREEN_BLANK_LINKING_BOOK = "green_blank_linking_book";
-        public static final String LIGHT_BLUE_BLANK_LINKING_BOOK = "light_blue_blank_linking_book";
-        public static final String LIGHT_GRAY_BLANK_LINKING_BOOK = "light_gray_blank_linking_book";
-        public static final String LIME_BLANK_LINKING_BOOK = "lime_blank_linking_book";
-        public static final String MAGENTA_BLANK_LINKING_BOOK = "magenta_blank_linking_book";
-        public static final String ORANGE_BLANK_LINKING_BOOK = "orange_blank_linking_book";
-        public static final String PINK_BLANK_LINKING_BOOK = "pink_blank_linking_book";
-        public static final String PURPLE_BLANK_LINKING_BOOK = "purple_blank_linking_book";
-        public static final String RED_BLANK_LINKING_BOOK = "red_blank_linking_book";
-        public static final String WHITE_BLANK_LINKING_BOOK = "white_blank_linking_book";
-        public static final String YELLOW_BLANK_LINKING_BOOK = "yellow_blank_linking_book";
-        public static final String BLACK_WRITTEN_LINKING_BOOK = "black_written_linking_book";
-        public static final String BLUE_WRITTEN_LINKING_BOOK = "blue_written_linking_book";
-        public static final String BROWN_WRITTEN_LINKING_BOOK = "brown_written_linking_book";
-        public static final String CYAN_WRITTEN_LINKING_BOOK = "cyan_written_linking_book";
-        public static final String GRAY_WRITTEN_LINKING_BOOK = "gray_written_linking_book";
-        public static final String GREEN_WRITTEN_LINKING_BOOK = "green_written_linking_book";
-        public static final String LIGHT_BLUE_WRITTEN_LINKING_BOOK = "light_blue_written_linking_book";
-        public static final String LIGHT_GRAY_WRITTEN_LINKING_BOOK = "light_gray_written_linking_book";
-        public static final String LIME_WRITTEN_LINKING_BOOK = "lime_written_linking_book";
-        public static final String MAGENTA_WRITTEN_LINKING_BOOK = "magenta_written_linking_book";
-        public static final String ORANGE_WRITTEN_LINKING_BOOK = "orange_written_linking_book";
-        public static final String PINK_WRITTEN_LINKING_BOOK = "pink_written_linking_book";
-        public static final String PURPLE_WRITTEN_LINKING_BOOK = "purple_written_linking_book";
-        public static final String RED_WRITTEN_LINKING_BOOK = "red_written_linking_book";
-        public static final String WHITE_WRITTEN_LINKING_BOOK = "white_written_linking_book";
-        public static final String YELLOW_WRITTEN_LINKING_BOOK = "yellow_written_linking_book";
+        public static final String BLANK_LINKING_BOOK = "blank_linking_book";
+        public static final String WRITTEN_LINKING_BOOK = "written_linking_book";
         public static final String LINKING_PANEL = "linking_panel";
     }
 
@@ -119,6 +71,10 @@ public class Reference {
         public static final ResourceLocation LINK_DATA = getAsResourceLocation("link_data");
     }
 
+    public static class DataComponentNames {
+        public static final String LINK_DATA = "link_data";
+    }
+
     public static class RecipeSerializerNames {
         public static final String LINK_EFFECT = "link_effect";
     }
@@ -134,8 +90,13 @@ public class Reference {
         public static final String BOOK_CLOSE = "book_close";
     }
 
+    public static class RegistryKeyNames {
+        public static final String LINK_EFFECT_TYPE = "link_effect_type";
+        public static final String LINK_EFFECT = "link_effect";
+    }
+
     public static class RegistryNames {
-        public static final ResourceLocation LINK_EFFECT_TYPES = getAsResourceLocation("linkeffecttypes");
+        public static final ResourceLocation LINK_EFFECT_TYPE = getAsResourceLocation("link_effect_type");
     }
 
     public static class CreativeModeTabNames {

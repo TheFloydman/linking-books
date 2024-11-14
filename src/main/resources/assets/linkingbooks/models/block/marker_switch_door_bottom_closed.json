@@ -1,5 +1,5 @@
 {
-	"loader": "forge:obj",
+	"loader": "neoforge:obj",
 	"model": "linkingbooks:models/block/marker_switch_door_bottom_closed.obj",
 	"emissive_ambient": true,
 	"flip_v": false,

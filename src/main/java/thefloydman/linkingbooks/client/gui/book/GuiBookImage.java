@@ -41,7 +41,7 @@ public class GuiBookImage extends GuiBookElement<ImageWidget> {
 
     @Override
     public ImageWidget getAsWidget(String id, int x, int y, float z, int width, int height, Screen parentScreen,
-            float scale, Font font) {
+                                   float scale, Font font) {
         float localScale = (float) width / (float) this.sourceWidth;
         float scaledHeight = this.sourceHeight * localScale;
         return new ImageWidget(id, x, y, z, (int) (width * this.scale / scale),

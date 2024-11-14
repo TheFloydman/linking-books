@@ -41,7 +41,7 @@ public class GuiBookParagraph extends GuiBookElement<ParagraphWidget> {
 
     @Override
     public ParagraphWidget getAsWidget(String id, int x, int y, float z, int width, int height, Screen parentScreen,
-            float scale, Font font) {
+                                       float scale, Font font) {
 
         List<Component> outputParagraph = Lists.newArrayList();
         for (String span : this.contents) {
@@ -58,10 +58,10 @@ public class GuiBookParagraph extends GuiBookElement<ParagraphWidget> {
                 for (String currentLine = ""; index < wordList.size(); index++) {
                     String preWord = wordList.get(index);
                     String temp = preWord;
-                    while (temp.indexOf("§") >= 0) {
-                        int currentIndex = temp.indexOf("§");
+                    while (temp.indexOf("ï¿½") >= 0) {
+                        int currentIndex = temp.indexOf("ï¿½");
                         String sub = temp.substring(currentIndex, currentIndex + 2);
-                        styled = !sub.equals("§r");
+                        styled = !sub.equals("ï¿½r");
                         if (styled) {
                             style += sub;
                         } else {
@@ -75,7 +75,7 @@ public class GuiBookParagraph extends GuiBookElement<ParagraphWidget> {
                     currentLine = lineList.stream().collect(Collectors.joining(" "));
                     excessWords = font.width(currentLine) > (width / scale) && lineList.size() > 1;
                     if (excessWords) {
-                        if (preWord.contains("§r"))
+                        if (preWord.contains("ï¿½r"))
                             postWord = lastStyle + preWord;
                         wordList.set(index, postWord);
                         lineList.remove(lineList.size() - 1);

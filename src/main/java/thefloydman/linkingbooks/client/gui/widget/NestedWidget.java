@@ -22,17 +22,16 @@ import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 
+import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -42,8 +41,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 
@@ -68,15 +65,15 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            this.renderChildren(poseStack, mouseX, mouseY, partialTicks);
+            this.renderChildren(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
 
-    public void renderChildren(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderChildren(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         for (NestedWidget widget : this.children.values()) {
-            widget.render(poseStack, mouseX, mouseY, partialTicks);
+            widget.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
 
@@ -109,12 +106,9 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     /**
-     * A z-level-dependent version of AbstractGui::fill.
+     * A z-level-dependent version of GuiGraphics#fill.
      */
-    /**
-     * Z-sensitive fill method.
-     */
-    public void zFill(final PoseStack poseStack, int xStart, int yStart, int xEnd, int yEnd, final int color) {
+    public void zFill(GuiGraphics guiGraphics, int xStart, int yStart, int xEnd, int yEnd, final int color) {
 
         if (xStart < xEnd) {
             int endUpdated = xStart;
@@ -133,33 +127,29 @@ public abstract class NestedWidget extends AbstractWidget {
         final float blue = (color & 0xFF) / 255.0f;
         final float alpha = (color >> 24 & 0xFF) / 255.0f;
 
-        final BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        Matrix4f matrix = poseStack.last().pose();
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        bufferBuilder.vertex(matrix, xStart, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.vertex(matrix, xEnd, yEnd, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.vertex(matrix, xEnd, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.vertex(matrix, xStart, yStart, this.zLevel).color(red, green, blue, alpha).endVertex();
-        BufferUploader.drawWithShader(bufferBuilder.end());
-        RenderSystem.enableTexture();
+        Matrix4f matrix = guiGraphics.pose().last().pose();
+        VertexConsumer vertexconsumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
+        vertexconsumer.addVertex(matrix, xStart, yEnd, this.zLevel).setColor(red, green, blue, alpha);
+        vertexconsumer.addVertex(matrix, xEnd, yEnd, this.zLevel).setColor(red, green, blue, alpha);
+        vertexconsumer.addVertex(matrix, xEnd, yStart, this.zLevel).setColor(red, green, blue, alpha);
+        vertexconsumer.addVertex(matrix, xStart, yStart, this.zLevel).setColor(red, green, blue, alpha);
         RenderSystem.disableBlend();
     }
 
-    public void point(final PoseStack matrixStack, int x, int y, final int color) {
-        this.zFill(matrixStack, x, y, x + 1, y + 1, color);
+    public void point(final GuiGraphics guiGraphics, int x, int y, final int color) {
+        this.zFill(guiGraphics, x, y, x + 1, y + 1, color);
     }
 
     /**
      * Returns a positive difference if the zLevel needs to be raised and a negative
      * difference if it should be lowered.
      */
-    public static float zDifference(PoseStack matrixStack, float zLevel) {
+    public static float zDifference(GuiGraphics guiGraphics, float zLevel) {
         FloatBuffer floatBuffer = FloatBuffer.allocate(16);
-        matrixStack.last().pose().set(floatBuffer);
+        guiGraphics.pose().last().pose().set(floatBuffer);
         float currentZ = floatBuffer.get(10);
         return zLevel - currentZ < 0 ? zLevel - Mth.abs(currentZ) : zLevel + Mth.abs(currentZ);
     }

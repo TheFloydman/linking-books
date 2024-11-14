@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "linkingbooks:linking_panel"
+    },
+    {
+      "item": "minecraft:leather"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "linkingbooks:blank_linking_book"
+  }
+}

@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<!-- Basic structure -->
+    <!-- Basic structure -->
 
     <xs:element name="book">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="page" maxOccurs="unbounded">
-					<xs:complexType mixed="true">
-						<xs:group ref="main_element" minOccurs="0" maxOccurs="unbounded"/>
-      					<xs:attribute name="title" type="xs:string"/>
-      				</xs:complexType>
-      			</xs:element>
-    		</xs:sequence>
-    		<xs:attribute name="line_spacing" type="xs:integer"/>
-    		<xs:attribute name="paragraph_spacing" type="xs:integer"/>
-  		</xs:complexType>
-	</xs:element>
-	
-	<!-- Referenced parts -->
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="page" maxOccurs="unbounded">
+                    <xs:complexType mixed="true">
+                        <xs:group ref="main_element" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:attribute name="title" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="line_spacing" type="xs:integer"/>
+            <xs:attribute name="paragraph_spacing" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:group name="main_element">
-		<xs:choice>
-			<xs:group ref="paragraph"/>
-			<xs:group ref="image"/>
-			<xs:group ref="recipe"/>
-			<xs:group ref="recipes"/>
-		</xs:choice>   
-	</xs:group>
-	
-	<xs:group name="paragraph">
-		<xs:sequence>
-			<xs:element name="p" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType mixed="true">
-					<xs:choice>
-						<xs:group ref="style"/>
-						<xs:group ref="break"/>
-					</xs:choice>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:group>
-	
-	<xs:group name="style">
-		<xs:sequence>
-			<xs:element name="style" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType mixed="true">
-					<xs:attribute name="color" type="xs:string"/>
-					<xs:attribute name="bold" type="xs:boolean" default="false"/>
-					<xs:attribute name="italic" type="xs:boolean" default="false"/>
-					<xs:attribute name="underline" type="xs:boolean" default="false"/>
-					<xs:attribute name="obfuscated" type="xs:boolean" default="false"/>
-					<xs:attribute name="strikethrough" type="xs:boolean" default="false"/>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:group>
-	
-	<xs:group name="break">
-		<xs:sequence>
-			<xs:element name="br" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
-	</xs:group>
-	
-	<xs:group name="image">
-		<xs:sequence>
-			<xs:element name="img" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:attribute name="src" type="xs:string"/>
-					<xs:attribute name="scale">
-						<xs:simpleType>
-							<xs:restriction base="xs:float">
-								<xs:minInclusive value="0"/>
-      							<xs:maxInclusive value="1"/>
-							</xs:restriction>
-						</xs:simpleType>
-					</xs:attribute>
-					<xs:attribute name="width" type="xs:positiveInteger"/>
-					<xs:attribute name="height" type="xs:positiveInteger"/>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:group>
-	
-	<xs:group name="recipe">
-		<xs:sequence>
-			<xs:element name="recipe" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:attribute name="src" type="xs:string"/>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:group>
-	
-	<xs:group name="rec">
-		<xs:sequence>
-			<xs:element name="rec" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:attribute name="src" type="xs:string"/>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:group>
-	
-	<xs:group name="recipes">
-		<xs:sequence>
-			<xs:element name="recipes" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType mixed="true">
-					<xs:sequence>
-						<xs:group ref="rec"/>
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-	</xs:group>
+    <!-- Referenced parts -->
+
+    <xs:group name="main_element">
+        <xs:choice>
+            <xs:group ref="paragraph"/>
+            <xs:group ref="image"/>
+            <xs:group ref="recipe"/>
+            <xs:group ref="recipes"/>
+        </xs:choice>
+    </xs:group>
+
+    <xs:group name="paragraph">
+        <xs:sequence>
+            <xs:element name="p" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType mixed="true">
+                    <xs:choice>
+                        <xs:group ref="style"/>
+                        <xs:group ref="break"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="style">
+        <xs:sequence>
+            <xs:element name="style" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType mixed="true">
+                    <xs:attribute name="color" type="xs:string"/>
+                    <xs:attribute name="bold" type="xs:boolean" default="false"/>
+                    <xs:attribute name="italic" type="xs:boolean" default="false"/>
+                    <xs:attribute name="underline" type="xs:boolean" default="false"/>
+                    <xs:attribute name="obfuscated" type="xs:boolean" default="false"/>
+                    <xs:attribute name="strikethrough" type="xs:boolean" default="false"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="break">
+        <xs:sequence>
+            <xs:element name="br" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="image">
+        <xs:sequence>
+            <xs:element name="img" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="src" type="xs:string"/>
+                    <xs:attribute name="scale">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0"/>
+                                <xs:maxInclusive value="1"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="width" type="xs:positiveInteger"/>
+                    <xs:attribute name="height" type="xs:positiveInteger"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="recipe">
+        <xs:sequence>
+            <xs:element name="recipe" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="src" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="rec">
+        <xs:sequence>
+            <xs:element name="rec" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="src" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="recipes">
+        <xs:sequence>
+            <xs:element name="recipes" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType mixed="true">
+                    <xs:sequence>
+                        <xs:group ref="rec"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
 
 </xs:schema>

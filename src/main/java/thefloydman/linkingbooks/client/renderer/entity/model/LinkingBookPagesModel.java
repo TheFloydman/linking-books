@@ -1,29 +1,7 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
- *
- * This file is part of Linking Books.
- *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
- *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package thefloydman.linkingbooks.client.renderer.entity.model;
-
-import java.util.Arrays;
-import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -33,7 +11,10 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
-import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class LinkingBookPagesModel extends EntityModel<LinkingBookEntity> {
 
@@ -59,10 +40,9 @@ public class LinkingBookPagesModel extends EntityModel<LinkingBookEntity> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
-            float red, float green, float blue, float alpha) {
+    public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, int color) {
         this.allModels.forEach((model) -> {
-            model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+            model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, color);
         });
     }
 

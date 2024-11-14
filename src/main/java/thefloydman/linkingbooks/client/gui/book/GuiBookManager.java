@@ -32,6 +32,8 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -48,8 +50,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.util.Reference;
 
 @OnlyIn(Dist.CLIENT)
@@ -57,38 +57,38 @@ public class GuiBookManager implements ResourceManagerReloadListener {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static Map<Integer, List<Object>> guidebookPages = Maps.newHashMap();
-    private static final String TAG_RESET = "งr";
-    private static Map<String, String> formatMap = Maps.newHashMap();
-    private static Map<String, String> colorMap = Maps.newHashMap();
+    private static final String TAG_RESET = "ยงr";
+    private static final Map<String, String> FORMAT_MAP = Maps.newHashMap();
+    private static final Map<String, String> COLOR_MAP = Maps.newHashMap();
 
     static {
-        colorMap.put("black", "0");
-        colorMap.put("dark_blue", "1");
-        colorMap.put("dark_green", "2");
-        colorMap.put("dark_aqua", "3");
-        colorMap.put("dark_red", "4");
-        colorMap.put("dark_purple", "5");
-        colorMap.put("gold", "6");
-        colorMap.put("gray", "7");
-        colorMap.put("dark_gray", "8");
-        colorMap.put("blue", "9");
-        colorMap.put("green", "a");
-        colorMap.put("aqua", "b");
-        colorMap.put("red", "c");
-        colorMap.put("light_purple", "d");
-        colorMap.put("yellow", "e");
-        colorMap.put("white", "f");
-        formatMap.put("obfuscated", "k");
-        formatMap.put("bold", "l");
-        formatMap.put("strikethrough", "m");
-        formatMap.put("underline", "n");
-        formatMap.put("italic", "o");
+        COLOR_MAP.put("black", "0");
+        COLOR_MAP.put("dark_blue", "1");
+        COLOR_MAP.put("dark_green", "2");
+        COLOR_MAP.put("dark_aqua", "3");
+        COLOR_MAP.put("dark_red", "4");
+        COLOR_MAP.put("dark_purple", "5");
+        COLOR_MAP.put("gold", "6");
+        COLOR_MAP.put("gray", "7");
+        COLOR_MAP.put("dark_gray", "8");
+        COLOR_MAP.put("blue", "9");
+        COLOR_MAP.put("green", "a");
+        COLOR_MAP.put("aqua", "b");
+        COLOR_MAP.put("red", "c");
+        COLOR_MAP.put("light_purple", "d");
+        COLOR_MAP.put("yellow", "e");
+        COLOR_MAP.put("white", "f");
+        FORMAT_MAP.put("obfuscated", "k");
+        FORMAT_MAP.put("bold", "l");
+        FORMAT_MAP.put("strikethrough", "m");
+        FORMAT_MAP.put("underline", "n");
+        FORMAT_MAP.put("italic", "o");
     }
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
         guidebookPages = Maps.newHashMap();
-        String currentLang = Minecraft.getInstance().getLanguageManager().getSelected().getCode();
+        String currentLang = Minecraft.getInstance().getLanguageManager().getSelected();
         Collection<ResourceLocation> guidebookResources = resourceManager
                 .listResources("lang/linkingbooks/guidebook", (resourceLocation) -> {
                     return resourceLocation.getPath().endsWith(String.format("%s.xml", currentLang));
@@ -133,15 +133,14 @@ public class GuiBookManager implements ResourceManagerReloadListener {
                                                 NamedNodeMap styleNodeMap = paragraphChildNode.getAttributes();
                                                 for (int l = 0; l < styleNodeMap.getLength(); l++) {
                                                     Node attribute = styleNodeMap.item(l);
-                                                    if (attribute.getNodeName() != null
-                                                            && attribute.getNodeValue() != null) {
+                                                    if (attribute.getNodeValue() != null) {
                                                         if (attribute.getNodeName().equals("color")) {
-                                                            String color = colorMap.get(attribute.getNodeValue());
-                                                            colorCode = color == null ? "" : "ง" + color;
+                                                            String color = COLOR_MAP.get(attribute.getNodeValue());
+                                                            colorCode = color == null ? "" : "ยง" + color;
                                                         } else {
                                                             if (attribute.getNodeValue().equals("true")) {
-                                                                String format = formatMap.get(attribute.getNodeName());
-                                                                formatCode += format == null ? "" : "ง" + format;
+                                                                String format = FORMAT_MAP.get(attribute.getNodeName());
+                                                                formatCode += format == null ? "" : "ยง" + format;
                                                             }
                                                         }
                                                     }
@@ -158,17 +157,15 @@ public class GuiBookManager implements ResourceManagerReloadListener {
                                     elementList.add(paragraph);
                                 } else if (elementNode.getNodeName().equals("img")) {
                                     NamedNodeMap imageNodeMap = elementNode.getAttributes();
-                                    ResourceLocation location = new ResourceLocation(
+                                    ResourceLocation location = ResourceLocation.parse(
                                             imageNodeMap.getNamedItem("src").getNodeValue());
                                     float scale = imageNodeMap.getNamedItem("scale") == null ? 1.0F
-                                            : Float.valueOf(imageNodeMap.getNamedItem("scale").getNodeValue());
+                                            : Float.parseFloat(imageNodeMap.getNamedItem("scale").getNodeValue());
                                     int width = imageNodeMap.getNamedItem("width") == null ? 256
-                                            : Integer.valueOf(imageNodeMap.getNamedItem("width").getNodeValue());
+                                            : Integer.parseInt(imageNodeMap.getNamedItem("width").getNodeValue());
                                     int height = imageNodeMap.getNamedItem("height") == null ? 256
-                                            : Integer.valueOf(imageNodeMap.getNamedItem("height").getNodeValue());
-                                    if (location != null) {
-                                        elementList.add(new GuiBookImage(location, scale, width, height));
-                                    }
+                                            : Integer.parseInt(imageNodeMap.getNamedItem("height").getNodeValue());
+                                    elementList.add(new GuiBookImage(location, scale, width, height));
                                 } else if (elementNode.getNodeName().equals("recipe")) {
                                     if (elementNode.hasAttributes()) {
                                         NamedNodeMap attributes = elementNode.getAttributes();

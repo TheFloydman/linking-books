@@ -1,33 +1,9 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
- *
- * This file is part of Linking Books.
- *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
- *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package thefloydman.linkingbooks.util;
 
-import java.util.List;
-import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -37,20 +13,27 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ForgeRegistries;
-import thefloydman.linkingbooks.api.capability.ILinkData;
-import thefloydman.linkingbooks.api.linking.LinkEffect;
-import thefloydman.linkingbooks.capability.ModCapabilities;
-import thefloydman.linkingbooks.config.ModConfig;
-import thefloydman.linkingbooks.entity.LinkingBookEntity;
-import thefloydman.linkingbooks.inventory.container.LinkingBookMenuType;
-import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.network.ModNetworkHandler;
-import thefloydman.linkingbooks.network.packets.TakeScreenshotForLinkingBookMessage;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import thefloydman.linkingbooks.core.component.ModDataComponents;
+import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.linking.LinkEffect;
+import thefloydman.linkingbooks.network.TakeScreenshotForLinkingBookMessage;
+import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
+import thefloydman.linkingbooks.world.item.ModItems;
+import net.minecraft.network.chat.Component;
+import thefloydman.linkingbooks.ModConfig;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
+
+import java.awt.*;
+import java.util.Set;
 
 public class LinkingUtils {
 
@@ -58,61 +41,21 @@ public class LinkingUtils {
 
     public static ItemStack createWrittenLinkingBook(Player player, ItemStack originItem) {
 
-        ItemStack resultItem = ModItems.GREEN_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
+        LinkData linkData = LinkData.fromPlayer(player);
+        ItemStack writtenBook = ModItems.WRITTEN_LINKING_BOOK.get().getDefaultInstance();
+        writtenBook.set(ModDataComponents.LINK_DATA, linkData);
+        writtenBook.set(DataComponents.DYED_COLOR, originItem.getOrDefault(DataComponents.DYED_COLOR, new DyedItemColor(
+                new Color(181, 134, 83).getRGB(), false)));
 
-        String itemName = ForgeRegistries.ITEMS.getKey(originItem.getItem()).getPath();
+        PacketDistributor.sendToPlayer((ServerPlayer) player, new TakeScreenshotForLinkingBookMessage(linkData.uuid()));
 
-        if (itemName.equals(Reference.ItemNames.BLACK_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.BLACK_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.BLUE_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.BLUE_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.BROWN_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.BROWN_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.CYAN_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.CYAN_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.GRAY_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.GRAY_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.LIGHT_BLUE_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.LIGHT_BLUE_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.LIGHT_GRAY_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.LIGHT_GRAY_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.LIME_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.LIME_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.MAGENTA_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.MAGENTA_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.ORANGE_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.ORANGE_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.PINK_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.PINK_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.PURPLE_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.PURPLE_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.RED_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.RED_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else if (itemName.equals(Reference.ItemNames.WHITE_BLANK_LINKING_BOOK)) {
-            resultItem = ModItems.WHITE_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        } else {
-            resultItem = ModItems.YELLOW_WRITTEN_LINKING_BOOK.get().getDefaultInstance();
-        }
-
-        ILinkData linkData = resultItem.getCapability(ModCapabilities.LINK_DATA).orElse(null);
-        if (linkData == null) {
-            return ItemStack.EMPTY;
-        }
-        linkData.setDimension(player.getCommandSenderWorld().dimension().location());
-        linkData.setPosition(player.blockPosition());
-        linkData.setRotation(player.getYRot());
-
-        ModNetworkHandler.sendToPlayer(new TakeScreenshotForLinkingBookMessage(linkData.getUUID()),
-                (ServerPlayer) player);
-
-        return resultItem;
+        return writtenBook;
     }
 
     /**
-     * Teleport an entity to a dimension and position. Should only be called
-     * server-side.
+     * Teleport an entity to a dimension and position.
      */
-    public static boolean linkEntity(Entity entity, ILinkData linkData, boolean holdingBook) {
+    public static boolean linkEntity(Entity entity, LinkData linkData, boolean holdingBook) {
 
         Level world = entity.getCommandSenderWorld();
 
@@ -121,13 +64,13 @@ public class LinkingUtils {
                     "An attempt has been made to directly link an entity from the client. Only do this from the server.");
         } else if (linkData == null) {
             LOGGER.info("A null ILinkInfo has been supplied. Link failed.");
-        } else if (linkData.getDimension() == null) {
-            LOGGER.info("ILinkData.getDimension() returned null. Link failed.");
-        } else if (linkData.getPosition() == null) {
-            LOGGER.info("ILinkData.getPosition() returned null. Link failed.");
-        } else if (!ModConfig.COMMON.alwaysAllowIntraAgeLinking.get()
-                && !linkData.getLinkEffectsAsRL().contains(new ResourceLocation("linkingbooks:intraage_linking"))
-                && world.dimension().location().equals(linkData.getDimension())) {
+        } else if (linkData.dimension() == null) {
+            LOGGER.info("LinkData.dimension() returned null. Link failed.");
+        } else if (linkData.blockPos() == null) {
+            LOGGER.info("LinkData.blockPos() returned null. Link failed.");
+        } else if (!ModConfig.alwaysAllowIntraAgeLinking
+                && !linkData.linkEffects().contains(ResourceLocation.parse("linkingbooks:intraage_linking"))
+                && world.dimension().location().equals(linkData.dimension())) {
             if (entity instanceof ServerPlayer) {
                 ServerPlayer player = (ServerPlayer) entity;
                 player.closeContainer();
@@ -137,19 +80,18 @@ public class LinkingUtils {
         } else {
 
             ServerLevel serverWorld = world.getServer()
-                    .getLevel(ResourceKey.create(Registries.DIMENSION, linkData.getDimension()));
+                    .getLevel(ResourceKey.create(Registries.DIMENSION, linkData.dimension()));
 
             if (serverWorld == null) {
-                LOGGER.info("Cannot find dimension \"" + linkData.getDimension().toString() + "\". Link failed.");
+                LOGGER.info("Cannot find dimension \"" + linkData.dimension().toString() + "\". Link failed.");
                 return false;
             }
 
-            Set<LinkEffect> linkEffects = linkData.getLinkEffectsAsLE();
+            Set<LinkEffect> linkEffects = linkData.linkEffectsAsLE(serverWorld);
 
             for (LinkEffect effect : linkEffects) {
-                if (!effect.canStartLink(entity, linkData)) {
-                    if (entity instanceof ServerPlayer) {
-                        ServerPlayer player = (ServerPlayer) entity;
+                if (!effect.type().canStartLink(entity, linkData)) {
+                    if (entity instanceof ServerPlayer player) {
                         player.closeContainer();
                         player.doCloseContainer();
                         player.displayClientMessage(Component.translatable("message.linkingbooks.link_failed_start"),
@@ -160,16 +102,16 @@ public class LinkingUtils {
             }
 
             for (LinkEffect effect : linkEffects) {
-                effect.onLinkStart(entity, linkData);
+                effect.type().onLinkStart(entity, linkData);
             }
 
             Vec3 originalPos = entity.position();
             float originalRot = entity.getYRot();
-            BlockPos pos = linkData.getPosition();
+            BlockPos pos = linkData.blockPos();
             double x = pos.getX() + 0.5D;
             double y = pos.getY();
             double z = pos.getZ() + 0.5D;
-            float rotation = linkData.getRotation();
+            float rotation = linkData.rotation();
             boolean tookExperience = false;
 
             /*
@@ -181,18 +123,18 @@ public class LinkingUtils {
                 ServerPlayer player = (ServerPlayer) entity;
                 // Deduct experience levels if a cost has been set in config.
                 if (!player.isCreative()) {
-                    if (player.experienceLevel < ModConfig.COMMON.linkingCostLevels.get()) {
+                    if (player.experienceLevel < ModConfig.linkingCostLevels) {
                         player.closeContainer();
                         player.doCloseContainer();
                         player.displayClientMessage(
                                 Component.translatable("message.linkingbooks.insufficient_experience"), true);
                         return false;
                     }
-                    player.giveExperienceLevels(ModConfig.COMMON.linkingCostLevels.get() * -1);
+                    player.giveExperienceLevels(ModConfig.linkingCostLevels * -1);
                     tookExperience = true;
                 }
                 if (holdingBook
-                        && !linkData.getLinkEffectsAsRL().contains(Reference.getAsResourceLocation("tethered"))) {
+                        && !linkData.linkEffects().contains(Reference.getAsResourceLocation("tethered"))) {
                     LinkingBookEntity book = new LinkingBookEntity(world, player.getMainHandItem().copy());
                     Vec3 lookVec = player.getLookAngle();
                     book.setPos(player.getX() + (lookVec.x() / 4.0D), player.getY() + 1.0D,
@@ -217,11 +159,10 @@ public class LinkingUtils {
                 serverWorld.addDuringTeleport(entityCopy);
             }
             for (LinkEffect effect : linkEffects) {
-                if (!effect.canFinishLink(entity, linkData)) {
-                    if (entity instanceof ServerPlayer) {
-                        ServerPlayer player = (ServerPlayer) entity;
+                if (!effect.type().canFinishLink(entity, linkData)) {
+                    if (entity instanceof ServerPlayer player) {
                         if (tookExperience) {
-                            player.giveExperienceLevels(ModConfig.COMMON.linkingCostLevels.get());
+                            player.giveExperienceLevels(ModConfig.linkingCostLevels);
                         }
                         serverWorld.getServer().execute(() -> {
                             player.teleportTo((ServerLevel) world, originalPos.x, originalPos.y, originalPos.z,
@@ -246,46 +187,39 @@ public class LinkingUtils {
                 }
             }
             for (LinkEffect effect : linkEffects) {
-                effect.onLinkEnd(entity, linkData);
+                effect.type().onLinkEnd(entity, linkData);
             }
             return true;
         }
         return false;
     }
 
-    /**
-     * Teleport multiple entities to a dimension and position using the same
-     * ILinkInfo. Should only be called server-side.
-     * 
-     * @param entities
-     * @param linkInfo
-     * @return The number of entities that were successfully teleported.
-     */
-    public static int linkEntities(List<Entity> entities, ILinkData linkInfo, boolean holdingBook) {
-        int linked = 0;
-        for (Entity entity : entities) {
-            linked += linkEntity(entity, linkInfo, holdingBook) == true ? 1 : 0;
-        }
-        return linked;
-    }
-
-    public static void openLinkingBookGui(ServerPlayer player, boolean holdingBook, int color, ILinkData linkData,
-            ResourceLocation currentDimension) {
-        NetworkHooks.openScreen(player, new SimpleMenuProvider((id, playerInventory, playerEntity) -> {
+    public static void openLinkingBookGui(ServerPlayer player, boolean holdingBook, int color, LinkData linkData,
+                                          ResourceLocation currentDimension) {
+        player.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) -> {
             return new LinkingBookMenuType(id, playerInventory);
         }, Component.literal("")), extraData -> {
             extraData.writeBoolean(holdingBook);
             extraData.writeInt(color);
-            linkData.write(extraData);
-            boolean canLink = ModConfig.COMMON.alwaysAllowIntraAgeLinking.get()
-                    || !currentDimension.equals(linkData.getDimension())
-                    || linkData.getLinkEffectsAsRL().contains(Reference.getAsResourceLocation("intraage_linking"));
+            extraData.writeJsonWithCodec(LinkData.CODEC, linkData);
+            boolean canLink = ModConfig.alwaysAllowIntraAgeLinking
+                    || !currentDimension.equals(linkData.dimension())
+                    || linkData.linkEffects().contains(Reference.getAsResourceLocation("intraage_linking"));
             extraData.writeBoolean(canLink);
             LinkingBooksSavedData savedData = player.getServer().getLevel(Level.OVERWORLD).getDataStorage()
-                    .computeIfAbsent(LinkingBooksSavedData::load, LinkingBooksSavedData::new, Reference.MOD_ID);
-            CompoundTag image = savedData.getLinkingPanelImage(linkData.getUUID());
-            extraData.writeNbt(image);
+                    .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
+            extraData.writeJsonWithCodec(ImageUtils.NATIVE_IMAGE_CODEC, savedData.getLinkingPanelImage(linkData.uuid()));
         });
     }
 
+    public static int getLinkingBookColor(ItemStack stack, int tintIndex) {
+        if (tintIndex != 0) {
+            return -1;
+        }
+        DyedItemColor dyedColor = stack.getOrDefault(
+                DataComponents.DYED_COLOR,
+                new DyedItemColor(new Color(181, 134, 83).getRGB(), false)
+        );
+        return dyedColor.rgb();
+    }
 }

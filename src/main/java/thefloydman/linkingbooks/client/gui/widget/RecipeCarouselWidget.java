@@ -25,6 +25,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -43,7 +44,7 @@ public class RecipeCarouselWidget extends NestedWidget {
     Map<Integer, NestedWidget> renderMap = Maps.newHashMap();
 
     public RecipeCarouselWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale, List<List<List<ItemStack>>> recipes) {
+                                Screen parentScreen, float scale, List<List<List<ItemStack>>> recipes) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         for (int i = 0; i < recipes.size(); i++) {
             List<List<ItemStack>> ingredients = recipes.get(i);
@@ -60,13 +61,13 @@ public class RecipeCarouselWidget extends NestedWidget {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            int generalIndex = Mth.fastFloor((System.currentTimeMillis() - this.creationTime) / this.changeTime)
+            int generalIndex = Mth.floor((System.currentTimeMillis() - this.creationTime) / this.changeTime)
                     % this.totalVariations;
             NestedWidget recipeWidget = this.renderMap.get(generalIndex);
             if (recipeWidget != null) {
-                recipeWidget.render(poseStack, mouseX, mouseY, partialTicks);
+                recipeWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
             }
         }
     }

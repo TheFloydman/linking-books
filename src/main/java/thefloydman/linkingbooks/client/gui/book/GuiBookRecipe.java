@@ -21,6 +21,8 @@ package thefloydman.linkingbooks.client.gui.book;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.core.Holder;
+import net.minecraft.world.item.crafting.*;
 import org.apache.commons.compress.utils.Lists;
 
 import net.minecraft.client.Minecraft;
@@ -31,10 +33,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import thefloydman.linkingbooks.client.gui.widget.RecipeWidget;
 
 public class GuiBookRecipe extends GuiBookElement<RecipeWidget> {
@@ -50,7 +48,7 @@ public class GuiBookRecipe extends GuiBookElement<RecipeWidget> {
 
     @Override
     public RecipeWidget getAsWidget(String id, int x, int y, float z, int width, int height, Screen parentScreen,
-            float scale, Font font) {
+                                    float scale, Font font) {
 
         Minecraft minecraft = Minecraft.getInstance();
         ClientLevel level = minecraft.level;
@@ -66,14 +64,18 @@ public class GuiBookRecipe extends GuiBookElement<RecipeWidget> {
         int gridWidth = 107;
         int gridHeight = 62;
         List<List<ItemStack>> recipeList = Lists.newArrayList();
-        Recipe<?> recipe = recipeManager.byKey(this.resourceLocation).orElse(null);
+        RecipeHolder<?> recipeHolder = recipeManager.byKey(this.resourceLocation).orElse(null);
+        Recipe<?> recipe = null;
+        if (recipeHolder != null) {
+            recipe = recipeHolder.value();
+        }
         if (recipe != null && recipe.getType() == this.recipeType) {
             if (this.recipeType == RecipeType.CRAFTING) {
                 NonNullList<Ingredient> ingredients = recipe.getIngredients();
                 for (Ingredient ingredient : ingredients) {
                     recipeList.add(Stream.of(ingredient.getItems()).toList());
                 }
-                recipeList.add(Stream.of(recipe.getResultItem()).toList());
+                recipeList.add(Stream.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())).toList());
             }
         }
         return (new RecipeWidget(id, (int) (x + ((width - (gridWidth * scale)) / 2.0F)), y, z, gridWidth, gridHeight,
