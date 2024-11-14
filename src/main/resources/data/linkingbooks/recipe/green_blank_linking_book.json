@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "linkingbooks:linking_panel"
+    },
+    {
+      "item": "minecraft:leather"
+    },
+    {
+      "tag": "c:dyes/green"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "linkingbooks:blank_linking_book",
+    "components": {
+      "minecraft:dyed_color": {
+        "rgb": -16741881
+      }
+    }
+  }
+}

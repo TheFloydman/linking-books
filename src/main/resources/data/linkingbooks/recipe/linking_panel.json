@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "PIP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "I": {
+      "tag": "c:dyes/black"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "linkingbooks:linking_panel"
+  }
+}

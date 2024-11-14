@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    " B ",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "B": {
+      "tag": "c:bookshelves"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "linkingbooks:linking_lectern"
+  }
+}
