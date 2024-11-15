@@ -33,7 +33,9 @@ import thefloydman.linkingbooks.ModConfig;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LinkingUtils {
 
@@ -87,7 +89,7 @@ public class LinkingUtils {
                 return false;
             }
 
-            Set<LinkEffect> linkEffects = linkData.linkEffectsAsLE(serverWorld);
+            Set<LinkEffect> linkEffects = linkData.linkEffectsAsLE(serverWorld).stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
             for (LinkEffect effect : linkEffects) {
                 if (!effect.type().canStartLink(entity, linkData)) {

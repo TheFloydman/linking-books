@@ -14,16 +14,19 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.linking.LinkEffect;
+import thefloydman.linkingbooks.linking.LinkEffectTypes;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public record LinkData(ResourceLocation dimension, BlockPos blockPos, float rotation, UUID uuid,
-                       List<ResourceLocation> linkEffects) {
+public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos, float rotation, @Nonnull UUID uuid,
+                       @Nonnull List<ResourceLocation> linkEffects) {
 
     public static final Codec<LinkData> CODEC = RecordCodecBuilder.create(
             codecBuilderInstance -> codecBuilderInstance.group(

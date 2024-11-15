@@ -8,8 +8,7 @@
             "item": "minecraft:spider_eye"
         }
     ],
-    "link_effects":
-    [
+    "link_effects": [
         "linkingbooks:poison_200"
     ]
 }

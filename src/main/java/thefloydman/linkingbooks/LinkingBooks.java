@@ -17,6 +17,8 @@ import thefloydman.linkingbooks.world.entity.ModEntityTypes;
 import thefloydman.linkingbooks.world.inventory.ModMenuTypes;
 import thefloydman.linkingbooks.world.item.ModCreativeModeTabs;
 import thefloydman.linkingbooks.world.item.ModItems;
+import thefloydman.linkingbooks.world.item.crafting.ModRecipeSerializers;
+import thefloydman.linkingbooks.world.item.crafting.ModRecipeTypes;
 import thefloydman.linkingbooks.world.level.block.ModBlocks;
 import thefloydman.linkingbooks.world.level.block.entity.ModBlockEntityTypes;
 
@@ -31,6 +33,8 @@ public class LinkingBooks {
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         LinkEffectTypes.LINK_EFFECT_TYPES.register(modEventBus);
+        ModRecipeTypes.RECIPE_TYPES.register(modEventBus);
+        ModRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
         ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
         ModEntityTypes.ENTITIES.register(modEventBus);
