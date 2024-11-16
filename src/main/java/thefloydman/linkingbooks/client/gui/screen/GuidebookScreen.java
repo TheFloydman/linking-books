@@ -1,30 +1,23 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
  *
  * This file is part of Linking Books.
  *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
 package thefloydman.linkingbooks.client.gui.screen;
 
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -37,11 +30,15 @@ import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.world.inventory.GuidebookMenuType;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> {
 
-    public GuidebookScreen(GuidebookMenuType menuType, Inventory intentory, Component narration) {
-        super(menuType, intentory, narration);
+    public GuidebookScreen(GuidebookMenuType menuType, Inventory inventory, Component narration) {
+        super(menuType, inventory, narration);
         this.imageWidth = 256;
         this.imageHeight = 180;
     }
@@ -51,7 +48,7 @@ public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> 
         super.init();
         this.addRenderableWidget(new BookWidget("guidebook", this.leftPos, this.topPos, 100.0F, this.imageWidth,
                 this.imageHeight, Component.literal("Guidebook"), this, 1.0F, this.font,
-                GuiBookManager.getPages().values().stream().collect(Collectors.toList())));
+                new ArrayList<>(GuiBookManager.getPages().values())));
     }
 
     @Override
@@ -61,14 +58,14 @@ public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> 
     }
 
     @Override
-    public void resize(Minecraft minecraft, int width, int height) {
+    public void resize(@Nonnull Minecraft minecraft, int width, int height) {
         Map<String, NestedWidget> backupList = Maps.newHashMap(this.renderables.stream()
-                .filter(item -> item instanceof NestedWidget).map(item -> NestedWidget.class.cast(item))
+                .filter(item -> item instanceof NestedWidget).map(NestedWidget.class::cast)
                 .collect(Collectors.toMap(NestedWidget::getId, Function.identity())));
         this.renderables.clear();
         super.resize(minecraft, width, height);
         for (NestedWidget element : this.renderables.stream().filter(item -> item instanceof NestedWidget)
-                .map(item -> NestedWidget.class.cast(item)).collect(Collectors.toList())) {
+                .map(NestedWidget.class::cast).toList()) {
             if (backupList.get(element.getId()) != null) {
                 element.restore(backupList.get(element.getId()));
                 element.restoreChildren(backupList.get(element.getId()));

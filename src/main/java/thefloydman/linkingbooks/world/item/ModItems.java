@@ -1,8 +1,22 @@
-package thefloydman.linkingbooks.world.item;
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.UUID;
+package thefloydman.linkingbooks.world.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -16,6 +30,10 @@ import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.level.block.ModBlocks;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class ModItems {
 

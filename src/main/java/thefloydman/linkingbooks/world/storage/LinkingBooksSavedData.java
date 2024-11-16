@@ -1,16 +1,30 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.world.storage;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.storage.CommandStorage;
 import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.util.ImageUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,47 +34,6 @@ public class LinkingBooksSavedData extends SavedData {
 
     public Map<UUID, CompoundTag> linkingPanelImages = new HashMap<>();
     public Map<BlockPos, LinkData> linkingPortals = new HashMap<>();
-
-    public boolean addLinkingPanelImage(UUID uuid, NativeImage image) {
-        if (this.linkingPanelImages.containsKey(uuid)) {
-            return false;
-        }
-        this.linkingPanelImages.put(uuid, (CompoundTag) ImageUtils.NATIVE_IMAGE_CODEC.encodeStart(NbtOps.INSTANCE, image).getOrThrow());
-        this.setDirty();
-        return true;
-    }
-
-    public boolean removeLinkingPanelImage(UUID uuid) {
-        if (!this.linkingPanelImages.containsKey(uuid)) {
-            return false;
-        }
-        this.linkingPanelImages.remove(uuid);
-        this.setDirty();
-        return true;
-    }
-
-    public NativeImage getLinkingPanelImage(UUID uuid) {
-        return ImageUtils.NATIVE_IMAGE_CODEC.parse(NbtOps.INSTANCE, this.linkingPanelImages.get(uuid)).getOrThrow();
-    }
-
-    public boolean addLinkingPortalData(BlockPos pos, LinkData linkData) {
-        this.linkingPortals.put(new BlockPos(pos), linkData);
-        this.setDirty();
-        return true;
-    }
-
-    public boolean removeLinkingPortalData(BlockPos pos) {
-        if (!this.linkingPortals.containsKey(pos)) {
-            return false;
-        }
-        this.linkingPortals.remove(pos);
-        this.setDirty();
-        return true;
-    }
-
-    public LinkData getLinkingPortalData(BlockPos pos) {
-        return this.linkingPortals.get(pos);
-    }
 
     public static LinkingBooksSavedData load(CompoundTag nbt, HolderLookup.Provider provider) {
         LinkingBooksSavedData data = new LinkingBooksSavedData();
@@ -90,6 +63,50 @@ public class LinkingBooksSavedData extends SavedData {
         return data;
     }
 
+    public static SavedData.Factory<LinkingBooksSavedData> factory() {
+        return new SavedData.Factory<>(
+                LinkingBooksSavedData::new, LinkingBooksSavedData::load
+        );
+    }
+
+    public boolean addLinkingPanelImage(UUID uuid, CompoundTag image) {
+        this.linkingPanelImages.put(uuid, image);
+        this.setDirty();
+        return true;
+    }
+
+    public boolean removeLinkingPanelImage(UUID uuid) {
+        if (!this.linkingPanelImages.containsKey(uuid)) {
+            return false;
+        }
+        this.linkingPanelImages.remove(uuid);
+        this.setDirty();
+        return true;
+    }
+
+    public CompoundTag getLinkingPanelImage(UUID uuid) {
+        return this.linkingPanelImages.get(uuid);
+    }
+
+    public boolean addLinkingPortalData(BlockPos pos, LinkData linkData) {
+        this.linkingPortals.put(new BlockPos(pos), linkData);
+        this.setDirty();
+        return true;
+    }
+
+    public boolean removeLinkingPortalData(BlockPos pos) {
+        if (!this.linkingPortals.containsKey(pos)) {
+            return false;
+        }
+        this.linkingPortals.remove(pos);
+        this.setDirty();
+        return true;
+    }
+
+    public LinkData getLinkingPortalData(BlockPos pos) {
+        return this.linkingPortals.get(pos);
+    }
+
     @Override
     public @NotNull CompoundTag save(CompoundTag nbt, @NotNull HolderLookup.Provider provider) {
         ListTag imageList = new ListTag();
@@ -102,21 +119,13 @@ public class LinkingBooksSavedData extends SavedData {
         this.linkingPortals.forEach((pos, linkData) -> {
             CompoundTag compound = new CompoundTag();
             compound.put("portal_pos", NbtUtils.writeBlockPos(pos));
-            try {
-                compound.put("link_data", LinkData.CODEC.encodeStart(NbtOps.INSTANCE, linkData).getOrThrow());
-            } catch (IllegalStateException exception) {
-                LogUtils.getLogger().warn(exception.getMessage());
-            }
+            LinkData.CODEC.encodeStart(NbtOps.INSTANCE, linkData).ifSuccess(tag -> {
+                compound.put("link_data", tag);
+            });
             portalList.add(compound);
         });
         nbt.put("linking_portals", portalList);
         return nbt;
-    }
-
-    public static SavedData.Factory<LinkingBooksSavedData> factory() {
-        return new SavedData.Factory<>(
-                LinkingBooksSavedData::new, LinkingBooksSavedData::load
-        );
     }
 
 }

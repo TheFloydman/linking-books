@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.util;
 
 import net.minecraft.resources.ResourceLocation;
@@ -11,10 +29,10 @@ public class Reference {
 
     /**
      * Convenience method to make a ResourceLocation under this mod's domain.
-     * 
+     *
      * @param path The path of the ResourceLocation.
      * @return A ResourceLocation with this mod's ID as the domain and the given
-     *         parameter as the path.
+     * parameter as the path.
      */
     public static ResourceLocation getAsResourceLocation(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);

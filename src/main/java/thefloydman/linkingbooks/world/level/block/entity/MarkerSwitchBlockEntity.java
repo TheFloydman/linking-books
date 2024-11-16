@@ -1,9 +1,26 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.world.level.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -90,9 +107,12 @@ public class MarkerSwitchBlockEntity extends BlockEntity implements IItemHandler
 
     @Override
     public @Nonnull ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        this.item = stack;
+        int slotLimit = this.getSlotLimit(slot);
+        this.item = stack.copyWithCount(slotLimit);
         this.setChanged();
-        return ItemStack.EMPTY;
+        ItemStack returnStack = stack.copy();
+        returnStack.shrink(slotLimit);
+        return returnStack;
     }
 
     @Override

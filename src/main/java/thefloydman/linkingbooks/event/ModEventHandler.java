@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.event;
 
 import net.neoforged.api.distmarker.Dist;
@@ -13,6 +31,12 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
+import thefloydman.linkingbooks.client.gui.screen.GuidebookScreen;
+import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
+import thefloydman.linkingbooks.client.renderer.blockentity.LinkTranslatorRenderer;
+import thefloydman.linkingbooks.client.renderer.blockentity.LinkingLecternRenderer;
+import thefloydman.linkingbooks.client.renderer.blockentity.MarkerSwitchRenderer;
+import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
@@ -22,17 +46,11 @@ import thefloydman.linkingbooks.network.LinkMessage;
 import thefloydman.linkingbooks.network.SaveLinkingPanelImageMessage;
 import thefloydman.linkingbooks.network.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.util.LinkingUtils;
+import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.entity.ModEntityTypes;
 import thefloydman.linkingbooks.world.inventory.ModMenuTypes;
 import thefloydman.linkingbooks.world.item.ModItems;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
-import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
-import thefloydman.linkingbooks.client.gui.screen.GuidebookScreen;
 import thefloydman.linkingbooks.world.level.block.entity.ModBlockEntityTypes;
-import thefloydman.linkingbooks.client.renderer.blockentity.LinkingLecternRenderer;
-import thefloydman.linkingbooks.client.renderer.blockentity.LinkTranslatorRenderer;
-import thefloydman.linkingbooks.client.renderer.blockentity.MarkerSwitchRenderer;
 
 @EventBusSubscriber(modid = Reference.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ModEventHandler {

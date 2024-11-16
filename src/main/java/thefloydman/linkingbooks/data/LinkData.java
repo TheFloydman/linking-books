@@ -1,6 +1,23 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.data;
 
-import com.jcraft.jorbis.Block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -14,9 +31,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.linking.LinkEffect;
-import thefloydman.linkingbooks.linking.LinkEffectTypes;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -25,7 +40,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos, float rotation, @Nonnull UUID uuid,
+public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos, float rotation,
+                       @Nonnull UUID uuid,
                        @Nonnull List<ResourceLocation> linkEffects) {
 
     public static final Codec<LinkData> CODEC = RecordCodecBuilder.create(
@@ -58,8 +74,9 @@ public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos bl
         return this.linkEffects.stream().map(serverLevel.registryAccess().registry(LinkEffect.REGISTRY_KEY).get()::get).collect(Collectors.toSet());
     }
 
-    /*public Set<LinkEffect> linkEffectsAsLE(Minecraft minecraft) {
+    @OnlyIn(Dist.CLIENT)
+    public Set<LinkEffect> linkEffectsAsLE(Minecraft minecraft) {
         return this.linkEffects.stream().map(minecraft.getConnection().registryAccess().registry(LinkEffect.REGISTRY_KEY).get()::get).collect(Collectors.toSet());
-    }*/
+    }
 
 }

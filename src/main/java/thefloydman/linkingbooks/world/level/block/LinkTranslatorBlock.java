@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.world.level.block;
 
 import com.mojang.serialization.MapCodec;
@@ -38,8 +56,8 @@ import javax.annotation.Nonnull;
 
 public class LinkTranslatorBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
-    public static final MapCodec<LinkTranslatorBlock> CODEC = simpleCodec(LinkTranslatorBlock::new);
     public static final BooleanProperty HAS_BOOK = BlockStateProperties.HAS_BOOK;
+    public static final MapCodec<LinkTranslatorBlock> CODEC = simpleCodec(LinkTranslatorBlock::new);
     public static final VoxelShape NORTH_SHAPE = Shapes.or(Block.box(0, 0, 2, 16, 16, 16), Block.box(0, 0, 0, 16, 5, 1),
             Block.box(0, 0, 1, 16, 4, 2), Block.box(0, 11, 0, 16, 16, 1), Block.box(0, 12, 1, 16, 16, 2));
     public static final VoxelShape EAST_SHAPE = Shapes.or(Block.box(0, 0, 0, 14, 16, 16),

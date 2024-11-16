@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.linking;
 
 import com.mojang.serialization.Codec;
@@ -9,9 +27,10 @@ import javax.annotation.Nonnull;
 
 public interface LinkEffectType {
 
-    public <T extends LinkEffectType> @Nonnull Codec<T> codec();
+    <T extends LinkEffectType> @Nonnull Codec<T> codec();
 
-    public @Nonnull ResourceLocation typeID();
+    @Nonnull
+    ResourceLocation typeID();
 
     /**
      * Fires before entity changes dimensions and before onLinkStart has been called
@@ -21,7 +40,7 @@ public interface LinkEffectType {
      * @param linkData The LinkDataComponent for the link.
      * @return Whether the link should proceed. If false, entity will not link.
      */
-    public default boolean canStartLink(Entity entity, LinkData linkData) {
+    default boolean canStartLink(Entity entity, LinkData linkData) {
         return true;
     }
 
@@ -34,7 +53,7 @@ public interface LinkEffectType {
      * @return Whether the link should proceed successfully. If false, entity will
      * be returned to origin.
      */
-    public default boolean canFinishLink(Entity entity, LinkData linkData) {
+    default boolean canFinishLink(Entity entity, LinkData linkData) {
         return true;
     }
 
@@ -44,7 +63,7 @@ public interface LinkEffectType {
      * @param entity   The Entity that is linking.
      * @param linkData The LinkDataComponent for the link.
      */
-    public default void onLinkStart(Entity entity, LinkData linkData) {
+    default void onLinkStart(Entity entity, LinkData linkData) {
     }
 
     /**
@@ -53,7 +72,7 @@ public interface LinkEffectType {
      * @param entity   The Entity that is linking.
      * @param linkData The LinkDataComponent for the link.
      */
-    public default void onLinkEnd(Entity entity, LinkData linkData) {
+    default void onLinkEnd(Entity entity, LinkData linkData) {
     }
 
 }

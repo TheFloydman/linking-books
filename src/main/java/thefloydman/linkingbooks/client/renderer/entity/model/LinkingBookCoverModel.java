@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.client.renderer.entity.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -32,14 +50,6 @@ public class LinkingBookCoverModel extends EntityModel<LinkingBookEntity> {
         this.allModels = Arrays.asList(this.coverRight, this.coverLeft, this.bookSpine);
     }
 
-    @Override
-    public void renderToBuffer(@Nonnull PoseStack matrixStackIn, @Nonnull VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
-                               int color) {
-        this.allModels.forEach((model) -> {
-            model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, color);
-        });
-    }
-
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
@@ -53,6 +63,14 @@ public class LinkingBookCoverModel extends EntityModel<LinkingBookEntity> {
                 CubeListBuilder.create().texOffs(12, 0).addBox(-1.0F, -5.0F, 0.0F, 2.0F, 10.0F, 0.005F),
                 PartPose.rotation(0.0F, (float) Math.PI / 2.0F, 0.0F));
         return LayerDefinition.create(meshdefinition, 64, 32);
+    }
+
+    @Override
+    public void renderToBuffer(@Nonnull PoseStack matrixStackIn, @Nonnull VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
+                               int color) {
+        this.allModels.forEach((model) -> {
+            model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, color);
+        });
     }
 
     public void setBookState(float openAmount) {

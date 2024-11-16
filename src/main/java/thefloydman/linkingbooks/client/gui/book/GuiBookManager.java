@@ -1,37 +1,29 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
  *
  * This file is part of Linking Books.
  *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
 package thefloydman.linkingbooks.client.gui.book;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
+import com.google.common.collect.Maps;
+import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
@@ -41,25 +33,29 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.google.common.collect.Maps;
-import com.mojang.logging.LogUtils;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraft.world.item.crafting.RecipeType;
 import thefloydman.linkingbooks.util.Reference;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiBookManager implements ResourceManagerReloadListener {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static Map<Integer, List<Object>> guidebookPages = Maps.newHashMap();
     private static final String TAG_RESET = "§r";
     private static final Map<String, String> FORMAT_MAP = Maps.newHashMap();
     private static final Map<String, String> COLOR_MAP = Maps.newHashMap();
+    private static Map<Integer, List<Object>> guidebookPages = Maps.newHashMap();
 
     static {
         COLOR_MAP.put("black", "0");
@@ -83,6 +79,10 @@ public class GuiBookManager implements ResourceManagerReloadListener {
         FORMAT_MAP.put("strikethrough", "m");
         FORMAT_MAP.put("underline", "n");
         FORMAT_MAP.put("italic", "o");
+    }
+
+    public static Map<Integer, List<Object>> getPages() {
+        return guidebookPages;
     }
 
     @Override
@@ -203,9 +203,5 @@ public class GuiBookManager implements ResourceManagerReloadListener {
         }
         LOGGER.info(
                 String.format("Successfully imported %d guidebook pages for Linking Books.", guidebookPages.size()));
-    }
-
-    public static Map<Integer, List<Object>> getPages() {
-        return guidebookPages;
     }
 }

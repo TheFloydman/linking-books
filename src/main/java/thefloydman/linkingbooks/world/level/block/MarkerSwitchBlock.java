@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.world.level.block;
 
 import com.mojang.serialization.MapCodec;
@@ -5,7 +23,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -132,7 +149,7 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
     }
 
     /**
-     * See DoorBlock.neighborChanged().
+     * See {@link DoorBlock#neighborChanged}.
      */
     @Override
     public void neighborChanged(BlockState state, Level world, @Nonnull BlockPos pos, @Nonnull Block
@@ -164,7 +181,7 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
     }
 
     /**
-     * See DoorBlock.updatePostPlacement().
+     * See {@link DoorBlock#updateShape}.
      */
     @Override
     public @Nonnull BlockState updateShape(BlockState state, Direction direction, @Nonnull BlockState
@@ -206,22 +223,22 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
     }
 
     @Override
-    public @Nonnull BlockState playerWillDestroy(Level world, @Nonnull BlockPos pos, @Nonnull BlockState
-            state, @Nonnull Player player) {
-        if (!world.isClientSide() && player.isCreative()) {
-            /* Start copy from DoublePlantBlock.removeBottomHalf() */
-            DoubleBlockHalf doubleblockhalf = state.getValue(HALF);
-            if (doubleblockhalf == DoubleBlockHalf.UPPER) {
-                BlockPos blockpos = pos.below();
-                BlockState blockstate = world.getBlockState(blockpos);
-                if (blockstate.getBlock() == state.getBlock() && blockstate.getValue(HALF) == DoubleBlockHalf.LOWER) {
-                    world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-                    world.levelEvent(player, 2001, blockpos, Block.getId(blockstate));
+    public @Nonnull BlockState playerWillDestroy(Level level, @Nonnull BlockPos blockPos, @Nonnull BlockState
+            blockState, @Nonnull Player player) {
+        if (!level.isClientSide() && player.isCreative()) {
+            /* Start copy from DoublePlantBlock#preventDropFromBottomPart */
+            DoubleBlockHalf doubleBlockHalf = blockState.getValue(HALF);
+            if (doubleBlockHalf == DoubleBlockHalf.UPPER) {
+                BlockPos blockPosBelow = blockPos.below();
+                BlockState blockStateBelow = level.getBlockState(blockPosBelow);
+                if (blockStateBelow.getBlock() == blockState.getBlock() && blockStateBelow.getValue(HALF) == DoubleBlockHalf.LOWER) {
+                    level.setBlock(blockPosBelow, Blocks.AIR.defaultBlockState(), 35);
+                    level.levelEvent(player, 2001, blockPosBelow, Block.getId(blockStateBelow));
                 }
             }
-            /* End copy from DoublePla ntBlock.removeBottomHalf() */
+            /* End copy from DoublePlantBlock#preventDropFromBottomPart */
         }
-        return super.playerWillDestroy(world, pos, state, player);
+        return super.playerWillDestroy(level, blockPos, blockState, player);
     }
 
     @Override
@@ -230,17 +247,17 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
     }
 
     @Override
-    public void onRemove(BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, BlockState newState,
+    public void onRemove(BlockState blockState, @Nonnull Level level, @Nonnull BlockPos blockPos, BlockState newState,
                          boolean isMoving) {
-        if (state.getBlock() != newState.getBlock() && state.getValue(HALF) == DoubleBlockHalf.LOWER
-                && !world.isClientSide()) {
-            BlockEntity tileEntity = world.getBlockEntity(pos);
+        if (blockState.getBlock() != newState.getBlock() && blockState.getValue(HALF) == DoubleBlockHalf.LOWER
+                && !level.isClientSide()) {
+            BlockEntity tileEntity = level.getBlockEntity(blockPos);
             if (tileEntity instanceof MarkerSwitchBlockEntity markerTE) {
                 if (markerTE.hasItem()) {
-                    Containers.dropContents(world, pos, (Container) markerTE);
-                    world.updateNeighbourForOutputSignal(pos, this);
+                    Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), markerTE.extractItem(0, Integer.MAX_VALUE, false));
+                    level.updateNeighbourForOutputSignal(blockPos, this);
                 }
-                super.onRemove(state, world, pos, newState, isMoving);
+                super.onRemove(blockState, level, blockPos, newState, isMoving);
             }
         }
     }

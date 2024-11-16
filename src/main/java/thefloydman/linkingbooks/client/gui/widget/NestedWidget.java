@@ -1,67 +1,75 @@
-/*******************************************************************************
- * Copyright 2019-2022 Dan Floyd ("TheFloydman")
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
  *
  * This file is part of Linking Books.
  *
- * Linking Books is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
  *
- * Linking Books is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Linking Books. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
 package thefloydman.linkingbooks.client.gui.widget;
-
-import java.nio.FloatBuffer;
-import java.util.List;
-import java.util.Map;
-
-import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.joml.Matrix4f;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.systems.RenderSystem;
-
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
+
+import java.nio.FloatBuffer;
+import java.util.List;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 
 public abstract class NestedWidget extends AbstractWidget {
 
     protected final String id;
-    public float zLevel = 0.0F;
     protected final Map<String, NestedWidget> children = Maps.newHashMap();
     protected final List<GuiEventListener> listeners = Lists.newArrayList();
     protected final Minecraft minecraft;
     protected final Screen parentScreen;
+    public float zLevel = 0.0F;
     protected float scale;
 
     public NestedWidget(String id, int x, int y, float z, int width, int height, Component narration,
-            Screen parentScreen, float scale) {
+                        Screen parentScreen, float scale) {
         super(x, y, width, height, narration);
         this.zLevel = z;
         this.id = id;
         this.parentScreen = parentScreen;
         this.scale = scale;
         this.minecraft = Minecraft.getInstance();
+    }
+
+    /**
+     * Returns a positive difference if the zLevel needs to be raised and a negative
+     * difference if it should be lowered.
+     */
+    public static float zDifference(GuiGraphics guiGraphics, float zLevel) {
+        FloatBuffer floatBuffer = FloatBuffer.allocate(16);
+        guiGraphics.pose().last().pose().set(floatBuffer);
+        float currentZ = floatBuffer.get(10);
+        return zLevel - currentZ < 0 ? zLevel - Mth.abs(currentZ) : zLevel + Mth.abs(currentZ);
     }
 
     @Override
@@ -143,17 +151,6 @@ public abstract class NestedWidget extends AbstractWidget {
         this.zFill(guiGraphics, x, y, x + 1, y + 1, color);
     }
 
-    /**
-     * Returns a positive difference if the zLevel needs to be raised and a negative
-     * difference if it should be lowered.
-     */
-    public static float zDifference(GuiGraphics guiGraphics, float zLevel) {
-        FloatBuffer floatBuffer = FloatBuffer.allocate(16);
-        guiGraphics.pose().last().pose().set(floatBuffer);
-        float currentZ = floatBuffer.get(10);
-        return zLevel - currentZ < 0 ? zLevel - Mth.abs(currentZ) : zLevel + Mth.abs(currentZ);
-    }
-
     @Override
     public void updateWidgetNarration(NarrationElementOutput foo) {
     }
@@ -177,15 +174,15 @@ public abstract class NestedWidget extends AbstractWidget {
         return this.id;
     }
 
+    public boolean getVisible() {
+        return this.visible;
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
         for (NestedWidget element : this.children.values()) {
             element.setVisible(visible);
         }
-    }
-
-    public boolean getVisible() {
-        return this.visible;
     }
 
 }

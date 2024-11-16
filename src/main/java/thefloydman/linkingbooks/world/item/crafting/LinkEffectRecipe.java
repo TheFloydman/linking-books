@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.world.item.crafting;
 
 import com.mojang.serialization.DataResult;
@@ -14,7 +32,6 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.linking.LinkEffect;
 import thefloydman.linkingbooks.world.item.ModItems;
 import thefloydman.linkingbooks.world.item.WrittenLinkingBookItem;
 
@@ -36,82 +53,6 @@ public class LinkEffectRecipe implements CraftingRecipe {
         if (pos > -1) {
             this.outputStack = recipeInput.get(pos).getItems()[0];
         }
-    }
-
-    public static class Serializer implements RecipeSerializer<LinkEffectRecipe> {
-
-        private static final MapCodec<LinkEffectRecipe> CODEC = RecordCodecBuilder.mapCodec(
-                instanceBuilder -> instanceBuilder.group(
-                                Ingredient.CODEC_NONEMPTY
-                                        .listOf()
-                                        .fieldOf("additional_ingredients")
-                                        .flatXmap(
-                                                ingredientsList -> {
-                                                    Ingredient[] aingredient = ingredientsList.toArray(Ingredient[]::new); // Neo skip the empty check and immediately create the array.
-                                                    if (aingredient.length == 0) {
-                                                        return DataResult.error(() -> "No ingredients to add link effects");
-                                                    } else {
-                                                        return aingredient.length > (ShapedRecipePattern.getMaxHeight() * ShapedRecipePattern.getMaxWidth()) - 1
-                                                                ? DataResult.error(() -> "Too many ingredients for link effect recipe. The maximum is: %s".formatted((ShapedRecipePattern.getMaxHeight() * ShapedRecipePattern.getMaxWidth()) - 1))
-                                                                : DataResult.success(NonNullList.of(Ingredient.EMPTY, aingredient));
-                                                    }
-                                                },
-                                                DataResult::success
-                                        )
-                                        .forGetter(linkEffectRecipe -> linkEffectRecipe.recipeInputs),
-                                ResourceLocation.CODEC
-                                        .listOf()
-                                        .fieldOf("link_effects")
-                                        .flatXmap(
-                                                effectsList -> {
-                                                    ResourceLocation[] linkEffects = effectsList.toArray(ResourceLocation[]::new);
-                                                    if (linkEffects.length == 0) {
-                                                        return DataResult.error(() -> "No link effects for link effect recipe");
-                                                    } else {
-                                                        return DataResult.success(NonNullList.of(ResourceLocation.parse("linkingbooks:none"), linkEffects));
-                                                    }
-                                                },
-                                                DataResult::success)
-                                        .forGetter(linkEffectRecipe -> linkEffectRecipe.linkEffects)
-                        )
-                        .apply(instanceBuilder, LinkEffectRecipe::new)
-        );
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, LinkEffectRecipe> STREAM_CODEC = StreamCodec.of(
-                LinkEffectRecipe.Serializer::toNetwork, LinkEffectRecipe.Serializer::fromNetwork
-        );
-
-        @Override
-        public @Nonnull MapCodec<LinkEffectRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public @Nonnull StreamCodec<RegistryFriendlyByteBuf, LinkEffectRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
-
-        private static LinkEffectRecipe fromNetwork(RegistryFriendlyByteBuf byteBuf) {
-            int ingredientsSize = ByteBufCodecs.VAR_INT.decode(byteBuf);
-            NonNullList<Ingredient> ingredientsList = NonNullList.withSize(ingredientsSize, Ingredient.EMPTY);
-            ingredientsList.replaceAll(ingredient -> Ingredient.CONTENTS_STREAM_CODEC.decode(byteBuf));
-            int effectsSize = ByteBufCodecs.VAR_INT.decode(byteBuf);
-            NonNullList<ResourceLocation> effectsList = NonNullList.withSize(effectsSize, ResourceLocation.parse("linkingbooks:none"));
-            effectsList.replaceAll(resourceLocation -> ResourceLocation.STREAM_CODEC.decode(byteBuf));
-            return new LinkEffectRecipe(ingredientsList, effectsList);
-        }
-
-        private static void toNetwork(RegistryFriendlyByteBuf byteBuf, LinkEffectRecipe linkEffectRecipe) {
-            ByteBufCodecs.VAR_INT.encode(byteBuf, linkEffectRecipe.recipeInputs.size());
-            for (Ingredient recipeInput : linkEffectRecipe.recipeInputs) {
-                Ingredient.CONTENTS_STREAM_CODEC.encode(byteBuf, recipeInput);
-            }
-            ByteBufCodecs.VAR_INT.encode(byteBuf, linkEffectRecipe.linkEffects.size());
-            for (ResourceLocation linkEffect : linkEffectRecipe.linkEffects) {
-                ResourceLocation.STREAM_CODEC.encode(byteBuf, linkEffect);
-            }
-        }
-
     }
 
     @Override
@@ -192,5 +133,80 @@ public class LinkEffectRecipe implements CraftingRecipe {
     @Override
     public @Nonnull CraftingBookCategory category() {
         return CraftingBookCategory.MISC;
+    }
+
+    public static class Serializer implements RecipeSerializer<LinkEffectRecipe> {
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, LinkEffectRecipe> STREAM_CODEC = StreamCodec.of(
+                LinkEffectRecipe.Serializer::toNetwork, LinkEffectRecipe.Serializer::fromNetwork
+        );
+        private static final MapCodec<LinkEffectRecipe> CODEC = RecordCodecBuilder.mapCodec(
+                instanceBuilder -> instanceBuilder.group(
+                                Ingredient.CODEC_NONEMPTY
+                                        .listOf()
+                                        .fieldOf("additional_ingredients")
+                                        .flatXmap(
+                                                ingredientsList -> {
+                                                    Ingredient[] aingredient = ingredientsList.toArray(Ingredient[]::new); // Neo skip the empty check and immediately create the array.
+                                                    if (aingredient.length == 0) {
+                                                        return DataResult.error(() -> "No ingredients to add link effects");
+                                                    } else {
+                                                        return aingredient.length > (ShapedRecipePattern.getMaxHeight() * ShapedRecipePattern.getMaxWidth()) - 1
+                                                                ? DataResult.error(() -> "Too many ingredients for link effect recipe. The maximum is: %s".formatted((ShapedRecipePattern.getMaxHeight() * ShapedRecipePattern.getMaxWidth()) - 1))
+                                                                : DataResult.success(NonNullList.of(Ingredient.EMPTY, aingredient));
+                                                    }
+                                                },
+                                                DataResult::success
+                                        )
+                                        .forGetter(linkEffectRecipe -> linkEffectRecipe.recipeInputs),
+                                ResourceLocation.CODEC
+                                        .listOf()
+                                        .fieldOf("link_effects")
+                                        .flatXmap(
+                                                effectsList -> {
+                                                    ResourceLocation[] linkEffects = effectsList.toArray(ResourceLocation[]::new);
+                                                    if (linkEffects.length == 0) {
+                                                        return DataResult.error(() -> "No link effects for link effect recipe");
+                                                    } else {
+                                                        return DataResult.success(NonNullList.of(ResourceLocation.parse("linkingbooks:none"), linkEffects));
+                                                    }
+                                                },
+                                                DataResult::success)
+                                        .forGetter(linkEffectRecipe -> linkEffectRecipe.linkEffects)
+                        )
+                        .apply(instanceBuilder, LinkEffectRecipe::new)
+        );
+
+        private static LinkEffectRecipe fromNetwork(RegistryFriendlyByteBuf byteBuf) {
+            int ingredientsSize = ByteBufCodecs.VAR_INT.decode(byteBuf);
+            NonNullList<Ingredient> ingredientsList = NonNullList.withSize(ingredientsSize, Ingredient.EMPTY);
+            ingredientsList.replaceAll(ingredient -> Ingredient.CONTENTS_STREAM_CODEC.decode(byteBuf));
+            int effectsSize = ByteBufCodecs.VAR_INT.decode(byteBuf);
+            NonNullList<ResourceLocation> effectsList = NonNullList.withSize(effectsSize, ResourceLocation.parse("linkingbooks:none"));
+            effectsList.replaceAll(resourceLocation -> ResourceLocation.STREAM_CODEC.decode(byteBuf));
+            return new LinkEffectRecipe(ingredientsList, effectsList);
+        }
+
+        private static void toNetwork(RegistryFriendlyByteBuf byteBuf, LinkEffectRecipe linkEffectRecipe) {
+            ByteBufCodecs.VAR_INT.encode(byteBuf, linkEffectRecipe.recipeInputs.size());
+            for (Ingredient recipeInput : linkEffectRecipe.recipeInputs) {
+                Ingredient.CONTENTS_STREAM_CODEC.encode(byteBuf, recipeInput);
+            }
+            ByteBufCodecs.VAR_INT.encode(byteBuf, linkEffectRecipe.linkEffects.size());
+            for (ResourceLocation linkEffect : linkEffectRecipe.linkEffects) {
+                ResourceLocation.STREAM_CODEC.encode(byteBuf, linkEffect);
+            }
+        }
+
+        @Override
+        public @Nonnull MapCodec<LinkEffectRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public @Nonnull StreamCodec<RegistryFriendlyByteBuf, LinkEffectRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+
     }
 }

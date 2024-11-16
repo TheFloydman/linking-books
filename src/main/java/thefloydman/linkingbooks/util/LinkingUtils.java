@@ -1,9 +1,28 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -16,11 +35,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import thefloydman.linkingbooks.ModConfig;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.linking.LinkEffect;
@@ -28,8 +46,6 @@ import thefloydman.linkingbooks.network.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
 import thefloydman.linkingbooks.world.item.ModItems;
-import net.minecraft.network.chat.Component;
-import thefloydman.linkingbooks.ModConfig;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 import java.awt.*;
@@ -66,15 +82,10 @@ public class LinkingUtils {
                     "An attempt has been made to directly link an entity from the client. Only do this from the server.");
         } else if (linkData == null) {
             LOGGER.info("A null ILinkInfo has been supplied. Link failed.");
-        } else if (linkData.dimension() == null) {
-            LOGGER.info("LinkData.dimension() returned null. Link failed.");
-        } else if (linkData.blockPos() == null) {
-            LOGGER.info("LinkData.blockPos() returned null. Link failed.");
         } else if (!ModConfig.alwaysAllowIntraAgeLinking
                 && !linkData.linkEffects().contains(ResourceLocation.parse("linkingbooks:intraage_linking"))
                 && world.dimension().location().equals(linkData.dimension())) {
-            if (entity instanceof ServerPlayer) {
-                ServerPlayer player = (ServerPlayer) entity;
+            if (entity instanceof ServerPlayer player) {
                 player.closeContainer();
                 player.doCloseContainer();
                 player.displayClientMessage(Component.translatable("message.linkingbooks.no_intraage_linking"), true);
@@ -85,7 +96,7 @@ public class LinkingUtils {
                     .getLevel(ResourceKey.create(Registries.DIMENSION, linkData.dimension()));
 
             if (serverWorld == null) {
-                LOGGER.info("Cannot find dimension \"" + linkData.dimension().toString() + "\". Link failed.");
+                LOGGER.info("Cannot find dimension \"{}\". Link failed.", linkData.dimension());
                 return false;
             }
 
@@ -121,8 +132,7 @@ public class LinkingUtils {
              * world.
              */
 
-            if (entity instanceof ServerPlayer) {
-                ServerPlayer player = (ServerPlayer) entity;
+            if (entity instanceof ServerPlayer player) {
                 // Deduct experience levels if a cost has been set in config.
                 if (!player.isCreative()) {
                     if (player.experienceLevel < ModConfig.linkingCostLevels) {
@@ -210,7 +220,7 @@ public class LinkingUtils {
             extraData.writeBoolean(canLink);
             LinkingBooksSavedData savedData = player.getServer().getLevel(Level.OVERWORLD).getDataStorage()
                     .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
-            extraData.writeJsonWithCodec(ImageUtils.NATIVE_IMAGE_CODEC, savedData.getLinkingPanelImage(linkData.uuid()));
+            extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
         });
     }
 

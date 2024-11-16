@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.client.renderer.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,10 +28,12 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import org.joml.Quaternionf;
 import thefloydman.linkingbooks.world.level.block.MarkerSwitchBlock;
 import thefloydman.linkingbooks.world.level.block.entity.MarkerSwitchBlockEntity;
 
@@ -37,8 +57,10 @@ public class MarkerSwitchRenderer implements BlockEntityRenderer<MarkerSwitchBlo
                     && tileEntity.hasItem()) {
                 ItemStack itemStack = tileEntity.getStackInSlot(0);
                 poseStack.pushPose();
-                poseStack.translate(0.5D, 0.6D, 0.5D);
+                double y = (double) (Mth.sin((tileEntity.getLevel().getGameTime() % 80) / 80.0F * (float) Math.PI * 2.0F) / 20.0D) + 0.8D;
+                poseStack.translate(0.5D, y, 0.5D);
                 poseStack.scale(0.5F, 0.5F, 0.5F);
+                poseStack.rotateAround(new Quaternionf().rotationY(((float) (tileEntity.getLevel().getGameTime() % 160) / 160.0F) * (float) Math.PI * 2.0F), 0.0F, 0.0F, 0.0F);
                 Direction facing = tileEntity.getBlockState().getValue(MarkerSwitchBlock.FACING);
                 float rotation = facing == Direction.EAST || facing == Direction.WEST ? facing.toYRot() + 45.0F
                         : facing.toYRot() - 135.0F;

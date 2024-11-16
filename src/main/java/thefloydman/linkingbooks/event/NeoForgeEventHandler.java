@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ *
+ * This file is part of Linking Books.
+ *
+ * Linking Books is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Linking Books is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with Linking Books. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package thefloydman.linkingbooks.event;
 
 import net.minecraft.core.BlockPos;
@@ -5,6 +23,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -61,8 +80,8 @@ public class NeoForgeEventHandler {
             return;
         }
         BlockPos blockPos = event.getPos();
-        if (level.getBlockState(blockPos).getBlock() instanceof LinkingLecternBlock
-                || level.getBlockState(blockPos).getBlock() instanceof LinkTranslatorBlock) {
+        Block block = level.getBlockState(blockPos).getBlock();
+        if (block instanceof LinkingLecternBlock || block instanceof LinkTranslatorBlock) {
             BlockEntity generic = level.getBlockEntity(blockPos);
             if (!(generic instanceof LinkingBookHolderBlockEntity linkingBookHolderBlockEntity)) {
                 return;
@@ -85,7 +104,7 @@ public class NeoForgeEventHandler {
                     LinkingPortalArea.tryEraseLinkingPortalOnEveryAxis(level, blockPos);
                 }
             }
-        } else if (level.getBlockState(blockPos).getBlock() instanceof MarkerSwitchBlock) {
+        } else if (block instanceof MarkerSwitchBlock) {
             BlockState blockState = level.getBlockState(blockPos);
             if (blockState.getValue(MarkerSwitchBlock.OPEN)) {
                 BlockEntity genericOriginalBlockEntity = level.getBlockEntity(blockPos);
@@ -96,12 +115,14 @@ public class NeoForgeEventHandler {
                             : level.getBlockEntity(blockPos.below());
                     ItemStack itemStack = player.getItemInHand(hand);
                     if (!originalBlockEntity.hasItem()) {
-                        ItemStack returnedItemStack = originalBlockEntity.insertItem(0, itemStack, false);
-                        if (genericTwinBlockEntity instanceof MarkerSwitchBlockEntity twinBlockEntity) {
-                            twinBlockEntity.insertItem(0, itemStack, false);
+                        if (!itemStack.isEmpty()) {
+                            ItemStack returnedItemStack = originalBlockEntity.insertItem(0, itemStack, false);
+                            if (genericTwinBlockEntity instanceof MarkerSwitchBlockEntity twinBlockEntity) {
+                                twinBlockEntity.insertItem(0, itemStack, false);
+                            }
+                            player.getInventory().setItem(player.getInventory().selected, returnedItemStack);
+                            player.inventoryMenu.broadcastChanges();
                         }
-                        player.getInventory().setItem(player.getInventory().findSlotMatchingItem(itemStack), returnedItemStack);
-                        player.inventoryMenu.broadcastChanges();
                     } else {
                         ItemStack extractedStack = originalBlockEntity.extractItem(0, Integer.MAX_VALUE, false);
                         player.addItem(extractedStack);
