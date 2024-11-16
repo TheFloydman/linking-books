@@ -18,11 +18,13 @@
 
 package thefloydman.linkingbooks.data;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -34,10 +36,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.linking.LinkEffect;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos, float rotation,
@@ -71,7 +70,8 @@ public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos bl
     }
 
     public Set<LinkEffect> linkEffectsAsLE(ServerLevel serverLevel) {
-        return this.linkEffects.stream().map(serverLevel.registryAccess().registry(LinkEffect.REGISTRY_KEY).get()::get).collect(Collectors.toSet());
+        Registry<LinkEffect> linkEffectRegistry = serverLevel.registryAccess().registry(LinkEffect.REGISTRY_KEY).get();
+        return this.linkEffects.stream().map(linkEffectRegistry::get).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     @OnlyIn(Dist.CLIENT)

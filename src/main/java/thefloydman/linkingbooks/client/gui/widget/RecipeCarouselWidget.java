@@ -24,12 +24,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.util.Reference;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+@OnlyIn(Dist.CLIENT)
 public class RecipeCarouselWidget extends NestedWidget {
 
     protected static final ResourceLocation CRAFTING_TEXTURE = Reference
@@ -48,19 +53,22 @@ public class RecipeCarouselWidget extends NestedWidget {
             RecipeWidget recipeWidget = new RecipeWidget(this.id + "recipe" + i, this.getX(), this.getY(), z + 1.0F,
                     this.width, this.height, Component.literal("Recipe"), parentScreen, 0.5F, ingredients);
             this.addChild(recipeWidget);
-            int size = ingredients.stream().max(Comparator.comparing(List::size)).get().size();
-            this.totalVariations += size;
-            for (int j = 0; j < size; j++) {
-                renderMap.put(renderMap.size(), recipeWidget);
+            Optional<List<ItemStack>> optionalItemStackList = ingredients.stream().max(Comparator.comparing(List::size));
+            if (optionalItemStackList.isPresent()) {
+                int size = optionalItemStackList.get().size();
+                this.totalVariations += size;
+                for (int j = 0; j < size; j++) {
+                    renderMap.put(renderMap.size(), recipeWidget);
+                }
             }
         }
         this.creationTime = System.currentTimeMillis();
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            int generalIndex = Mth.floor((System.currentTimeMillis() - this.creationTime) / this.changeTime)
+            int generalIndex = Mth.floor((float) (System.currentTimeMillis() - this.creationTime) / (float) this.changeTime)
                     % this.totalVariations;
             NestedWidget recipeWidget = this.renderMap.get(generalIndex);
             if (recipeWidget != null) {
@@ -71,8 +79,7 @@ public class RecipeCarouselWidget extends NestedWidget {
 
     @Override
     public void restore(NestedWidget backup) {
-        if (backup instanceof RecipeCarouselWidget) {
-            RecipeCarouselWidget old = (RecipeCarouselWidget) backup;
+        if (backup instanceof RecipeCarouselWidget old) {
             this.creationTime = old.creationTime;
         }
     }

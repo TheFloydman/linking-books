@@ -21,9 +21,13 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@OnlyIn(Dist.CLIENT)
 public class ParagraphWidget extends NestedWidget {
 
     public List<Component> lines;
@@ -39,7 +43,7 @@ public class ParagraphWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().scale(this.scale, this.scale, 1.0F);

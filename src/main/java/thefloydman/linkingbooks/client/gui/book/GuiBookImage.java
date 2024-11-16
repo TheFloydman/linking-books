@@ -21,8 +21,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.client.gui.widget.ImageWidget;
 
+@OnlyIn(Dist.CLIENT)
 public class GuiBookImage extends GuiBookElement<ImageWidget> {
 
     private final ResourceLocation resourceLocation;

@@ -77,7 +77,7 @@ public class WrittenLinkingBookItem extends Item {
         super.appendHoverText(stack, tooltipContext, tooltip, flag);
         LinkData linkData = stack.get(ModDataComponents.LINK_DATA);
         if (linkData != null) {
-            tooltip.add(Component.literal("§eAge: §9§o" + linkData.dimension().toString()));
+            tooltip.add(Component.literal("§eAge: §9§o" + linkData.dimension()));
             tooltip.add(Component.literal("§eCoordinates: §9§o(" + linkData.blockPos().getX() + ", "
                     + linkData.blockPos().getY() + ", " + linkData.blockPos().getZ() + ")"));
             Set<ResourceLocation> linkEffects = new HashSet<>(linkData.linkEffects());

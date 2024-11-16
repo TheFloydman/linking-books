@@ -25,6 +25,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -38,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import thefloydman.linkingbooks.ModConfig;
+import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.linking.LinkEffect;
@@ -82,7 +83,7 @@ public class LinkingUtils {
                     "An attempt has been made to directly link an entity from the client. Only do this from the server.");
         } else if (linkData == null) {
             LOGGER.info("A null ILinkInfo has been supplied. Link failed.");
-        } else if (!ModConfig.alwaysAllowIntraAgeLinking
+        } else if (!LinkingBooksConfig.ALWAYS_ALLOW_INTRAAGE_LINKING.get()
                 && !linkData.linkEffects().contains(ResourceLocation.parse("linkingbooks:intraage_linking"))
                 && world.dimension().location().equals(linkData.dimension())) {
             if (entity instanceof ServerPlayer player) {
@@ -92,18 +93,23 @@ public class LinkingUtils {
             }
         } else {
 
-            ServerLevel serverWorld = world.getServer()
-                    .getLevel(ResourceKey.create(Registries.DIMENSION, linkData.dimension()));
+            MinecraftServer server = world.getServer();
+            if (server == null) {
+                LOGGER.info("Cannot get Minecraft server instance. Link failed.");
+                return false;
+            }
+
+            ServerLevel serverWorld = server.getLevel(ResourceKey.create(Registries.DIMENSION, linkData.dimension()));
 
             if (serverWorld == null) {
                 LOGGER.info("Cannot find dimension \"{}\". Link failed.", linkData.dimension());
                 return false;
             }
 
-            Set<LinkEffect> linkEffects = linkData.linkEffectsAsLE(serverWorld).stream().filter(Objects::nonNull).collect(Collectors.toSet());
+            Set<LinkEffect> linkEffects = linkData.linkEffectsAsLE(serverWorld);
 
             for (LinkEffect effect : linkEffects) {
-                if (!effect.type().canStartLink(entity, linkData)) {
+                if (!effect.canStartLink().apply(entity, linkData)) {
                     if (entity instanceof ServerPlayer player) {
                         player.closeContainer();
                         player.doCloseContainer();
@@ -115,7 +121,7 @@ public class LinkingUtils {
             }
 
             for (LinkEffect effect : linkEffects) {
-                effect.type().onLinkStart(entity, linkData);
+                effect.onLinkStart().accept(entity, linkData);
             }
 
             Vec3 originalPos = entity.position();
@@ -135,14 +141,14 @@ public class LinkingUtils {
             if (entity instanceof ServerPlayer player) {
                 // Deduct experience levels if a cost has been set in config.
                 if (!player.isCreative()) {
-                    if (player.experienceLevel < ModConfig.linkingCostLevels) {
+                    if (player.experienceLevel < LinkingBooksConfig.LINKING_COST_LEVELS.get()) {
                         player.closeContainer();
                         player.doCloseContainer();
                         player.displayClientMessage(
                                 Component.translatable("message.linkingbooks.insufficient_experience"), true);
                         return false;
                     }
-                    player.giveExperienceLevels(ModConfig.linkingCostLevels * -1);
+                    player.giveExperienceLevels(LinkingBooksConfig.LINKING_COST_LEVELS.get() * -1);
                     tookExperience = true;
                 }
                 if (holdingBook
@@ -171,10 +177,10 @@ public class LinkingUtils {
                 serverWorld.addDuringTeleport(entityCopy);
             }
             for (LinkEffect effect : linkEffects) {
-                if (!effect.type().canFinishLink(entity, linkData)) {
+                if (!effect.canFinishLink().apply(entity, linkData)) {
                     if (entity instanceof ServerPlayer player) {
                         if (tookExperience) {
-                            player.giveExperienceLevels(ModConfig.linkingCostLevels);
+                            player.giveExperienceLevels(LinkingBooksConfig.LINKING_COST_LEVELS.get());
                         }
                         serverWorld.getServer().execute(() -> {
                             player.teleportTo((ServerLevel) world, originalPos.x, originalPos.y, originalPos.z,
@@ -199,7 +205,7 @@ public class LinkingUtils {
                 }
             }
             for (LinkEffect effect : linkEffects) {
-                effect.type().onLinkEnd(entity, linkData);
+                effect.onLinkEnd().accept(entity, linkData);
             }
             return true;
         }
@@ -214,13 +220,18 @@ public class LinkingUtils {
             extraData.writeBoolean(holdingBook);
             extraData.writeInt(color);
             extraData.writeJsonWithCodec(LinkData.CODEC, linkData);
-            boolean canLink = ModConfig.alwaysAllowIntraAgeLinking
+            boolean canLink = LinkingBooksConfig.ALWAYS_ALLOW_INTRAAGE_LINKING.get()
                     || !currentDimension.equals(linkData.dimension())
                     || linkData.linkEffects().contains(Reference.getAsResourceLocation("intraage_linking"));
             extraData.writeBoolean(canLink);
-            LinkingBooksSavedData savedData = player.getServer().getLevel(Level.OVERWORLD).getDataStorage()
-                    .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
-            extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
+            MinecraftServer server = player.getServer();
+            if (server != null) {
+                ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+                if (overworld != null) {
+                    LinkingBooksSavedData savedData = overworld.getDataStorage().computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
+                    extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
+                }
+            }
         });
     }
 

@@ -18,15 +18,13 @@
 
 package thefloydman.linkingbooks;
 
-import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import org.slf4j.Logger;
 import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.linking.LinkEffectTypes;
@@ -42,8 +40,6 @@ import thefloydman.linkingbooks.world.level.block.entity.ModBlockEntityTypes;
 
 @Mod(Reference.MODID)
 public class LinkingBooks {
-    // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     public LinkingBooks(IEventBus modEventBus, ModContainer modContainer) {
 
@@ -59,23 +55,8 @@ public class LinkingBooks {
         ModBlockEntityTypes.TILE_ENTITIES.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
 
-        NeoForge.EVENT_BUS.register(this);
-
-        modEventBus.addListener(this::commonSetup);
-
-        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, ModConfig.SPEC);
-    }
-
-    private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-    }
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        modContainer.registerConfig(ModConfig.Type.COMMON, LinkingBooksConfig.CONFIG);
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
 }

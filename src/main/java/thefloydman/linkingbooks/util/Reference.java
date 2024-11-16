@@ -109,8 +109,8 @@ public class Reference {
     }
 
     public static class RegistryKeyNames {
-        public static final String LINK_EFFECT_TYPE = "link_effect_type";
-        public static final String LINK_EFFECT = "link_effect";
+        public static final String LINK_EFFECT_TYPE = "linkeffecttype";
+        public static final String LINK_EFFECT = "linkeffect";
     }
 
     public static class RegistryNames {

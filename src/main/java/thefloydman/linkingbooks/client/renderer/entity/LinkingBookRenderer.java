@@ -36,12 +36,13 @@ import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.world.item.WrittenLinkingBookItem;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
 
-    private LinkingBookCoverModel coverModel;
-    private LinkingBookPagesModel pagesModel;
+    private final LinkingBookCoverModel coverModel;
+    private final LinkingBookPagesModel pagesModel;
     private int color = new Color(0.0F, 1.0F, 0.0F, 1.0F).getRGB();
 
     public LinkingBookRenderer(EntityRendererProvider.Context context) {
@@ -53,8 +54,8 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
     }
 
     @Override
-    public void render(LinkingBookEntity entity, float yaw, float partialTicks, PoseStack matrixStack,
-                       MultiBufferSource buffer, int packedLight) {
+    public void render(LinkingBookEntity entity, float yaw, float partialTicks, @Nonnull PoseStack matrixStack,
+                       @Nonnull MultiBufferSource buffer, int packedLight) {
 
         ItemStack bookStack = entity.getItem();
         if (bookStack != null && !bookStack.isEmpty()) {
@@ -85,12 +86,12 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(LinkingBookEntity entity) {
+    public @Nonnull ResourceLocation getTextureLocation(@Nonnull LinkingBookEntity entity) {
         return Reference.getAsResourceLocation("textures/entity/linking_book.png");
     }
 
     @Override
-    protected boolean shouldShowName(LinkingBookEntity entity) {
+    protected boolean shouldShowName(@Nonnull LinkingBookEntity entity) {
         return super.shouldShowName(entity) && (entity.shouldShowName()
                 || entity.hasCustomName() && entity == this.entityRenderDispatcher.crosshairPickEntity);
     }

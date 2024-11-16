@@ -23,6 +23,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.gui.widget.BookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
@@ -30,11 +32,13 @@ import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.world.inventory.GuidebookMenuType;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@OnlyIn(Dist.CLIENT)
 public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> {
 
     public GuidebookScreen(GuidebookMenuType menuType, Inventory inventory, Component narration) {
@@ -47,13 +51,15 @@ public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> 
     protected void init() {
         super.init();
         this.addRenderableWidget(new BookWidget("guidebook", this.leftPos, this.topPos, 100.0F, this.imageWidth,
-                this.imageHeight, Component.literal("Guidebook"), this, 1.0F, this.font,
+                this.imageHeight, new Color(80, 111, 203).getRGB(), Component.literal("Guidebook"), this, 1.0F, this.font,
                 new ArrayList<>(GuiBookManager.getPages().values())));
     }
 
     @Override
     public void onClose() {
-        this.minecraft.player.playSound(ModSounds.BOOK_CLOSE.get());
+        if (this.minecraft != null && this.minecraft.player != null) {
+            this.minecraft.player.playSound(ModSounds.BOOK_CLOSE.get());
+        }
         super.onClose();
     }
 

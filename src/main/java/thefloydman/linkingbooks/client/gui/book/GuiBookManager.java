@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @OnlyIn(Dist.CLIENT)
@@ -97,18 +99,16 @@ public class GuiBookManager implements ResourceManagerReloadListener {
             Document document = null;
             try {
                 SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                Schema schema = factory.newSchema(new StreamSource(resourceManager
-                        .getResource(Reference.getAsResourceLocation("lang/linkingbooks/guidebook/schema.xsd")).get()
-                        .open()));
+                Optional<Resource> optionalResource = resourceManager.getResource(Reference.getAsResourceLocation("lang/linkingbooks/guidebook/schema.xsd"));
+                if (optionalResource.isEmpty()) {
+                    continue;
+                }
+                Schema schema = factory.newSchema(new StreamSource(optionalResource.get().open()));
                 DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
                 builderFactory.setSchema(schema);
                 DocumentBuilder builder = builderFactory.newDocumentBuilder();
                 document = builder.parse(resourceManager.open(resourceLocation));
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-            } catch (SAXException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (ParserConfigurationException | SAXException | IOException e) {
                 e.printStackTrace();
             }
             if (document != null) {
@@ -121,77 +121,82 @@ public class GuiBookManager implements ResourceManagerReloadListener {
                         for (int j = 0; j < elementNodes.getLength(); j++) {
                             Node elementNode = elementNodes.item(j);
                             if (elementNode.getNodeType() == Node.ELEMENT_NODE) {
-                                if (elementNode.getNodeName().equals("p")) {
-                                    List<String> brokenLines = Lists.newArrayList();
-                                    NodeList paragraphChildNodes = elementNode.getChildNodes();
-                                    for (int k = 0; k < paragraphChildNodes.getLength(); k++) {
-                                        Node paragraphChildNode = paragraphChildNodes.item(k);
-                                        if (paragraphChildNode.getNodeName().equals("style")) {
-                                            String colorCode = "";
-                                            String formatCode = "";
-                                            if (paragraphChildNode.hasAttributes()) {
-                                                NamedNodeMap styleNodeMap = paragraphChildNode.getAttributes();
-                                                for (int l = 0; l < styleNodeMap.getLength(); l++) {
-                                                    Node attribute = styleNodeMap.item(l);
-                                                    if (attribute.getNodeValue() != null) {
-                                                        if (attribute.getNodeName().equals("color")) {
-                                                            String color = COLOR_MAP.get(attribute.getNodeValue());
-                                                            colorCode = color == null ? "" : "§" + color;
-                                                        } else {
-                                                            if (attribute.getNodeValue().equals("true")) {
-                                                                String format = FORMAT_MAP.get(attribute.getNodeName());
-                                                                formatCode += format == null ? "" : "§" + format;
+                                switch (elementNode.getNodeName()) {
+                                    case "p" -> {
+                                        List<String> brokenLines = Lists.newArrayList();
+                                        NodeList paragraphChildNodes = elementNode.getChildNodes();
+                                        for (int k = 0; k < paragraphChildNodes.getLength(); k++) {
+                                            Node paragraphChildNode = paragraphChildNodes.item(k);
+                                            if (paragraphChildNode.getNodeName().equals("style")) {
+                                                String colorCode = "";
+                                                StringBuilder formatCode = new StringBuilder();
+                                                if (paragraphChildNode.hasAttributes()) {
+                                                    NamedNodeMap styleNodeMap = paragraphChildNode.getAttributes();
+                                                    for (int l = 0; l < styleNodeMap.getLength(); l++) {
+                                                        Node attribute = styleNodeMap.item(l);
+                                                        if (attribute.getNodeValue() != null) {
+                                                            if (attribute.getNodeName().equals("color")) {
+                                                                String color = COLOR_MAP.get(attribute.getNodeValue());
+                                                                colorCode = color == null ? "" : "§" + color;
+                                                            } else {
+                                                                if (attribute.getNodeValue().equals("true")) {
+                                                                    String format = FORMAT_MAP.get(attribute.getNodeName());
+                                                                    formatCode.append(format == null ? "" : "§" + format);
+                                                                }
                                                             }
                                                         }
                                                     }
+                                                    paragraphChildNode.setTextContent(colorCode + formatCode
+                                                            + paragraphChildNode.getTextContent() + TAG_RESET);
                                                 }
-                                                paragraphChildNode.setTextContent(colorCode + formatCode
-                                                        + paragraphChildNode.getTextContent() + TAG_RESET);
-                                            }
-                                        } else if (paragraphChildNode.getNodeName().equals("br")) {
-                                            paragraphChildNode.setTextContent("/u000a");
-                                        }
-                                    }
-                                    brokenLines = Stream.of(elementNode.getTextContent().split("/u000a")).toList();
-                                    GuiBookParagraph paragraph = new GuiBookParagraph(brokenLines);
-                                    elementList.add(paragraph);
-                                } else if (elementNode.getNodeName().equals("img")) {
-                                    NamedNodeMap imageNodeMap = elementNode.getAttributes();
-                                    ResourceLocation location = ResourceLocation.parse(
-                                            imageNodeMap.getNamedItem("src").getNodeValue());
-                                    float scale = imageNodeMap.getNamedItem("scale") == null ? 1.0F
-                                            : Float.parseFloat(imageNodeMap.getNamedItem("scale").getNodeValue());
-                                    int width = imageNodeMap.getNamedItem("width") == null ? 256
-                                            : Integer.parseInt(imageNodeMap.getNamedItem("width").getNodeValue());
-                                    int height = imageNodeMap.getNamedItem("height") == null ? 256
-                                            : Integer.parseInt(imageNodeMap.getNamedItem("height").getNodeValue());
-                                    elementList.add(new GuiBookImage(location, scale, width, height));
-                                } else if (elementNode.getNodeName().equals("recipe")) {
-                                    if (elementNode.hasAttributes()) {
-                                        NamedNodeMap attributes = elementNode.getAttributes();
-                                        String source = attributes.getNamedItem("src") == null ? ""
-                                                : attributes.getNamedItem("src").getNodeValue();
-                                        elementList.add(new GuiBookRecipe(RecipeType.CRAFTING,
-                                                ResourceLocation.tryParse(source)));
-                                    }
-                                } else if (elementNode.getNodeName().equals("recipes")) {
-                                    if (elementNode.hasChildNodes()) {
-                                        NodeList recipeNodeList = elementNode.getChildNodes();
-                                        List<ResourceLocation> recipeLocationList = Lists.newArrayList();
-                                        for (int k = 0; k < recipeNodeList.getLength(); k++) {
-                                            Node recipeNode = recipeNodeList.item(k);
-                                            if (recipeNode.getNodeType() == Node.ELEMENT_NODE
-                                                    && recipeNode.getNodeName().equals("rec")) {
-                                                if (recipeNode.hasAttributes()) {
-                                                    NamedNodeMap attributes = recipeNode.getAttributes();
-                                                    String source = attributes.getNamedItem("src") == null ? ""
-                                                            : attributes.getNamedItem("src").getNodeValue();
-                                                    recipeLocationList.add(ResourceLocation.tryParse(source));
-                                                }
+                                            } else if (paragraphChildNode.getNodeName().equals("br")) {
+                                                paragraphChildNode.setTextContent("/u000a");
                                             }
                                         }
-                                        elementList.add(
-                                                new GuiBookRecipeCarousel(RecipeType.CRAFTING, recipeLocationList));
+                                        brokenLines = Stream.of(elementNode.getTextContent().split("/u000a")).toList();
+                                        GuiBookParagraph paragraph = new GuiBookParagraph(brokenLines);
+                                        elementList.add(paragraph);
+                                    }
+                                    case "img" -> {
+                                        NamedNodeMap imageNodeMap = elementNode.getAttributes();
+                                        ResourceLocation location = ResourceLocation.parse(
+                                                imageNodeMap.getNamedItem("src").getNodeValue());
+                                        float scale = imageNodeMap.getNamedItem("scale") == null ? 1.0F
+                                                : Float.parseFloat(imageNodeMap.getNamedItem("scale").getNodeValue());
+                                        int width = imageNodeMap.getNamedItem("width") == null ? 256
+                                                : Integer.parseInt(imageNodeMap.getNamedItem("width").getNodeValue());
+                                        int height = imageNodeMap.getNamedItem("height") == null ? 256
+                                                : Integer.parseInt(imageNodeMap.getNamedItem("height").getNodeValue());
+                                        elementList.add(new GuiBookImage(location, scale, width, height));
+                                    }
+                                    case "recipe" -> {
+                                        if (elementNode.hasAttributes()) {
+                                            NamedNodeMap attributes = elementNode.getAttributes();
+                                            String source = attributes.getNamedItem("src") == null ? ""
+                                                    : attributes.getNamedItem("src").getNodeValue();
+                                            elementList.add(new GuiBookRecipe(RecipeType.CRAFTING,
+                                                    ResourceLocation.tryParse(source)));
+                                        }
+                                    }
+                                    case "recipes" -> {
+                                        if (elementNode.hasChildNodes()) {
+                                            NodeList recipeNodeList = elementNode.getChildNodes();
+                                            List<ResourceLocation> recipeLocationList = Lists.newArrayList();
+                                            for (int k = 0; k < recipeNodeList.getLength(); k++) {
+                                                Node recipeNode = recipeNodeList.item(k);
+                                                if (recipeNode.getNodeType() == Node.ELEMENT_NODE
+                                                        && recipeNode.getNodeName().equals("rec")) {
+                                                    if (recipeNode.hasAttributes()) {
+                                                        NamedNodeMap attributes = recipeNode.getAttributes();
+                                                        String source = attributes.getNamedItem("src") == null ? ""
+                                                                : attributes.getNamedItem("src").getNodeValue();
+                                                        recipeLocationList.add(ResourceLocation.tryParse(source));
+                                                    }
+                                                }
+                                            }
+                                            elementList.add(
+                                                    new GuiBookRecipeCarousel(RecipeType.CRAFTING, recipeLocationList));
+                                        }
                                     }
                                 }
                             }

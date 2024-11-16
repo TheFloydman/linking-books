@@ -20,7 +20,6 @@ package thefloydman.linkingbooks.client.gui.widget;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,6 +30,7 @@ import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
+import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.util.Reference;
 
@@ -44,15 +44,16 @@ public class BookWidget extends NestedWidget {
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_cover.png");
     private static final ResourceLocation PAPER_TEXTURE = Reference
             .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
-    private List<GuiBookPageWidget> pages = Lists.newArrayList();
-    private PageChangeWidget previousArrow;
-    private PageChangeWidget nextArrow;
+    private final List<GuiBookPageWidget> pages = Lists.newArrayList();
+    private final PageChangeWidget previousArrow;
+    private final PageChangeWidget nextArrow;
     private int currentSpread = 0;
-    private int color = new Color(80, 111, 203).getRGB();
+    private final int color;
 
-    public BookWidget(String id, int x, int y, float z, int width, int height, Component narration, Screen parentScreen,
+    public BookWidget(String id, int x, int y, float z, int width, int height, int color, Component narration, Screen parentScreen,
                       float scale, Font font, List<List<Object>> pages) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
+        this.color = color;
         int marginLeftX = 20;
         int marginRightX = 10;
         int marginY = 14;
@@ -79,7 +80,7 @@ public class BookWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
@@ -102,26 +103,24 @@ public class BookWidget extends NestedWidget {
         if (this.currentSpread < 0)
             this.currentSpread = 0;
         updateVisible();
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.player.playSound(ModSounds.PAGEFLIP_BACK.get());
+        if (this.minecraft != null && this.minecraft.player != null) {
+            minecraft.player.playSound(ModSounds.PAGEFLIP_BACK.get());
+        }
     }
 
     public void nextPage() {
         this.currentSpread++;
         if (this.currentSpread * 2 >= this.pages.size())
-            this.currentSpread = Mth.floor(this.pages.size() / 2) - 1;
+            this.currentSpread = Mth.floor((float) this.pages.size() / 2.0F) - 1;
         updateVisible();
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.player.playSound(ModSounds.PAGEFLIP_FORWARD.get());
+        if (this.minecraft != null && this.minecraft.player != null) {
+            this.minecraft.player.playSound(ModSounds.PAGEFLIP_FORWARD.get());
+        }
     }
 
     private void updateVisible() {
         for (int i = 0; i < this.pages.size(); i++) {
-            if (i == currentSpread * 2 || i == currentSpread * 2 + 1) {
-                this.pages.get(i).setVisible(true);
-            } else {
-                this.pages.get(i).setVisible(false);
-            }
+            this.pages.get(i).setVisible(i == currentSpread * 2 || i == currentSpread * 2 + 1);
         }
         this.previousArrow.setVisible(currentSpread > 0);
         this.nextArrow.setVisible(currentSpread * 2 + 1 < this.pages.size() - 1);
@@ -129,7 +128,7 @@ public class BookWidget extends NestedWidget {
 
     @Override
     public void restore(NestedWidget backup) {
-        BookWidget old = BookWidget.class.cast(backup);
+        BookWidget old = (BookWidget) backup;
         if (old != null) {
             this.currentSpread = old.currentSpread;
             this.updateVisible();

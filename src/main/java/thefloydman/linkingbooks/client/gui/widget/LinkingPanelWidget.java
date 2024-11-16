@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.network.LinkMessage;
 
@@ -64,14 +65,14 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
             this.zFill(guiGraphics, this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height,
                     panelColor);
 
             if (this.canLink) {
-                if (this.linkingPanelImage != null) {
+                if (this.linkingPanelImage != null && this.linkingPanelImage.getPixels() != null) {
                     guiGraphics.pose().pushPose();
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,

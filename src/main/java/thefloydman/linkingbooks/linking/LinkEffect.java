@@ -18,24 +18,72 @@
 
 package thefloydman.linkingbooks.linking;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.*;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.util.Reference;
 
-public record LinkEffect(LinkEffectType type) {
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+
+public record LinkEffect(BiFunction<Entity, LinkData, Boolean> canStartLink,
+                         BiFunction<Entity, LinkData, Boolean> canFinishLink,
+                         BiConsumer<Entity, LinkData> onLinkStart, BiConsumer<Entity, LinkData> onLinkEnd) {
 
     public static final ResourceKey<Registry<LinkEffect>> REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Reference.MODID, Reference.RegistryKeyNames.LINK_EFFECT));
 
-    public static final Codec<LinkEffect> CODEC = RecordCodecBuilder.create(
-            codecBuilderInstance -> codecBuilderInstance.group(
-                            ResourceLocation.CODEC.fieldOf("type")
-                                    .xmap(resourceLocation -> LinkEffectTypes.REGISTRY.get(Reference.getAsResourceLocation(Reference.LinkEffectTypeNames.BASIC)), LinkEffectType::typeID)
-                                    .forGetter(LinkEffect::type)
-                    )
-                    .apply(codecBuilderInstance, LinkEffect::new)
-    );
+    public static final Codec<LinkEffect> CODEC = Codec.of(LinkEffect::encode, LinkEffect::decode);
+
+    private static <T> DataResult<T> encode(LinkEffect linkEffect, DynamicOps<T> ops, T prefix) {
+        return new DataResult.Error<>(() -> "Writing Link Effects to disk is currently not supported.", Optional.empty(), Lifecycle.stable());
+    }
+
+    private static <T> DataResult<Pair<LinkEffect, T>> decode(DynamicOps<T> ops, T input) {
+
+        JsonObject topLevelJsonObject = ops.convertTo(JsonOps.INSTANCE, input).getAsJsonObject();
+
+        if (topLevelJsonObject.has("type")) {
+            JsonElement typeElement = topLevelJsonObject.get("type");
+            DataResult<Pair<ResourceLocation, JsonElement>> typePair = ResourceLocation.CODEC.decode(JsonOps.INSTANCE, typeElement);
+            if (typePair.isSuccess() && typePair.result().isPresent()) {
+                ResourceLocation typeResourceLocation = typePair.result().get().getFirst();
+                LinkEffectType linkEffectType = LinkEffectTypes.REGISTRY.get(typeResourceLocation);
+                if (linkEffectType != null) {
+                    DataResult<Pair<LinkEffectType, T>> newPair = linkEffectType.codec().decode(ops, input);
+                    if (newPair.isSuccess() && newPair.result().isPresent()) {
+                        LinkEffectType specificLinkEffectType = newPair.result().get().getFirst();
+
+                        return new DataResult.Success<>(Pair.of(new LinkEffect(getCanStartLink(specificLinkEffectType), getCanFinishLink(specificLinkEffectType), getOnLinkStart(specificLinkEffectType), getOnLinkEnd(specificLinkEffectType)), input), Lifecycle.stable());
+                    }
+                }
+            }
+        }
+
+        return new DataResult.Error<>(() -> "Could not parse Link Effect.", Optional.empty(), Lifecycle.stable());
+
+    }
+
+    private static BiFunction<Entity, LinkData, Boolean> getCanStartLink(LinkEffectType type) {
+        return type::canStartLink;
+    }
+
+    private static BiFunction<Entity, LinkData, Boolean> getCanFinishLink(LinkEffectType type) {
+        return type::canFinishLink;
+    }
+
+    private static BiConsumer<Entity, LinkData> getOnLinkStart(LinkEffectType type) {
+        return type::onLinkStart;
+    }
+
+    private static BiConsumer<Entity, LinkData> getOnLinkEnd(LinkEffectType type) {
+        return type::onLinkEnd;
+    }
 
 }

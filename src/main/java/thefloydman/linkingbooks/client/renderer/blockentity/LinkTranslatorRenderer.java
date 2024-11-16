@@ -38,8 +38,8 @@ import java.awt.*;
 
 public class LinkTranslatorRenderer implements BlockEntityRenderer<LinkTranslatorBlockEntity> {
 
-    private LinkingBookCoverModel coverModel;
-    private LinkingBookPagesModel pagesModel;
+    private final LinkingBookCoverModel coverModel;
+    private final LinkingBookPagesModel pagesModel;
 
     public LinkTranslatorRenderer(BlockEntityRendererProvider.Context context) {
         this.coverModel = new LinkingBookCoverModel(context.bakeLayer(ModModelLayers.COVER));

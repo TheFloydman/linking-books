@@ -29,8 +29,6 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class GuiBookPageWidget extends NestedWidget {
 
-    public long changeTime = 2000L;
-
     public GuiBookPageWidget(String id, int x, int y, float z, int width, int height, Component narration,
                              Screen parentScreen, Float scale, Font font, List<Object> elements) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);

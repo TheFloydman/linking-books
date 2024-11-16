@@ -32,8 +32,8 @@ import java.util.UUID;
 
 public class LinkingBooksSavedData extends SavedData {
 
-    public Map<UUID, CompoundTag> linkingPanelImages = new HashMap<>();
-    public Map<BlockPos, LinkData> linkingPortals = new HashMap<>();
+    public final Map<UUID, CompoundTag> linkingPanelImages = new HashMap<>();
+    public final Map<BlockPos, LinkData> linkingPortals = new HashMap<>();
 
     public static LinkingBooksSavedData load(CompoundTag nbt, HolderLookup.Provider provider) {
         LinkingBooksSavedData data = new LinkingBooksSavedData();

@@ -38,8 +38,8 @@ import java.awt.*;
 
 public class LinkingLecternRenderer implements BlockEntityRenderer<LinkingLecternBlockEntity> {
 
-    private LinkingBookCoverModel coverModel;
-    private LinkingBookPagesModel pagesModel;
+    private final LinkingBookCoverModel coverModel;
+    private final LinkingBookPagesModel pagesModel;
 
     public LinkingLecternRenderer(BlockEntityRendererProvider.Context context) {
         this.coverModel = new LinkingBookCoverModel(context.bakeLayer(ModModelLayers.COVER));

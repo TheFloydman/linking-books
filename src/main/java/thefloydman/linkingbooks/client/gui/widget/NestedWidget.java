@@ -35,12 +35,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
+import javax.annotation.Nonnull;
 import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-
 public abstract class NestedWidget extends AbstractWidget {
 
     protected final String id;
@@ -48,8 +48,8 @@ public abstract class NestedWidget extends AbstractWidget {
     protected final List<GuiEventListener> listeners = Lists.newArrayList();
     protected final Minecraft minecraft;
     protected final Screen parentScreen;
-    public float zLevel = 0.0F;
-    protected float scale;
+    public final float zLevel;
+    protected final float scale;
 
     public NestedWidget(String id, int x, int y, float z, int width, int height, Component narration,
                         Screen parentScreen, float scale) {
@@ -73,7 +73,7 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             this.renderChildren(guiGraphics, mouseX, mouseY, partialTicks);
         }
@@ -94,7 +94,7 @@ public abstract class NestedWidget extends AbstractWidget {
         boolean eatenGeneral = false;
         for (NestedWidget widget : this.children.values()) {
             boolean eatenChild = widget.mouseClicked(mouseX, mouseY, button);
-            eatenGeneral = eatenChild == true ? eatenChild : eatenGeneral;
+            eatenGeneral = eatenChild ? eatenChild : eatenGeneral;
         }
         return eatenGeneral;
     }
@@ -152,7 +152,7 @@ public abstract class NestedWidget extends AbstractWidget {
     }
 
     @Override
-    public void updateWidgetNarration(NarrationElementOutput foo) {
+    public void updateWidgetNarration(@Nonnull NarrationElementOutput narrationOutput) {
     }
 
     /**

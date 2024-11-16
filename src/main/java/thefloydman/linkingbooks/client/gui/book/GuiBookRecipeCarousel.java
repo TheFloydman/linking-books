@@ -26,12 +26,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
 import thefloydman.linkingbooks.client.gui.widget.RecipeCarouselWidget;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+@OnlyIn(Dist.CLIENT)
 public class GuiBookRecipeCarousel extends GuiBookElement<RecipeCarouselWidget> {
 
     private final List<ResourceLocation> resourceLocations;

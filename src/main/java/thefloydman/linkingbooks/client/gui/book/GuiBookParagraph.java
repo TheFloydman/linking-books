@@ -20,6 +20,8 @@ package thefloydman.linkingbooks.client.gui.book;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
 import thefloydman.linkingbooks.client.gui.widget.ParagraphWidget;
 
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@OnlyIn(Dist.CLIENT)
 public class GuiBookParagraph extends GuiBookElement<ParagraphWidget> {
 
     private final int lineSpacing = 6;
@@ -46,7 +49,7 @@ public class GuiBookParagraph extends GuiBookElement<ParagraphWidget> {
             List<String> wordList = Stream.of(span.split(" ")).collect(Collectors.toList());
             boolean excessWords = true;
             boolean styled = false;
-            String style = "";
+            StringBuilder style = new StringBuilder();
             String lastStyle = "";
             while (excessWords) {
                 List<String> lineList = Lists.newArrayList();
@@ -56,31 +59,31 @@ public class GuiBookParagraph extends GuiBookElement<ParagraphWidget> {
                 for (String currentLine = ""; index < wordList.size(); index++) {
                     String preWord = wordList.get(index);
                     String temp = preWord;
-                    while (temp.indexOf("�") >= 0) {
-                        int currentIndex = temp.indexOf("�");
+                    while (temp.contains("§")) {
+                        int currentIndex = temp.indexOf("§");
                         String sub = temp.substring(currentIndex, currentIndex + 2);
-                        styled = !sub.equals("�r");
+                        styled = !sub.equals("§r");
                         if (styled) {
-                            style += sub;
+                            style.append(sub);
                         } else {
-                            lastStyle = style;
-                            style = "";
+                            lastStyle = style.toString();
+                            style = new StringBuilder();
                         }
                         temp = currentIndex + 2 < temp.length() ? temp.substring(currentIndex + 2) : "";
                     }
-                    postWord = (index == 0 && styled ? style : "") + preWord;
+                    postWord = (index == 0 && styled ? style.toString() : "") + preWord;
                     lineList.add(postWord);
-                    currentLine = lineList.stream().collect(Collectors.joining(" "));
+                    currentLine = String.join(" ", lineList);
                     excessWords = font.width(currentLine) > (width / scale) && lineList.size() > 1;
                     if (excessWords) {
-                        if (preWord.contains("�r"))
+                        if (preWord.contains("§r"))
                             postWord = lastStyle + preWord;
                         wordList.set(index, postWord);
-                        lineList.remove(lineList.size() - 1);
+                        lineList.removeLast();
                         break;
                     }
                 }
-                outputParagraph.add(Component.literal(lineList.stream().collect(Collectors.joining(" "))));
+                outputParagraph.add(Component.literal(String.join(" ", lineList)));
                 if (excessWords) {
                     wordList = wordList.subList(index, wordList.size());
                 }

@@ -37,20 +37,32 @@ import javax.annotation.Nonnull;
 public record MobEffectLinkEffectType(@Nonnull ResourceLocation typeID, Holder<MobEffect> effect,
                                       int ticks) implements LinkEffectType {
 
-    @Override
-    public @Nonnull Codec<MobEffectLinkEffectType> codec() {
-        return RecordCodecBuilder.create(
+    public static final Codec<MobEffectLinkEffectType> CODEC = RecordCodecBuilder.create(
+            codecBuilderInstance -> codecBuilderInstance.group(
+                            ResourceLocation.CODEC.fieldOf("type").forGetter(MobEffectLinkEffectType::typeID),
+                            Options.CODEC.fieldOf("options").forGetter(mobEffectLinkEffectType -> new Options(mobEffectLinkEffectType.effect(), mobEffectLinkEffectType.ticks()))
+                    )
+                    .apply(codecBuilderInstance, (resourceLocation, options) -> new MobEffectLinkEffectType(resourceLocation, options.effect(), options.ticks()))
+    );
+
+    private record Options(Holder<MobEffect> effect, int ticks) {
+        private static final Codec<Options> CODEC = RecordCodecBuilder.create(
                 codecBuilderInstance -> codecBuilderInstance.group(
-                                ResourceLocation.CODEC.fieldOf("type").forGetter(MobEffectLinkEffectType::typeID),
-                                MobEffect.CODEC.fieldOf("effect").forGetter(MobEffectLinkEffectType::effect),
-                                Codec.INT.fieldOf("ticks").forGetter(MobEffectLinkEffectType::ticks)
+                                MobEffect.CODEC.fieldOf("effect").forGetter(Options::effect),
+                                Codec.INT.fieldOf("ticks").forGetter(Options::ticks)
                         )
-                        .apply(codecBuilderInstance, MobEffectLinkEffectType::new)
+                        .apply(codecBuilderInstance, Options::new)
         );
     }
 
     @Override
+    public @Nonnull Codec<MobEffectLinkEffectType> codec() {
+        return CODEC;
+    }
+
+    @Override
     public void onLinkEnd(Entity entity, LinkData linkData) {
+        System.out.println(this.effect);
         if (entity instanceof LivingEntity) {
             ((LivingEntity) entity).addEffect(new MobEffectInstance(this.effect(), this.ticks()));
         }

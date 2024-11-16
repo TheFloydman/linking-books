@@ -22,15 +22,19 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.List;
 
+@OnlyIn(Dist.CLIENT)
 public class ItemStackWidget extends NestedWidget {
 
     public long creationTime;
-    public long changeTime = 2000L; // 2 seconds
-    protected List<ItemStack> itemStacks;
+    public final long changeTime = 2000L; // 2 seconds
+    protected final List<ItemStack> itemStacks;
 
     public ItemStackWidget(String id, int x, int y, float z, int width, int height, Component narration,
                            Screen parentScreen, float scale, List<ItemStack> itemStacks) {
@@ -40,7 +44,7 @@ public class ItemStackWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible() && !this.itemStacks.isEmpty()) {
             int changeIndex = Mth.floor((float) (System.currentTimeMillis() - this.creationTime) / this.changeTime);
             ItemStack stack = this.itemStacks.get(changeIndex % this.itemStacks.size());

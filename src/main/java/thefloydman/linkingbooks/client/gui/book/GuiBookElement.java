@@ -19,8 +19,11 @@ package thefloydman.linkingbooks.client.gui.book;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 
+@OnlyIn(Dist.CLIENT)
 public abstract class GuiBookElement<T extends NestedWidget> {
 
     private final String name;

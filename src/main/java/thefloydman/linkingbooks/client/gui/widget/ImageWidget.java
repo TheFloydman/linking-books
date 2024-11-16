@@ -25,28 +25,28 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
+@OnlyIn(Dist.CLIENT)
 public class ImageWidget extends NestedWidget {
 
-    public ResourceLocation resourceLocation;
-    public int sourceWidth;
-    public int sourceHeight;
-    public int sourceX;
-    public int sourceY;
+    final public ResourceLocation resourceLocation;
+    final public int sourceX;
+    final public int sourceY;
 
     public ImageWidget(String id, int x, int y, float z, int width, int height, Component narration,
                        Screen parentScreen, float scale, ResourceLocation resourceLocation, int sourceWidth, int sourceHeight,
                        int sourceX, int sourceY) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.resourceLocation = resourceLocation;
-        this.sourceWidth = sourceWidth;
-        this.sourceHeight = sourceHeight;
         this.sourceX = sourceX;
         this.sourceY = sourceY;
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             RenderSystem.enableBlend();

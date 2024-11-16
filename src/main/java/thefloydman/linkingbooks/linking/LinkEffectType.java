@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 
 public interface LinkEffectType {
 
-    <T extends LinkEffectType> @Nonnull Codec<T> codec();
+    <T extends LinkEffectType> Codec<T> codec();
 
     @Nonnull
     ResourceLocation typeID();
@@ -73,6 +73,7 @@ public interface LinkEffectType {
      * @param linkData The LinkDataComponent for the link.
      */
     default void onLinkEnd(Entity entity, LinkData linkData) {
+        System.out.println("link ended");
     }
 
 }

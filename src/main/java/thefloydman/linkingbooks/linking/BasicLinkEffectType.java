@@ -21,6 +21,7 @@ package thefloydman.linkingbooks.linking;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.util.Reference;
 
 import javax.annotation.Nonnull;
@@ -31,7 +32,7 @@ import javax.annotation.Nonnull;
 public record BasicLinkEffectType(@Nonnull ResourceLocation typeID) implements LinkEffectType {
 
     @Override
-    public @Nonnull Codec<BasicLinkEffectType> codec() {
+    public Codec<BasicLinkEffectType> codec() {
         return RecordCodecBuilder.create(
                 codecBuilderInstance -> codecBuilderInstance.group(
                                 ResourceLocation.CODEC.fieldOf("type").forGetter(BasicLinkEffectType::typeID)

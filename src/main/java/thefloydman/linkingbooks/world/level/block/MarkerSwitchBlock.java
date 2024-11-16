@@ -152,28 +152,28 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
      * See {@link DoorBlock#neighborChanged}.
      */
     @Override
-    public void neighborChanged(BlockState state, Level world, @Nonnull BlockPos pos, @Nonnull Block
-            block, @Nonnull BlockPos fromPos,
+    public void neighborChanged(BlockState blockState, Level level, @Nonnull BlockPos blockPos, @Nonnull Block
+                                        block, @Nonnull BlockPos fromPos,
                                 boolean notify) {
-        BlockPos otherPos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos.above();
-        BlockState otherState = world.getBlockState(otherPos);
+        BlockPos otherPos = blockState.getValue(HALF) == DoubleBlockHalf.UPPER ? blockPos.below() : blockPos.above();
+        BlockState otherState = level.getBlockState(otherPos);
         if (otherState.getBlock() == this) {
-            world.setBlockAndUpdate(pos, state.setValue(POWERED, otherState.getValue(POWERED)));
-            if ((state.getValue(HALF) == DoubleBlockHalf.LOWER && world.getSignal(pos.below(), Direction.DOWN) > 0)
-                    || (state.getValue(HALF) == DoubleBlockHalf.UPPER
-                    && world.getSignal(otherPos.below(), Direction.DOWN) > 0)) {
-                boolean changed = !state.getValue(OPEN);
-                world.setBlock(pos, state.setValue(OPEN, true), 10);
-                world.setBlock(otherPos, otherState.setValue(OPEN, true), 10);
-                if (state.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
-                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_OPEN, SoundSource.BLOCKS, 0.5F, 0.5F);
+            level.setBlockAndUpdate(blockPos, blockState.setValue(POWERED, otherState.getValue(POWERED)));
+            if ((blockState.getValue(HALF) == DoubleBlockHalf.LOWER && level.getSignal(blockPos.below(), Direction.DOWN) > 0)
+                    || (blockState.getValue(HALF) == DoubleBlockHalf.UPPER
+                    && level.getSignal(otherPos.below(), Direction.DOWN) > 0)) {
+                boolean changed = !blockState.getValue(OPEN);
+                level.setBlock(blockPos, blockState.setValue(OPEN, true), 10);
+                level.setBlock(otherPos, otherState.setValue(OPEN, true), 10);
+                if (blockState.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
+                    level.playSound(null, blockPos, SoundEvents.WOODEN_TRAPDOOR_OPEN, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.1F + 0.9F);
                 }
             } else {
-                boolean changed = state.getValue(OPEN);
-                world.setBlock(pos, state.setValue(OPEN, false), 10);
-                world.setBlock(otherPos, otherState.setValue(OPEN, false), 10);
-                if (state.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
-                    world.playSound(null, pos, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 0.5F, 0.5F);
+                boolean changed = blockState.getValue(OPEN);
+                level.setBlock(blockPos, blockState.setValue(OPEN, false), 10);
+                level.setBlock(otherPos, otherState.setValue(OPEN, false), 10);
+                if (blockState.getValue(HALF) == DoubleBlockHalf.LOWER && changed) {
+                    level.playSound(null, blockPos, SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 0.5F);
                 }
             }
 
@@ -185,7 +185,7 @@ public class MarkerSwitchBlock extends HorizontalDirectionalBlock implements Ent
      */
     @Override
     public @Nonnull BlockState updateShape(BlockState state, Direction direction, @Nonnull BlockState
-            newState, @Nonnull LevelAccessor world,
+                                                   newState, @Nonnull LevelAccessor world,
                                            @Nonnull BlockPos pos, @Nonnull BlockPos posFrom) {
         DoubleBlockHalf doubleBlockHalf = state.getValue(HALF);
         if (direction.getAxis() == Direction.Axis.Y
