@@ -29,11 +29,13 @@ import net.minecraft.world.entity.Entity;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.util.Reference;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public record LinkEffect(BiFunction<Entity, LinkData, Boolean> canStartLink,
+public record LinkEffect(LinkEffectType type, BiFunction<Entity, LinkData, Boolean> canStartLink,
                          BiFunction<Entity, LinkData, Boolean> canFinishLink,
                          BiConsumer<Entity, LinkData> onLinkStart, BiConsumer<Entity, LinkData> onLinkEnd) {
 
@@ -59,8 +61,16 @@ public record LinkEffect(BiFunction<Entity, LinkData, Boolean> canStartLink,
                     DataResult<Pair<LinkEffectType, T>> newPair = linkEffectType.codec().decode(ops, input);
                     if (newPair.isSuccess() && newPair.result().isPresent()) {
                         LinkEffectType specificLinkEffectType = newPair.result().get().getFirst();
-
-                        return new DataResult.Success<>(Pair.of(new LinkEffect(getCanStartLink(specificLinkEffectType), getCanFinishLink(specificLinkEffectType), getOnLinkStart(specificLinkEffectType), getOnLinkEnd(specificLinkEffectType)), input), Lifecycle.stable());
+                        return new DataResult.Success<>(
+                                Pair.of(
+                                        new LinkEffect(
+                                                specificLinkEffectType,
+                                                getCanStartLink(specificLinkEffectType),
+                                                getCanFinishLink(specificLinkEffectType),
+                                                getOnLinkStart(specificLinkEffectType),
+                                                getOnLinkEnd(specificLinkEffectType)
+                                        ), input),
+                                Lifecycle.stable());
                     }
                 }
             }
@@ -84,6 +94,15 @@ public record LinkEffect(BiFunction<Entity, LinkData, Boolean> canStartLink,
 
     private static BiConsumer<Entity, LinkData> getOnLinkEnd(LinkEffectType type) {
         return type::onLinkEnd;
+    }
+
+    public static @Nullable LinkEffect getLinkEffect(@Nonnull ResourceLocation resourceLocation) {
+        Optional<Registry<LinkEffect>> optionalRegistry = Reference.server.registryAccess().registry(REGISTRY_KEY);
+        if (optionalRegistry.isPresent()) {
+            Registry<LinkEffect> linkEffectRegistry = optionalRegistry.get();
+            return linkEffectRegistry.get(resourceLocation);
+        }
+        return null;
     }
 
 }

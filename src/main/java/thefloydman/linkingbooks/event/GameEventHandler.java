@@ -35,10 +35,12 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.server.commands.LinkCommand;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
@@ -52,11 +54,17 @@ import thefloydman.linkingbooks.world.level.block.entity.LinkingBookHolderBlockE
 import thefloydman.linkingbooks.world.level.block.entity.MarkerSwitchBlockEntity;
 
 @EventBusSubscriber(modid = Reference.MODID, bus = EventBusSubscriber.Bus.GAME)
-public class NeoForgeEventHandler {
+public class GameEventHandler {
 
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         Reference.server = event.getServer();
+    }
+
+    @SubscribeEvent
+    public static void serverStarting(ServerStartingEvent event) {
+        // Register commands.
+        LinkCommand.register(event.getServer().getCommands().getDispatcher());
     }
 
     @SubscribeEvent

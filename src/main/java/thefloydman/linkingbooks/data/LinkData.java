@@ -70,8 +70,7 @@ public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos bl
     }
 
     public Set<LinkEffect> linkEffectsAsLE(ServerLevel serverLevel) {
-        Registry<LinkEffect> linkEffectRegistry = serverLevel.registryAccess().registry(LinkEffect.REGISTRY_KEY).get();
-        return this.linkEffects.stream().map(linkEffectRegistry::get).filter(Objects::nonNull).collect(Collectors.toSet());
+        return this.linkEffects.stream().map(LinkEffect::getLinkEffect).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -49,10 +49,9 @@ import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
 import thefloydman.linkingbooks.world.item.ModItems;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
-import java.awt.*;
-import java.util.Objects;
+import java.awt.Color;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class LinkingUtils {
 
@@ -72,7 +71,13 @@ public class LinkingUtils {
     }
 
     /**
-     * Teleport an entity to a dimension and position.
+     * Teleport an entitiy to a dimension and position using a LinkData.
+     * Should only be called server-side.
+     *
+     * @param entity the entity to link
+     * @param linkData the LinkData uses to link the entity
+     * @param holdingBook whether the entity was holding a book when it linked
+     * @return <code>true</code> if the entity successfully teleported; otherwise <code>false</code>
      */
     public static boolean linkEntity(Entity entity, LinkData linkData, boolean holdingBook) {
 
@@ -210,6 +215,23 @@ public class LinkingUtils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Teleport multiple entities to a dimension and position using the same
+     * LinkData. Should only be called server-side.
+     *
+     * @param entities a list of entities to link
+     * @param linkData the LinkData uses to link each entity
+     * @param holdingBook whether the entities were holding books when they linked
+     * @return an <code>int</code> representing the number of entities that were successfully teleported
+     */
+    public static int linkEntities(List<Entity> entities, LinkData linkData, boolean holdingBook) {
+        int linked = 0;
+        for (Entity entity : entities) {
+            linked += linkEntity(entity, linkData, holdingBook) ? 1 : 0;
+        }
+        return linked;
     }
 
     public static void openLinkingBookGui(ServerPlayer player, boolean holdingBook, int color, LinkData linkData,
