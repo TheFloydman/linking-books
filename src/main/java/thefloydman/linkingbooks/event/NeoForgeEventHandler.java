@@ -20,6 +20,7 @@ package thefloydman.linkingbooks.event;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -30,14 +31,18 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.world.item.ModItems;
 import thefloydman.linkingbooks.world.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.world.level.block.LinkTranslatorBlock;
 import thefloydman.linkingbooks.world.level.block.LinkingLecternBlock;
@@ -132,6 +137,20 @@ public class NeoForgeEventHandler {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+        Entity entity = event.getEntity();
+        if (entity instanceof Player player) {
+            Level level = player.level();
+            final String guidebookGivenTag = Reference.MODID + ":guidebook_given";
+            final boolean givingOkay = LinkingBooksConfig.GIVE_GUIDEBOOK_ON_FIRST_JOIN.get();
+            if (!level.isClientSide() && !player.getTags().contains(guidebookGivenTag) && givingOkay) {
+                ItemHandlerHelper.giveItemToPlayer(player, ModItems.GUIDEBOOK.toStack());
+                player.addTag(guidebookGivenTag);
             }
         }
     }

@@ -34,6 +34,11 @@ public class LinkingBooksConfig {
             .translation("linkingbooks.config.linkingcost_levels")
             .defineInRange("linkingCostLevels", 0, 0, Integer.MAX_VALUE);
 
+    public static final ModConfigSpec.BooleanValue GIVE_GUIDEBOOK_ON_FIRST_JOIN = BUILDER
+            .comment("Whether to give the guidebook to every player when they first join.")
+            .translation("linkingbooks.config.give_guidebook_on_first_join")
+            .define("giveGuidebookOnFirstJoin", true);
+
     public static final ModConfigSpec CONFIG = BUILDER.build();
 
 }
