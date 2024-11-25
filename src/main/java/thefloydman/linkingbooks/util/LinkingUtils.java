@@ -111,7 +111,7 @@ public class LinkingUtils {
                 return false;
             }
 
-            Set<LinkEffect> linkEffects = linkData.linkEffectsAsLE(serverWorld);
+            Set<LinkEffect> linkEffects = linkData.linkEffectsAsLE();
 
             for (LinkEffect effect : linkEffects) {
                 if (!effect.canStartLink().apply(entity, linkData)) {

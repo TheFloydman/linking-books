@@ -69,7 +69,7 @@ public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos bl
         return new LinkData(player.getCommandSenderWorld().dimension().location(), player.blockPosition(), player.getYRot(), UUID.randomUUID(), new ArrayList<ResourceLocation>());
     }
 
-    public Set<LinkEffect> linkEffectsAsLE(ServerLevel serverLevel) {
+    public Set<LinkEffect> linkEffectsAsLE() {
         return this.linkEffects.stream().map(LinkEffect::getLinkEffect).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
