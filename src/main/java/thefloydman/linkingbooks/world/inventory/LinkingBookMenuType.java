@@ -20,7 +20,6 @@ package thefloydman.linkingbooks.world.inventory;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -28,11 +27,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
-import thefloydman.linkingbooks.network.AddChunkLoaderMessage;
-import thefloydman.linkingbooks.network.RemoveChunkLoaderMessage;
-import thefloydman.linkingbooks.network.SaveLinkingPanelImageMessage;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
+import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
 
 import javax.annotation.Nonnull;
 

@@ -16,7 +16,7 @@
  * License along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thefloydman.linkingbooks.network;
+package thefloydman.linkingbooks.network.server;
 
 import com.mojang.logging.LogUtils;
 import io.netty.buffer.ByteBuf;

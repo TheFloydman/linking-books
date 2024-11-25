@@ -43,7 +43,7 @@ import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.linking.LinkEffect;
-import thefloydman.linkingbooks.network.TakeScreenshotForLinkingBookMessage;
+import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
 import thefloydman.linkingbooks.world.item.ModItems;

@@ -16,37 +16,32 @@
  * License along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package thefloydman.linkingbooks.network;
+package thefloydman.linkingbooks.network.server;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.util.LinkingUtils;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.util.Reference;
 
 import javax.annotation.Nonnull;
 
-public record LinkMessage(LinkData linkData, boolean holdingBook) implements CustomPacketPayload {
+public record RemoveChunkLoaderMessage() implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<LinkMessage> TYPE = new CustomPacketPayload.Type<>(Reference.getAsResourceLocation("link_entity"));
+    public static final Type<RemoveChunkLoaderMessage> TYPE = new Type<>(Reference.getAsResourceLocation("remove_chunk_loader"));
 
-    public static final StreamCodec<ByteBuf, LinkMessage> STREAM_CODEC = StreamCodec.composite(
-            LinkData.STREAM_CODEC, LinkMessage::linkData,
-            ByteBufCodecs.BOOL, LinkMessage::holdingBook,
-            LinkMessage::new
-    );
+    public static final StreamCodec<ByteBuf, RemoveChunkLoaderMessage> STREAM_CODEC = StreamCodec.unit(new RemoveChunkLoaderMessage());
 
-    public static void handle(final LinkMessage data, final IPayloadContext context) {
+    public static void handle(final RemoveChunkLoaderMessage data, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            LinkingUtils.linkEntity(context.player(), data.linkData(), data.holdingBook());
+            ImmersivePortalsIntegration.removeChunkLoader((ServerPlayer) context.player());
         });
     }
 
     @Override
-    public @Nonnull CustomPacketPayload.Type<LinkMessage> type() {
+    public @Nonnull Type<RemoveChunkLoaderMessage> type() {
         return TYPE;
     }
 

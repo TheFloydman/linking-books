@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
-import thefloydman.linkingbooks.network.LinkMessage;
+import thefloydman.linkingbooks.network.server.LinkMessage;
 import thefloydman.linkingbooks.util.Reference;
 
 import java.awt.*;
