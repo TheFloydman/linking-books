@@ -40,6 +40,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.server.commands.LinkCommand;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.Reference;
@@ -113,7 +114,10 @@ public class GameEventHandler {
                 ItemStack extractedStack = linkingBookHolderBlockEntity.extractItem(0, Integer.MAX_VALUE, false);
                 player.addItem(extractedStack);
                 player.inventoryMenu.broadcastChanges();
-                if (level.getBlockEntity(blockPos) instanceof LinkTranslatorBlockEntity) {
+                if (level.getBlockEntity(blockPos) instanceof LinkTranslatorBlockEntity linkTranslatorBlockEntity) {
+                    if (Reference.isImmersivePortalsLoaded()) {
+                        ImmersivePortalsIntegration.deleteLinkingPortals(linkTranslatorBlockEntity);
+                    }
                     LinkingPortalArea.tryEraseLinkingPortalOnEveryAxis(level, blockPos);
                 }
             }

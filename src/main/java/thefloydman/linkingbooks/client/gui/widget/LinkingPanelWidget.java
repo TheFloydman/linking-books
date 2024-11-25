@@ -17,6 +17,7 @@
  */
 package thefloydman.linkingbooks.client.gui.widget;
 
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -31,8 +32,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.network.LinkMessage;
+import thefloydman.linkingbooks.util.Reference;
 
 import java.awt.*;
 
@@ -44,6 +48,7 @@ public class LinkingPanelWidget extends NestedWidget {
     public boolean canLink = false;
     DynamicTexture linkingPanelImage = null;
     private ResourceLocation guiLinkingPanelImageResourceLocation;
+    private final TextureTarget linkingPanelFramebuffer = new TextureTarget(2, 2, true, false);
 
     public LinkingPanelWidget(String id, int x, int y, float z, int width, int height, Component narration,
                               Screen parentScreen, float scale, boolean holdingBook, LinkData linkData, boolean canLink,
@@ -60,20 +65,28 @@ public class LinkingPanelWidget extends NestedWidget {
                 }
             }
             this.linkingPanelImage = new DynamicTexture(image256);
-            guiLinkingPanelImageResourceLocation = Minecraft.getInstance().getTextureManager().register("gui_linking_panel_image", this.linkingPanelImage);
+            this.guiLinkingPanelImageResourceLocation = Minecraft.getInstance().getTextureManager().register("gui_linking_panel_image", this.linkingPanelImage);
         }
     }
 
     @Override
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
-            int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
-            this.zFill(guiGraphics, this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height,
-                    panelColor);
-
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0.0F, 0.0F, 150.0F);
             if (this.canLink) {
-                if (this.linkingPanelImage != null && this.linkingPanelImage.getPixels() != null) {
-                    guiGraphics.pose().pushPose();
+                if (Reference.isImmersivePortalsLoaded() && LinkingBooksConfig.USE_IP_FOR_LINKING_PANELS.get()) {
+                    ImmersivePortalsIntegration.renderGuiPortal(
+                            this.linkData,
+                            this.linkingPanelFramebuffer,
+                            this.minecraft,
+                            this.getX(),
+                            this.getY(),
+                            this.getWidth(),
+                            this.getHeight()
+                    );
+                    this.linkingPanelFramebuffer.clear(true);
+                } else if (this.linkingPanelImage != null && this.linkingPanelImage.getPixels() != null) {
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
                             GlStateManager.DestFactor.ZERO);
@@ -81,9 +94,12 @@ public class LinkingPanelWidget extends NestedWidget {
                     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                     guiGraphics.blit(this.guiLinkingPanelImageResourceLocation, this.getX(), this.getY(), 150, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
                             this.linkingPanelImage.getPixels().getHeight(), this.linkingPanelImage.getPixels().getWidth(), this.linkingPanelImage.getPixels().getHeight());
-                    guiGraphics.pose().popPose();
                 }
             }
+            int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
+            this.zFill(guiGraphics, this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height,
+                    panelColor);
+            guiGraphics.pose().popPose();
         }
     }
 

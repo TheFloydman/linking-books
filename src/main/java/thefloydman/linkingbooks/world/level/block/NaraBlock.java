@@ -27,7 +27,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
+import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.level.block.entity.LinkTranslatorBlockEntity;
 
 import javax.annotation.Nonnull;
@@ -67,6 +69,9 @@ public class NaraBlock extends Block {
                         BlockPos currentPos = new BlockPos(x, y, z);
                         BlockEntity blockEntity = world.getBlockEntity(currentPos);
                         if (blockEntity instanceof LinkTranslatorBlockEntity translator) {
+                            if (Reference.isImmersivePortalsLoaded()) {
+                                ImmersivePortalsIntegration.deleteLinkingPortals(translator);
+                            }
                             if (translator.hasBook()) {
                                 LinkData linkData = translator.getBook().get(ModDataComponents.LINK_DATA);
                                 LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData,

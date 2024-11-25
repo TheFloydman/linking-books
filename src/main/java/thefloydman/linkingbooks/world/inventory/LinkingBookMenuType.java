@@ -20,12 +20,19 @@ package thefloydman.linkingbooks.world.inventory;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
+import thefloydman.linkingbooks.network.AddChunkLoaderMessage;
+import thefloydman.linkingbooks.network.RemoveChunkLoaderMessage;
+import thefloydman.linkingbooks.network.SaveLinkingPanelImageMessage;
+import thefloydman.linkingbooks.util.Reference;
 
 import javax.annotation.Nonnull;
 
@@ -37,8 +44,8 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
     public boolean canLink = false;
     public CompoundTag linkingPanelImage = new CompoundTag();
 
-    public LinkingBookMenuType(int windowId, Inventory playerInventory) {
-        super(ModMenuTypes.LINKING_BOOK.get(), windowId);
+    public LinkingBookMenuType(int containerId, Inventory playerInventory) {
+        super(ModMenuTypes.LINKING_BOOK.get(), containerId);
     }
 
     public LinkingBookMenuType(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf extraData) {
@@ -48,6 +55,7 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
         this.linkData = extraData.readJsonWithCodec(LinkData.CODEC);
         this.canLink = extraData.readBoolean();
         this.linkingPanelImage = extraData.readNbt();
+        PacketDistributor.sendToServer(new AddChunkLoaderMessage(this.linkData));
     }
 
     @Override
@@ -57,6 +65,7 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
 
     @Override
     public void removed(@Nonnull Player player) {
+        PacketDistributor.sendToServer(new RemoveChunkLoaderMessage());
         super.removed(player);
     }
 

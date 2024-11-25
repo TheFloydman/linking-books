@@ -45,8 +45,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.LinkingUtils;
+import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.world.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.world.level.block.entity.LinkTranslatorBlockEntity;
@@ -168,6 +170,9 @@ public class LinkTranslatorBlock extends HorizontalDirectionalBlock implements E
                     BlockPos currentPos = new BlockPos(x, y, z);
                     BlockEntity blockEntity = world.getBlockEntity(currentPos);
                     if (blockEntity instanceof LinkTranslatorBlockEntity translator) {
+                        if (Reference.isImmersivePortalsLoaded()) {
+                            ImmersivePortalsIntegration.deleteLinkingPortals(translator);
+                        }
                         if (translator.hasBook()) {
                             LinkData linkData = translator.getBook().get(ModDataComponents.LINK_DATA);
                             LinkingPortalArea.tryMakeLinkingPortalOnEveryAxis(world, currentPos, linkData, translator);

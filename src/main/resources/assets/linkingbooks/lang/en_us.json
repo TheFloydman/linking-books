@@ -28,5 +28,9 @@
     "linkingbooks.config.always_allow_intraage_linking": "Intraage Linking Always Allowed",
     "linkingbooks.config.always_allow_intraage_linking.tooltip": "Whether to allow linking within the same dimension, even with books that don't have the IntraAge Link Effect applied.",
     "linkingbooks.config.give_guidebook_on_first_join": "Give Guidebook on First Join",
-    "linkingbooks.config.give_guidebook_on_first_join.tooltip": "Whether to give the guidebook to every player when they first join."
+    "linkingbooks.config.give_guidebook_on_first_join.tooltip": "Whether to give the guidebook to every player when they first join.",
+    "linkingbooks.config.linking_panel_chunk_load_radius": "Linking Panel Chunk Load Radius",
+    "linkingbooks.config.linking_panel_chunk_load_radius.tooltip": "The maximum render distance (in chunks) of a linking panel.",
+    "linkingbooks.config.use_immersive_portals_for_linking_portals": "Use Immersive Portals for Linking Portals",
+    "linkingbooks.config.use_immersive_portals_for_linking_portals.tooltip": "If Immersive Portals is present, uses it to render Linking Portals."
 }

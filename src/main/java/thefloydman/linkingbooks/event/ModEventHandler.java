@@ -30,6 +30,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.gui.screen.GuidebookScreen;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
@@ -40,11 +41,10 @@ import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
+import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.linking.LinkEffect;
 import thefloydman.linkingbooks.linking.LinkEffectTypes;
-import thefloydman.linkingbooks.network.LinkMessage;
-import thefloydman.linkingbooks.network.SaveLinkingPanelImageMessage;
-import thefloydman.linkingbooks.network.TakeScreenshotForLinkingBookMessage;
+import thefloydman.linkingbooks.network.*;
 import thefloydman.linkingbooks.util.LinkingUtils;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.entity.ModEntityTypes;
@@ -80,6 +80,16 @@ public class ModEventHandler {
                 LinkMessage.STREAM_CODEC,
                 LinkMessage::handle
         );
+        registrar.playToServer(
+                AddChunkLoaderMessage.TYPE,
+                AddChunkLoaderMessage.STREAM_CODEC,
+                AddChunkLoaderMessage::handle
+        );
+        registrar.playToServer(
+                RemoveChunkLoaderMessage.TYPE,
+                RemoveChunkLoaderMessage.STREAM_CODEC,
+                RemoveChunkLoaderMessage::handle
+        );
     }
 
     @SubscribeEvent
@@ -93,7 +103,18 @@ public class ModEventHandler {
     }
 
     @SubscribeEvent
+    public static void registerImmersivePortalsEntities(RegisterEvent event) {
+        if (Reference.isImmersivePortalsLoaded()) {
+            ImmersivePortalsIntegration.registerImmersivePortalsEntities(event);
+        }
+    }
+
+    @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+
+        if (Reference.isImmersivePortalsLoaded()) {
+            ImmersivePortalsIntegration.registerEntityRenderers(event);
+        }
 
         // Entities
         event.registerEntityRenderer(ModEntityTypes.LINKING_BOOK.get(), LinkingBookRenderer::new);
