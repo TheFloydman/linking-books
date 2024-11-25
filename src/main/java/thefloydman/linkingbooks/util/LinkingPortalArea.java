@@ -77,13 +77,13 @@ public class LinkingPortalArea {
                         break;
                 }
             } else {
-                return new HashSet<BlockPos>();
+                return new HashSet<>();
             }
             if (filler.size() > maxArea) {
-                return new HashSet<BlockPos>();
+                return new HashSet<>();
             }
         }
-        return filler.size() < minArea ? new HashSet<BlockPos>() : filler;
+        return filler.size() < minArea ? new HashSet<>() : filler;
     }
 
     private static void addPosIfAbsent(List<BlockPos> unvisited, BlockPos blockPos, Set<BlockPos> frame,

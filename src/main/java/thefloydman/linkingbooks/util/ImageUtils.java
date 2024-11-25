@@ -50,7 +50,7 @@ public class ImageUtils {
                             Codec.INT.fieldOf("width").forGetter(NativeImage::getWidth),
                             Codec.INT.fieldOf("height").forGetter(NativeImage::getHeight),
                             Codec.INT_STREAM.fieldOf("pixels").forGetter(image -> {
-                                List<Integer> pixels = new ArrayList<Integer>();
+                                List<Integer> pixels = new ArrayList<>();
                                 for (int y = 0; y < image.getHeight(); y++) {
                                     for (int x = 0; x < image.getWidth(); x++) {
                                         pixels.add(image.getPixelRGBA(x, y));

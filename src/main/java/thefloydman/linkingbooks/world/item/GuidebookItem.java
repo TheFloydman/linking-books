@@ -43,9 +43,7 @@ public class GuidebookItem extends Item {
     public @Nonnull InteractionResultHolder<ItemStack> use(Level world, Player player, @Nonnull InteractionHand hand) {
         ItemStack heldStack = player.getItemInHand(hand);
         if (!world.isClientSide() && player instanceof ServerPlayer) {
-            player.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) -> {
-                return new GuidebookMenuType(id, playerInventory);
-            }, Component.literal("")));
+            player.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) -> new GuidebookMenuType(id, playerInventory), Component.literal("")));
         }
         return InteractionResultHolder.pass(heldStack);
     }

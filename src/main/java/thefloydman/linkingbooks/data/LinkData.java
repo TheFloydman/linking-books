@@ -66,7 +66,7 @@ public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos bl
     public static final LinkData EMPTY = new LinkData(ResourceLocation.fromNamespaceAndPath("minecraft", "overworld"), BlockPos.ZERO, 0.0F, UUID.randomUUID(), new ArrayList<>());
 
     public static LinkData fromPlayer(Player player) {
-        return new LinkData(player.getCommandSenderWorld().dimension().location(), player.blockPosition(), player.getYRot(), UUID.randomUUID(), new ArrayList<ResourceLocation>());
+        return new LinkData(player.getCommandSenderWorld().dimension().location(), player.blockPosition(), player.getYRot(), UUID.randomUUID(), new ArrayList<>());
     }
 
     public Set<LinkEffect> linkEffectsAsLE() {

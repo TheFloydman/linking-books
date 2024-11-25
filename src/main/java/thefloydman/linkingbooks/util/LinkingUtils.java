@@ -49,7 +49,7 @@ import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
 import thefloydman.linkingbooks.world.item.ModItems;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
@@ -74,8 +74,8 @@ public class LinkingUtils {
      * Teleport an entitiy to a dimension and position using a LinkData.
      * Should only be called server-side.
      *
-     * @param entity the entity to link
-     * @param linkData the LinkData uses to link the entity
+     * @param entity      the entity to link
+     * @param linkData    the LinkData uses to link the entity
      * @param holdingBook whether the entity was holding a book when it linked
      * @return <code>true</code> if the entity successfully teleported; otherwise <code>false</code>
      */
@@ -221,8 +221,8 @@ public class LinkingUtils {
      * Teleport multiple entities to a dimension and position using the same
      * LinkData. Should only be called server-side.
      *
-     * @param entities a list of entities to link
-     * @param linkData the LinkData uses to link each entity
+     * @param entities    a list of entities to link
+     * @param linkData    the LinkData uses to link each entity
      * @param holdingBook whether the entities were holding books when they linked
      * @return an <code>int</code> representing the number of entities that were successfully teleported
      */
@@ -236,25 +236,28 @@ public class LinkingUtils {
 
     public static void openLinkingBookGui(ServerPlayer player, boolean holdingBook, int color, LinkData linkData,
                                           ResourceLocation currentDimension) {
-        player.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) -> {
-            return new LinkingBookMenuType(id, playerInventory);
-        }, Component.literal("")), extraData -> {
-            extraData.writeBoolean(holdingBook);
-            extraData.writeInt(color);
-            extraData.writeJsonWithCodec(LinkData.CODEC, linkData);
-            boolean canLink = LinkingBooksConfig.ALWAYS_ALLOW_INTRAAGE_LINKING.get()
-                    || !currentDimension.equals(linkData.dimension())
-                    || linkData.linkEffects().contains(Reference.getAsResourceLocation("intraage_linking"));
-            extraData.writeBoolean(canLink);
-            MinecraftServer server = player.getServer();
-            if (server != null) {
-                ServerLevel overworld = server.getLevel(Level.OVERWORLD);
-                if (overworld != null) {
-                    LinkingBooksSavedData savedData = overworld.getDataStorage().computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
-                    extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
-                }
-            }
-        });
+        player.openMenu(
+                new SimpleMenuProvider(
+                        (id, playerInventory, playerEntity) ->
+                                new LinkingBookMenuType(id, playerInventory),
+                        Component.literal("")),
+                extraData -> {
+                    extraData.writeBoolean(holdingBook);
+                    extraData.writeInt(color);
+                    extraData.writeJsonWithCodec(LinkData.CODEC, linkData);
+                    boolean canLink = LinkingBooksConfig.ALWAYS_ALLOW_INTRAAGE_LINKING.get()
+                            || !currentDimension.equals(linkData.dimension())
+                            || linkData.linkEffects().contains(Reference.getAsResourceLocation("intraage_linking"));
+                    extraData.writeBoolean(canLink);
+                    MinecraftServer server = player.getServer();
+                    if (server != null) {
+                        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+                        if (overworld != null) {
+                            LinkingBooksSavedData savedData = overworld.getDataStorage().computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
+                            extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
+                        }
+                    }
+                });
     }
 
     public static int getLinkingBookColor(ItemStack stack, int tintIndex) {

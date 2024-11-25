@@ -51,9 +51,7 @@ public final class ModBlocks {
 
     public static final DeferredBlock<Block> LINKING_PORTAL = BLOCKS.register(Reference.BlockNames.LINKING_PORTAL,
             () -> new LinkingPortalBlock(BlockBehaviour.Properties.of().noCollission()
-                    .strength(-1.0F, -1.0F).sound(SoundType.GLASS).noOcclusion().lightLevel((state) -> {
-                        return 11;
-                    })));
+                    .strength(-1.0F, -1.0F).sound(SoundType.GLASS).noOcclusion().lightLevel((state) -> 11)));
 
     public static final DeferredBlock<Block> MARKER_SWITCH = BLOCKS.register(Reference.BlockNames.MARKER_SWITCH,
             () -> new MarkerSwitchBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(5)));

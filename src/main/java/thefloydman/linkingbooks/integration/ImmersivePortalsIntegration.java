@@ -62,7 +62,7 @@ import java.util.*;
 
 public class ImmersivePortalsIntegration {
 
-    private static final WeakHashMap<ServerPlayer, ChunkLoader> CHUNK_LOADERS = new WeakHashMap<ServerPlayer, ChunkLoader>();
+    private static final WeakHashMap<ServerPlayer, ChunkLoader> CHUNK_LOADERS = new WeakHashMap<>();
     public static final EntityType<LinkingPortalEntity> LINKING_PORTAL_ENTITY_TYPE = EntityType.Builder.<LinkingPortalEntity>of(LinkingPortalEntity::new, MobCategory.MISC).sized(1.0F, 1.0F).setTrackingRange(96).fireImmune().build(Reference.MODID + ":" + Reference.EntityNames.LINKING_PORTAL);
     ;
 
@@ -125,9 +125,10 @@ public class ImmersivePortalsIntegration {
     }
 
     public static void registerImmersivePortalsEntities(RegisterEvent event) {
-        event.register(Registries.ENTITY_TYPE, registry -> {
-            registry.register(Reference.getAsResourceLocation(Reference.EntityNames.LINKING_PORTAL), LINKING_PORTAL_ENTITY_TYPE);
-        });
+        event.register(
+                Registries.ENTITY_TYPE,
+                registry -> registry.register(Reference.getAsResourceLocation(Reference.EntityNames.LINKING_PORTAL), LINKING_PORTAL_ENTITY_TYPE)
+        );
     }
 
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {

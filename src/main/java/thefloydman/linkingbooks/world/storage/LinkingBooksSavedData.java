@@ -119,9 +119,7 @@ public class LinkingBooksSavedData extends SavedData {
         this.linkingPortals.forEach((pos, linkData) -> {
             CompoundTag compound = new CompoundTag();
             compound.put("portal_pos", NbtUtils.writeBlockPos(pos));
-            LinkData.CODEC.encodeStart(NbtOps.INSTANCE, linkData).ifSuccess(tag -> {
-                compound.put("link_data", tag);
-            });
+            LinkData.CODEC.encodeStart(NbtOps.INSTANCE, linkData).ifSuccess(tag -> compound.put("link_data", tag));
             portalList.add(compound);
         });
         nbt.put("linking_portals", portalList);

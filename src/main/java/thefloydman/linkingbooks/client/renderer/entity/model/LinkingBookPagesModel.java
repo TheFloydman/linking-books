@@ -59,9 +59,7 @@ public class LinkingBookPagesModel extends EntityModel<LinkingBookEntity> {
 
     @Override
     public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, int color) {
-        this.allModels.forEach((model) -> {
-            model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, color);
-        });
+        this.allModels.forEach((model) -> model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, color));
     }
 
     public void setBookState(float openAmount) {

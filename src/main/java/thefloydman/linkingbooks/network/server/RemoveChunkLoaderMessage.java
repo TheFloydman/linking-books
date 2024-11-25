@@ -35,9 +35,7 @@ public record RemoveChunkLoaderMessage() implements CustomPacketPayload {
     public static final StreamCodec<ByteBuf, RemoveChunkLoaderMessage> STREAM_CODEC = StreamCodec.unit(new RemoveChunkLoaderMessage());
 
     public static void handle(final RemoveChunkLoaderMessage data, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ImmersivePortalsIntegration.removeChunkLoader((ServerPlayer) context.player());
-        });
+        context.enqueueWork(() -> ImmersivePortalsIntegration.removeChunkLoader((ServerPlayer) context.player()));
     }
 
     @Override

@@ -39,9 +39,7 @@ public record AddChunkLoaderMessage(LinkData linkData) implements CustomPacketPa
     );
 
     public static void handle(final AddChunkLoaderMessage data, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ImmersivePortalsIntegration.addChunkLoader(data.linkData, (ServerPlayer) context.player());
-        });
+        context.enqueueWork(() -> ImmersivePortalsIntegration.addChunkLoader(data.linkData, (ServerPlayer) context.player()));
     }
 
     @Override

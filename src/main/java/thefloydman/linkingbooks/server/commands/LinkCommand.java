@@ -45,9 +45,7 @@ public class LinkCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
 
-        commandDispatcher.register(Commands.literal("link").requires((context) -> {
-                            return context.hasPermission(2);
-                        })
+        commandDispatcher.register(Commands.literal("link").requires((context) -> context.hasPermission(2))
 
                         .then(Commands.argument(ENTITIES, EntityArgument.entities())
                                 .then(Commands.argument(POSITION, BlockPosArgument.blockPos()).executes((context) -> {

@@ -67,7 +67,7 @@ public class ModItems {
                                             Reference.server == null ? BlockPos.ZERO : Reference.server.overworld().getSharedSpawnPos(),
                                             0.0F,
                                             UUID.randomUUID(),
-                                            new ArrayList<ResourceLocation>()))));
+                                            new ArrayList<>()))));
 
     // Block items
 

@@ -92,9 +92,9 @@ public class GuiBookManager implements ResourceManagerReloadListener {
         guidebookPages = Maps.newHashMap();
         String currentLang = Minecraft.getInstance().getLanguageManager().getSelected();
         Collection<ResourceLocation> guidebookResources = resourceManager
-                .listResources("lang/linkingbooks/guidebook", (resourceLocation) -> {
-                    return resourceLocation.getPath().endsWith(String.format("%s.xml", currentLang));
-                }).keySet();
+                .listResources("lang/linkingbooks/guidebook", resourceLocation ->
+                        resourceLocation.getPath().endsWith(String.format("%s.xml", currentLang))
+                ).keySet();
         for (ResourceLocation resourceLocation : guidebookResources) {
             Document document = null;
             try {
@@ -206,7 +206,6 @@ public class GuiBookManager implements ResourceManagerReloadListener {
                 }
             }
         }
-        LOGGER.info(
-                String.format("Successfully imported %d guidebook pages for Linking Books.", guidebookPages.size()));
+        LOGGER.info("Successfully imported {} guidebook pages for Linking Books.", guidebookPages.size());
     }
 }
