@@ -1,4 +1,4 @@
-_Myst_ comes to _Minecraft_ with **_Linking Books_**! Create books to warp between dimensions, and employ various blocks and items inspired by the greater _Myst_ universe. This mod adds special books that allow you to teleport to the exact location where they were first activated. Per Myst canon, linking books cannot be used to travel within the same "Age" (dimension). They also do not travel with you.
+Welcome to **_Linking Books_**, where _Myst_ meets _Minecraft_! Write linking books to warp between dimensions, and employ various blocks and items inspired by the greater _Myst_ universe. This mod adds special books that allow you to teleport to the exact location where they were first activated. Per Myst canon, linking books cannot be used to travel within the same "Age" (dimension). They also do not travel with you.
 
 (Includes an in-game guidebook, crafted on a 3x3 grid by surrounding a vanilla book with any kind of dye.)
 
@@ -16,5 +16,3 @@ Need help or just want to chat? Join us on Discord at https://discord.gg/eMSubn6
 
 - More sound effects, including linking sounds.
 - A fleshed-out ink system that will make creating Linking Panels a bit more involved.
-- Linking Panels with special effects like intra-dimension teleportation. The building blocks for this feature are already in place.
-- Miscellaneous decorative blocks from the Myst universe.
