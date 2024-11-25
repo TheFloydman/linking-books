@@ -92,11 +92,7 @@ public record TakeScreenshotForLinkingBookMessage(UUID uuid) implements CustomPa
         NativeImage largeImage = new NativeImage((int) largeWidth, (int) largeHeight, false);
         int initialX = (int) ((buffer.viewWidth - largeWidth) / 2);
         int initialY = (int) ((buffer.viewHeight - largeHeight) / 2);
-        for (int largeY = 0, fullY = initialY; largeY < largeHeight; largeY++, fullY++) {
-            for (int largeX = 0, fullX = initialX; largeX < largeWidth; largeX++, fullX++) {
-                largeImage.setPixelRGBA(largeX, largeY, fullImage.getPixelRGBA(fullX, fullY));
-            }
-        }
+        fullImage.copyRect(largeImage, initialX, initialY, 0, 0, (int) largeWidth, (int) largeHeight, false, false);
         NativeImage smallImage = new NativeImage((int) smallWidth, (int) smallHeight, false);
         largeImage.resizeSubRectTo(0, 0, (int) largeWidth, (int) largeHeight, smallImage);
         largeImage.close();
