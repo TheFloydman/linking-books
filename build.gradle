@@ -116,8 +116,11 @@ dependencies {
     // Example mod dependency using a file as dependency
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
     compileOnly files("libs/immersive_portals-6.0.3.jar")
-    localRuntime files("libs/immersive_portals-6.0.3.jar")
-    api "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
+    compileOnly "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
+
+    // Uncomment these lines to use these mods during testing.
+    //localRuntime files("libs/immersive_portals-6.0.3.jar")
+    //api "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
 
     // Example project dependency using a sister or child project:
     // implementation project(":myproject")
