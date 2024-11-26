@@ -19,21 +19,16 @@ package thefloydman.linkingbooks.client.gui.widget;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import java.nio.FloatBuffer;
@@ -111,44 +106,6 @@ public abstract class NestedWidget extends AbstractWidget {
 
     public void addListener(GuiEventListener listener) {
         this.listeners.add(listener);
-    }
-
-    /**
-     * A z-level-dependent version of GuiGraphics#fill.
-     */
-    public void zFill(GuiGraphics guiGraphics, int xStart, int yStart, int xEnd, int yEnd, final int color) {
-
-        if (xStart < xEnd) {
-            int endUpdated = xStart;
-            xStart = xEnd;
-            xEnd = endUpdated;
-        }
-
-        if (yStart < yEnd) {
-            int endUpdated = yStart;
-            yStart = yEnd;
-            yEnd = endUpdated;
-        }
-
-        final float red = (color >> 16 & 0xFF) / 255.0f;
-        final float green = (color >> 8 & 0xFF) / 255.0f;
-        final float blue = (color & 0xFF) / 255.0f;
-        final float alpha = (color >> 24 & 0xFF) / 255.0f;
-
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        Matrix4f matrix = guiGraphics.pose().last().pose();
-        VertexConsumer vertexconsumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
-        vertexconsumer.addVertex(matrix, xStart, yEnd, this.zLevel).setColor(red, green, blue, alpha);
-        vertexconsumer.addVertex(matrix, xEnd, yEnd, this.zLevel).setColor(red, green, blue, alpha);
-        vertexconsumer.addVertex(matrix, xEnd, yStart, this.zLevel).setColor(red, green, blue, alpha);
-        vertexconsumer.addVertex(matrix, xStart, yStart, this.zLevel).setColor(red, green, blue, alpha);
-        RenderSystem.disableBlend();
-    }
-
-    public void point(final GuiGraphics guiGraphics, int x, int y, final int color) {
-        this.zFill(guiGraphics, x, y, x + 1, y + 1, color);
     }
 
     @Override
