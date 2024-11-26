@@ -29,6 +29,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
+import thefloydman.linkingbooks.util.Reference;
 
 import javax.annotation.Nonnull;
 
@@ -51,7 +52,9 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
         this.linkData = extraData.readJsonWithCodec(LinkData.CODEC);
         this.canLink = extraData.readBoolean();
         this.linkingPanelImage = extraData.readNbt();
-        PacketDistributor.sendToServer(new AddChunkLoaderMessage(this.linkData));
+        if (Reference.isImmersivePortalsLoaded() && this.canLink) {
+            PacketDistributor.sendToServer(new AddChunkLoaderMessage(this.linkData));
+        }
     }
 
     @Override
@@ -61,7 +64,9 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
 
     @Override
     public void removed(@Nonnull Player player) {
-        PacketDistributor.sendToServer(new RemoveChunkLoaderMessage());
+        if (Reference.isImmersivePortalsLoaded() && this.canLink) {
+            PacketDistributor.sendToServer(new RemoveChunkLoaderMessage());
+        }
         super.removed(player);
     }
 
