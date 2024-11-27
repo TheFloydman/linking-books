@@ -46,17 +46,11 @@ public class PageChangeWidget extends NestedWidget {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             if (this.isInside(mouseX, mouseY)) {
-                RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
-                        DestFactor.ZERO);
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 guiGraphics.blitSprite(this.type.spriteHover, this.getX(), this.getY(), 1, 23, 13);
             } else {
-                RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
-                        DestFactor.ZERO);
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, 1.0F);
                 guiGraphics.blitSprite(this.type.spriteNormal, this.getX(), this.getY(), 1, 23, 13);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             }
             guiGraphics.pose().popPose();
         }

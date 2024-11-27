@@ -18,13 +18,10 @@
 package thefloydman.linkingbooks.client.gui.widget;
 
 import com.mojang.blaze3d.pipeline.TextureTarget;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -59,11 +56,7 @@ public class LinkingPanelWidget extends NestedWidget {
         this.canLink = canLink;
         if (linkingPanelImage != null) {
             NativeImage image256 = new NativeImage(256, 256, false);
-            for (int textureY = 0; textureY < linkingPanelImage.getHeight(); textureY++) {
-                for (int textureX = 0; textureX < linkingPanelImage.getWidth(); textureX++) {
-                    image256.setPixelRGBA(textureX, textureY, linkingPanelImage.getPixelRGBA(textureX, textureY));
-                }
-            }
+            linkingPanelImage.copyRect(image256, 0, 0, 0, 0, linkingPanelImage.getWidth(), linkingPanelImage.getHeight(), false, false);
             this.linkingPanelImage = new DynamicTexture(image256);
             this.guiLinkingPanelImageResourceLocation = Minecraft.getInstance().getTextureManager().register("gui_linking_panel_image", this.linkingPanelImage);
         }
@@ -73,29 +66,27 @@ public class LinkingPanelWidget extends NestedWidget {
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0.0F, 0.0F, 150.0F);
             int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
             guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, (int) this.zLevel, panelColor);
             if (this.canLink) {
                 if (Reference.isImmersivePortalsLoaded() && LinkingBooksConfig.USE_IP_FOR_LINKING_PANELS.get()) {
+                    guiGraphics.pose().translate(0.0F, 0.0F, 1.0F);
                     ImmersivePortalsIntegration.renderGuiPortal(
                             this.linkData,
                             this.linkingPanelFramebuffer,
                             this.minecraft,
-                            this.getX(),
-                            this.getY(),
-                            this.getWidth(),
-                            this.getHeight()
+                            this.getX(), this.getY(),
+                            this.getWidth(), this.getHeight()
                     );
                     this.linkingPanelFramebuffer.clear(true);
                 } else if (this.linkingPanelImage != null && this.linkingPanelImage.getPixels() != null) {
-                    RenderSystem.enableBlend();
-                    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-                            GlStateManager.DestFactor.ZERO);
-                    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                    guiGraphics.blit(this.guiLinkingPanelImageResourceLocation, this.getX(), this.getY(), 150, 0, 0, this.linkingPanelImage.getPixels().getWidth(),
-                            this.linkingPanelImage.getPixels().getHeight(), this.linkingPanelImage.getPixels().getWidth(), this.linkingPanelImage.getPixels().getHeight());
+                    guiGraphics.blit(
+                            this.guiLinkingPanelImageResourceLocation,
+                            this.getX(), this.getY(),
+                            (int) this.zLevel + 1, 0, 0,
+                            this.getWidth(), this.getHeight(),
+                            this.linkingPanelImage.getPixels().getWidth(), this.linkingPanelImage.getPixels().getHeight()
+                    );
                 }
             }
             guiGraphics.pose().popPose();

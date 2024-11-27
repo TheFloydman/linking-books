@@ -57,11 +57,6 @@ public class RecipeWidget extends NestedWidget {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().scale(this.scale, this.scale, 1.0F);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
-                    DestFactor.ZERO);
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             guiGraphics.blit(CRAFTING_TEXTURE, (int) (this.getX() / this.scale), (int) (this.getY() / this.scale), 1, 0, 0, this.width,
                     this.height, 256, 256);
             this.renderChildren(guiGraphics, mouseX, mouseY, partialTicks);

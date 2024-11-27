@@ -49,11 +49,6 @@ public class ImageWidget extends NestedWidget {
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
-            RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
-                    DestFactor.ZERO);
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             guiGraphics.blit(this.resourceLocation, this.getX(), this.getY(), 1, this.sourceX, this.sourceY, (int) (this.width * this.scale),
                     (int) (this.height * this.scale), (int) (this.width * this.scale),
                     (int) (this.height * this.scale));
