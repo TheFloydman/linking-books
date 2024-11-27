@@ -74,6 +74,8 @@ public class LinkingPanelWidget extends NestedWidget {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0.0F, 0.0F, 150.0F);
+            int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
+            guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, (int) this.zLevel, panelColor);
             if (this.canLink) {
                 if (Reference.isImmersivePortalsLoaded() && LinkingBooksConfig.USE_IP_FOR_LINKING_PANELS.get()) {
                     ImmersivePortalsIntegration.renderGuiPortal(
@@ -96,9 +98,6 @@ public class LinkingPanelWidget extends NestedWidget {
                             this.linkingPanelImage.getPixels().getHeight(), this.linkingPanelImage.getPixels().getWidth(), this.linkingPanelImage.getPixels().getHeight());
                 }
             }
-            int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
-            this.zFill(guiGraphics, this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height,
-                    panelColor);
             guiGraphics.pose().popPose();
         }
     }
