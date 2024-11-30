@@ -17,24 +17,21 @@
  */
 package thefloydman.linkingbooks.client.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.util.Reference;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 @OnlyIn(Dist.CLIENT)
@@ -61,7 +58,7 @@ public class LinkingBookWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             float[] color = new Color(this.color).getRGBColorComponents(null);

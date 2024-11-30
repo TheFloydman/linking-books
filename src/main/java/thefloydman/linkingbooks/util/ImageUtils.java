@@ -59,8 +59,8 @@ public class ImageUtils {
                                 return pixels.stream().mapToInt(Integer::intValue);
                             })
                     )
-                    .apply(codecBuilderInstance, (width, height, pixelsIntStream) -> {
-                        int[] pixels = pixelsIntStream.toArray();
+                    .apply(codecBuilderInstance, (width, height, intStream) -> {
+                        int[] pixels = intStream.toArray();
                         NativeImage image = new NativeImage(width, height, false);
                         int i = 0;
                         for (int y = 0; (y < height) && (i < pixels.length); y++) {

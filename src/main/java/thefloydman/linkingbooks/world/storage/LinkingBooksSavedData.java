@@ -23,9 +23,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.saveddata.SavedData;
-import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.data.LinkData;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -108,7 +108,7 @@ public class LinkingBooksSavedData extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(CompoundTag nbt, @NotNull HolderLookup.Provider provider) {
+    public @Nonnull CompoundTag save(CompoundTag nbt, @Nonnull HolderLookup.Provider provider) {
         ListTag imageList = new ListTag();
         linkingPanelImages.forEach((uuid, image) -> {
             image.putUUID("uuid", uuid);

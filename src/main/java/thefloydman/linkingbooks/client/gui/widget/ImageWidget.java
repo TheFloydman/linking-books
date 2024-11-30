@@ -17,17 +17,14 @@
  */
 package thefloydman.linkingbooks.client.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class ImageWidget extends NestedWidget {
@@ -46,7 +43,7 @@ public class ImageWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             guiGraphics.blit(this.resourceLocation, this.getX(), this.getY(), 1, this.sourceX, this.sourceY, (int) (this.width * this.scale),

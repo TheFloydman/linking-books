@@ -23,8 +23,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
@@ -43,7 +43,7 @@ public class ParagraphWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().scale(this.scale, this.scale, 1.0F);

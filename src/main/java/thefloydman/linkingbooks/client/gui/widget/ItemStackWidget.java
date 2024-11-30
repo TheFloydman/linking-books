@@ -24,8 +24,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class ItemStackWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible() && !this.itemStacks.isEmpty()) {
             int changeIndex = Mth.floor((float) (System.currentTimeMillis() - this.creationTime) / this.changeTime);
             ItemStack stack = this.itemStacks.get(changeIndex % this.itemStacks.size());

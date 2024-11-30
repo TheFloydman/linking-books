@@ -24,8 +24,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.util.LinkingUtils;
+
+import javax.annotation.Nonnull;
 
 public class BlankLinkingBookItem extends Item {
 
@@ -35,7 +36,7 @@ public class BlankLinkingBookItem extends Item {
 
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level world, Player player, @NotNull InteractionHand hand) {
+    public @Nonnull InteractionResultHolder<ItemStack> use(Level world, Player player, @Nonnull InteractionHand hand) {
         ItemStack heldStack = player.getItemInHand(hand);
         if (!world.isClientSide() && !heldStack.isEmpty()) {
             ItemStack writtenBook = LinkingUtils.createWrittenLinkingBook(player, heldStack);

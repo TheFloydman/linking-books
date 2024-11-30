@@ -28,13 +28,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.LinkingBooksConfig;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.network.server.LinkMessage;
 import thefloydman.linkingbooks.util.Reference;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 @OnlyIn(Dist.CLIENT)
@@ -63,7 +63,7 @@ public class LinkingPanelWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             guiGraphics.pose().pushPose();
             int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();

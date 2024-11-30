@@ -26,9 +26,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 import thefloydman.linkingbooks.util.Reference;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class RecipeCarouselWidget extends NestedWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             int generalIndex = Mth.floor((float) (System.currentTimeMillis() - this.creationTime) / (float) this.changeTime)
                     % this.totalVariations;
