@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Something went wrong? Let us know.
 title: "[BUG] Something wrong"
 labels: bug
 assignees: TheFloydman
