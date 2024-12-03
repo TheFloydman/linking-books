@@ -44,7 +44,7 @@ public record LinkEffect(LinkEffectType type, BiFunction<Entity, LinkData, Boole
     public static final Codec<LinkEffect> CODEC = Codec.of(LinkEffect::encode, LinkEffect::decode);
 
     private static <T> DataResult<T> encode(LinkEffect linkEffect, DynamicOps<T> ops, T prefix) {
-        return new DataResult.Error<>(() -> "Writing Link Effects to disk is currently not supported.", Optional.empty(), Lifecycle.stable());
+        return linkEffect.type().codec().encode(linkEffect.type(), ops, prefix);
     }
 
     private static <T> DataResult<Pair<LinkEffect, T>> decode(DynamicOps<T> ops, T input) {
