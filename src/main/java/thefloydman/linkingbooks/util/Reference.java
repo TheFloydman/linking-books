@@ -21,6 +21,12 @@ package thefloydman.linkingbooks.util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.function.Function;
 
 public class Reference {
 
@@ -109,7 +115,9 @@ public class Reference {
     public static class SoundNames {
         public static final String PAGEFLIP_FORWARD = "pageflip_forward";
         public static final String PAGEFLIP_BACK = "pageflip_back";
+        public static final String BOOK_OPEN = "book_open";
         public static final String BOOK_CLOSE = "book_close";
+        public static final String LINK = "link";
     }
 
     public static class RegistryKeyNames {
@@ -130,6 +138,30 @@ public class Reference {
         public static final ResourceLocation FLOWING_INK_TEXTURE = getAsResourceLocation("block/ink_flow");
         public static final ResourceLocation LINKING_BOOK_TEXTURE = getAsResourceLocation(
                 "textures/entity/linking_book.png");
+    }
+
+    // Helper for making the private field getters via reflection
+    // Also throws ClassCastException if the types are wrong
+    @SuppressWarnings("unchecked")
+    public static <FIELDHOLDER, FIELDTYPE> Function<FIELDHOLDER, FIELDTYPE> getField(
+            Class<FIELDHOLDER> fieldHolderClass, String fieldName) {
+        // Forge's ORH is needed to reflect into vanilla Minecraft Java
+        Field field = ObfuscationReflectionHelper.findField(fieldHolderClass, fieldName);
+        return instance -> {
+            try {
+                return (FIELDTYPE) (field.get(instance));
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    public static Method getMethod(Class<?> methodHolderClass, String methodName, Class<?>... parameterTypes) {
+        return ObfuscationReflectionHelper.findMethod(methodHolderClass, methodName, parameterTypes);
+    }
+
+    public static <T> Constructor<T> getConstructor(final Class<T> classOne, final Class<?>... parameters) {
+        return ObfuscationReflectionHelper.findConstructor(classOne, parameters);
     }
 
 }
