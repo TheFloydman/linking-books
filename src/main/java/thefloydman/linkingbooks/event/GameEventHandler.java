@@ -42,11 +42,13 @@ import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.server.commands.LinkCommand;
+import thefloydman.linkingbooks.server.commands.ReltoCommand;
 import thefloydman.linkingbooks.util.LinkingPortalArea;
 import thefloydman.linkingbooks.util.Reference;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.world.item.ModItems;
 import thefloydman.linkingbooks.world.item.WrittenLinkingBookItem;
+import thefloydman.linkingbooks.world.level.AgeUtils;
 import thefloydman.linkingbooks.world.level.block.LinkTranslatorBlock;
 import thefloydman.linkingbooks.world.level.block.LinkingLecternBlock;
 import thefloydman.linkingbooks.world.level.block.MarkerSwitchBlock;
@@ -60,12 +62,15 @@ public class GameEventHandler {
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         Reference.server = event.getServer();
+        // Add existing Ages to level map so the game knows they exist!
+        AgeUtils.mapLevelsOnStartup(event.getServer());
     }
 
     @SubscribeEvent
     public static void serverStarting(ServerStartingEvent event) {
         // Register commands.
         LinkCommand.register(event.getServer().getCommands().getDispatcher());
+        ReltoCommand.register(event.getServer().getCommands().getDispatcher());
     }
 
     @SubscribeEvent

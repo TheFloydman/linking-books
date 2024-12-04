@@ -45,6 +45,7 @@ import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.linking.LinkEffect;
 import thefloydman.linkingbooks.linking.LinkEffectTypes;
 import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
+import thefloydman.linkingbooks.network.client.UpdateClientDimensionListMessage;
 import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.LinkMessage;
 import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
@@ -73,6 +74,11 @@ public class ModEventHandler {
                 TakeScreenshotForLinkingBookMessage.TYPE,
                 TakeScreenshotForLinkingBookMessage.STREAM_CODEC,
                 TakeScreenshotForLinkingBookMessage::handle
+        );
+        registrar.playToClient(
+                UpdateClientDimensionListMessage.TYPE,
+                UpdateClientDimensionListMessage.STREAM_CODEC,
+                UpdateClientDimensionListMessage::handle
         );
         registrar.playToServer(
                 SaveLinkingPanelImageMessage.TYPE,

@@ -7,8 +7,16 @@
     "subtitle": "linkingbooks.subtitle.pageflip_back",
     "sounds": [ "linkingbooks:pageflip_back" ]
   },
+  "book_open": {
+    "subtitle": "linkingbooks.subtitle.book_open",
+    "sounds": [ "linkingbooks:book_open" ]
+  },
   "book_close": {
     "subtitle": "linkingbooks.subtitle.book_close",
     "sounds": [ "linkingbooks:book_close" ]
+  },
+  "link": {
+    "subtitle": "linkingbooks.subtitle.link",
+    "sounds": [ "linkingbooks:link" ]
   }
 }

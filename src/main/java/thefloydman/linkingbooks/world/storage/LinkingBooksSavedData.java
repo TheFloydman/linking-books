@@ -18,50 +18,25 @@
 
 package thefloydman.linkingbooks.world.storage;
 
+import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.DataResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.saveddata.SavedData;
 import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.world.level.AgeInfo;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class LinkingBooksSavedData extends SavedData {
 
     public final Map<UUID, CompoundTag> linkingPanelImages = new HashMap<>();
     public final Map<BlockPos, LinkData> linkingPortals = new HashMap<>();
-
-    public static LinkingBooksSavedData load(CompoundTag nbt, HolderLookup.Provider provider) {
-        LinkingBooksSavedData data = new LinkingBooksSavedData();
-        if (nbt.contains("linkingPanelImages", Tag.TAG_LIST)) {
-            ListTag list = nbt.getList("linkingPanelImages", Tag.TAG_COMPOUND);
-            for (Tag item : list) {
-                CompoundTag compound = (CompoundTag) item;
-                if (compound.contains("uuid", Tag.TAG_INT_ARRAY)) {
-                    UUID uuid = compound.getUUID("uuid");
-                    data.linkingPanelImages.put(uuid, compound);
-                }
-            }
-        }
-        if (nbt.contains("linking_portals", Tag.TAG_LIST)) {
-            ListTag list = nbt.getList("linking_portals", Tag.TAG_COMPOUND);
-            for (Tag item : list) {
-                CompoundTag compound = (CompoundTag) item;
-                BlockPos pos = NbtUtils.readBlockPos(compound, "portal_pos").orElseGet(() -> BlockPos.ZERO);
-                try {
-                    LinkData linkData = LinkData.CODEC.parse(NbtOps.INSTANCE, compound.getCompound("link_data")).getOrThrow();
-                    data.linkingPortals.put(pos, linkData);
-                } catch (IllegalStateException exception) {
-                    LogUtils.getLogger().warn(exception.getMessage());
-                }
-            }
-        }
-        return data;
-    }
+    public final Set<AgeInfo> ages = Sets.newHashSet();
 
     public static SavedData.Factory<LinkingBooksSavedData> factory() {
         return new SavedData.Factory<>(
@@ -86,6 +61,13 @@ public class LinkingBooksSavedData extends SavedData {
 
     public CompoundTag getLinkingPanelImage(UUID uuid) {
         return this.linkingPanelImages.get(uuid);
+    }
+
+    public void addAge(AgeInfo age) {
+        if (this.ages.stream().map(AgeInfo::id).noneMatch(resourceLocation -> resourceLocation.equals(age.id()))) {
+            this.ages.add(age);
+            this.setDirty();
+        }
     }
 
     public boolean addLinkingPortalData(BlockPos pos, LinkData linkData) {
@@ -123,7 +105,55 @@ public class LinkingBooksSavedData extends SavedData {
             portalList.add(compound);
         });
         nbt.put("linking_portals", portalList);
+        ListTag ageList = new ListTag();
+        List<Tag> tags = this.ages.stream().map(age -> {
+            DataResult<Tag> dataResult = AgeInfo.CODEC.encodeStart(NbtOps.INSTANCE, age);
+            if (dataResult.isSuccess() && dataResult.result().isPresent()) {
+                return dataResult.result().get();
+            }
+            return null;
+        }).filter(Objects::nonNull).toList();
+        ageList.addAll(tags);
+        nbt.put("ages", ageList);
         return nbt;
+    }
+
+    public static LinkingBooksSavedData load(CompoundTag nbt, HolderLookup.Provider provider) {
+        LinkingBooksSavedData data = new LinkingBooksSavedData();
+        if (nbt.contains("linkingPanelImages", Tag.TAG_LIST)) {
+            ListTag list = nbt.getList("linkingPanelImages", Tag.TAG_COMPOUND);
+            for (Tag item : list) {
+                CompoundTag compound = (CompoundTag) item;
+                if (compound.contains("uuid", Tag.TAG_INT_ARRAY)) {
+                    UUID uuid = compound.getUUID("uuid");
+                    data.linkingPanelImages.put(uuid, compound);
+                }
+            }
+        }
+        if (nbt.contains("linking_portals", Tag.TAG_LIST)) {
+            ListTag list = nbt.getList("linking_portals", Tag.TAG_COMPOUND);
+            for (Tag item : list) {
+                CompoundTag compound = (CompoundTag) item;
+                BlockPos pos = NbtUtils.readBlockPos(compound, "portal_pos").orElseGet(() -> BlockPos.ZERO);
+                try {
+                    LinkData linkData = LinkData.CODEC.parse(NbtOps.INSTANCE, compound.getCompound("link_data")).getOrThrow();
+                    data.linkingPortals.put(pos, linkData);
+                } catch (IllegalStateException exception) {
+                    LogUtils.getLogger().warn(exception.getMessage());
+                }
+            }
+        }
+        if (nbt.contains("ages", Tag.TAG_LIST)) {
+            ListTag list = nbt.getList("ages", Tag.TAG_COMPOUND);
+            data.ages.addAll(list.stream().map(tag -> {
+                DataResult<Pair<AgeInfo, Tag>> pair = AgeInfo.CODEC.decode(NbtOps.INSTANCE, tag);
+                if (pair.isSuccess() && pair.result().isPresent()) {
+                    return pair.result().get().getFirst();
+                }
+                return AgeInfo.DUMMY;
+            }).toList());
+        }
+        return data;
     }
 
 }
