@@ -50,17 +50,20 @@ import qouteall.imm_ptl.core.render.GuiPortalRendering;
 import qouteall.imm_ptl.core.render.PortalEntityRenderer;
 import qouteall.imm_ptl.core.render.context_management.WorldRenderInfo;
 import thefloydman.linkingbooks.LinkingBooksConfig;
-import thefloydman.linkingbooks.component.ModDataComponents;
-import thefloydman.linkingbooks.component.LinkData;
-import thefloydman.linkingbooks.client.ImageUtils;
 import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
+import thefloydman.linkingbooks.client.ImageUtils;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.entity.LinkingPortalEntity;
 import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
 
 import java.util.*;
 
-public class ImmersivePortalsIntegration {
+/**
+ * Check {@link Reference#isImmersivePortalsLoaded} before referencing this class.
+ */
+public final class ImmersivePortalsIntegration {
 
     private static final WeakHashMap<ServerPlayer, ChunkLoader> CHUNK_LOADERS = new WeakHashMap<>();
     public static final EntityType<LinkingPortalEntity> LINKING_PORTAL_ENTITY_TYPE = EntityType.Builder.<LinkingPortalEntity>of(LinkingPortalEntity::new, MobCategory.MISC).sized(1.0F, 1.0F).setTrackingRange(96).fireImmune().build(Reference.MODID + ":" + Reference.EntityNames.LINKING_PORTAL);
