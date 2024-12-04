@@ -18,6 +18,7 @@
 
 package thefloydman.linkingbooks.util;
 
+import com.mojang.serialization.JsonOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -28,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -40,6 +42,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import thefloydman.linkingbooks.LinkingBooksConfig;
+import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.linking.LinkEffect;
@@ -81,16 +84,16 @@ public class LinkingUtils {
      */
     public static boolean linkEntity(Entity entity, LinkData linkData, boolean holdingBook) {
 
-        Level world = entity.getCommandSenderWorld();
+        Level level = entity.getCommandSenderWorld();
 
-        if (world.isClientSide()) {
+        if (level.isClientSide()) {
             LOGGER.info(
                     "An attempt has been made to directly link an entity from the client. Only do this from the server.");
         } else if (linkData == null) {
             LOGGER.info("A null ILinkInfo has been supplied. Link failed.");
         } else if (!LinkingBooksConfig.ALWAYS_ALLOW_INTRAAGE_LINKING.get()
                 && !linkData.linkEffects().contains(ResourceLocation.parse("linkingbooks:intraage_linking"))
-                && world.dimension().location().equals(linkData.dimension())) {
+                && level.dimension().location().equals(linkData.dimension())) {
             if (entity instanceof ServerPlayer player) {
                 player.closeContainer();
                 player.doCloseContainer();
@@ -98,7 +101,7 @@ public class LinkingUtils {
             }
         } else {
 
-            MinecraftServer server = world.getServer();
+            MinecraftServer server = level.getServer();
             if (server == null) {
                 LOGGER.info("Cannot get Minecraft server instance. Link failed.");
                 return false;
@@ -158,16 +161,17 @@ public class LinkingUtils {
                 }
                 if (holdingBook
                         && !linkData.linkEffects().contains(Reference.getAsResourceLocation("tethered"))) {
-                    LinkingBookEntity book = new LinkingBookEntity(world, player.getMainHandItem().copy());
+                    LinkingBookEntity book = new LinkingBookEntity(level, player.getMainHandItem().copy());
                     Vec3 lookVec = player.getLookAngle();
                     book.setPos(player.getX() + (lookVec.x() / 4.0D), player.getY() + 1.0D,
                             player.getZ() + (lookVec.z() / 4.0D));
                     book.setYRot(player.yHeadRot);
-                    world.addFreshEntity(book);
+                    level.addFreshEntity(book);
                     player.getMainHandItem().shrink(1);
                 }
                 player.doCloseContainer();
                 player.closeContainer();
+                serverWorld.playSound(null, player.blockPosition(), ModSounds.LINK.get(), SoundSource.PLAYERS, 0.25F, 1.0F);
                 player.teleportTo(serverWorld, x, y, z, rotation, player.getXRot());
             } else {
                 CompoundTag nbt = new CompoundTag();
@@ -188,7 +192,7 @@ public class LinkingUtils {
                             player.giveExperienceLevels(LinkingBooksConfig.LINKING_COST_LEVELS.get());
                         }
                         serverWorld.getServer().execute(() -> {
-                            player.teleportTo((ServerLevel) world, originalPos.x, originalPos.y, originalPos.z,
+                            player.teleportTo((ServerLevel) level, originalPos.x, originalPos.y, originalPos.z,
                                     originalRot, player.getXRot());
                             player.displayClientMessage(Component.translatable("message.linkingbooks.link_failed_end"),
                                     true);
@@ -198,11 +202,11 @@ public class LinkingUtils {
                             CompoundTag tag = new CompoundTag();
                             entity.saveAsPassenger(tag);
                             entity.remove(Entity.RemovalReason.CHANGED_DIMENSION);
-                            Entity entityCopy = EntityType.create(tag, world).orElse(null);
+                            Entity entityCopy = EntityType.create(tag, level).orElse(null);
                             if (entityCopy != null) {
                                 entityCopy.setPos(originalPos.x, originalPos.y, originalPos.z);
-                                world.addFreshEntity(entityCopy);
-                                ((ServerLevel) world).addDuringTeleport(entityCopy);
+                                level.addFreshEntity(entityCopy);
+                                ((ServerLevel) level).addDuringTeleport(entityCopy);
                             }
                         });
                     }
@@ -234,9 +238,9 @@ public class LinkingUtils {
         return linked;
     }
 
-    public static void openLinkingBookGui(ServerPlayer player, boolean holdingBook, int color, LinkData linkData,
+    public static void openLinkingBookGui(ServerPlayer serverPlayer, boolean holdingBook, int color, LinkData linkData,
                                           ResourceLocation currentDimension) {
-        player.openMenu(
+        serverPlayer.openMenu(
                 new SimpleMenuProvider(
                         (id, playerInventory, playerEntity) ->
                                 new LinkingBookMenuType(id, playerInventory),
@@ -249,13 +253,11 @@ public class LinkingUtils {
                             || !currentDimension.equals(linkData.dimension())
                             || linkData.linkEffects().contains(Reference.getAsResourceLocation("intraage_linking"));
                     extraData.writeBoolean(canLink);
-                    MinecraftServer server = player.getServer();
+                    MinecraftServer server = serverPlayer.getServer();
                     if (server != null) {
-                        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
-                        if (overworld != null) {
-                            LinkingBooksSavedData savedData = overworld.getDataStorage().computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
-                            extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
-                        }
+                        ServerLevel overworld = server.overworld();
+                        LinkingBooksSavedData savedData = overworld.getDataStorage().computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
+                        extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
                     }
                 });
     }

@@ -53,12 +53,15 @@ public class GuidebookScreen extends AbstractContainerScreen<GuidebookMenuType> 
         this.addRenderableWidget(new BookWidget("guidebook", this.leftPos, this.topPos, 100.0F, this.imageWidth,
                 this.imageHeight, new Color(80, 111, 203).getRGB(), Component.literal("Guidebook"), this, 1.0F, this.font,
                 new ArrayList<>(GuiBookManager.getPages().values())));
+        if (this.minecraft != null && this.minecraft.player != null) {
+            this.minecraft.player.playSound(ModSounds.BOOK_OPEN.get());
+        }
     }
 
     @Override
     public void onClose() {
         if (this.minecraft != null && this.minecraft.player != null) {
-            this.minecraft.player.playSound(ModSounds.BOOK_CLOSE.get());
+            this.minecraft.player.playSound(ModSounds.BOOK_CLOSE.get(), 0.5F, 1.0F);
         }
         super.onClose();
     }

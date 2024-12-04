@@ -32,7 +32,7 @@ import thefloydman.linkingbooks.util.Reference;
 import javax.annotation.Nonnull;
 
 /**
- * A Link Effect only containing a name.
+ * A Link Effect that applies a MobEffect (Potion Effect) for a specified duration.
  */
 public record MobEffectLinkEffectType(@Nonnull ResourceLocation typeID, Holder<MobEffect> effect,
                                       int ticks) implements LinkEffectType {

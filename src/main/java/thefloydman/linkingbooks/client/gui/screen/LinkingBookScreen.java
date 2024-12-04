@@ -27,6 +27,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
+import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.util.ImageUtils;
 import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
 
@@ -50,7 +51,19 @@ public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookMenuTy
                 this.getMenu().holdingBook, this.getMenu().bookColor, this.getMenu().linkData, this.getMenu().canLink,
                 linkingPanelImage));
         linkingBook.addListener(this);
+        if (this.minecraft != null && this.minecraft.player != null) {
+            this.minecraft.player.playSound(ModSounds.BOOK_OPEN.get(), 0.5F, 1.0F);
+        }
     }
+
+    @Override
+    public void onClose() {
+        if (this.minecraft != null && this.minecraft.player != null) {
+            this.minecraft.player.playSound(ModSounds.BOOK_CLOSE.get());
+        }
+        super.onClose();
+    }
+
 
     @Override
     protected void renderLabels(@Nonnull GuiGraphics guiGraphics, int p_97809_, int p_97810_) {

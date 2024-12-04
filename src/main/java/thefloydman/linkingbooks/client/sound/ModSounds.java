@@ -38,8 +38,16 @@ public class ModSounds {
             () -> SoundEvent
                     .createVariableRangeEvent(Reference.getAsResourceLocation(Reference.SoundNames.PAGEFLIP_BACK)));
 
+    public static final Supplier<SoundEvent> BOOK_OPEN = SOUNDS.register(Reference.SoundNames.BOOK_OPEN,
+            () -> SoundEvent
+                    .createVariableRangeEvent(Reference.getAsResourceLocation(Reference.SoundNames.BOOK_OPEN)));
+
     public static final Supplier<SoundEvent> BOOK_CLOSE = SOUNDS.register(Reference.SoundNames.BOOK_CLOSE,
             () -> SoundEvent
                     .createVariableRangeEvent(Reference.getAsResourceLocation(Reference.SoundNames.BOOK_CLOSE)));
+
+    public static final Supplier<SoundEvent> LINK = SOUNDS.register(Reference.SoundNames.LINK,
+            () -> SoundEvent
+                    .createVariableRangeEvent(Reference.getAsResourceLocation(Reference.SoundNames.LINK)));
 
 }

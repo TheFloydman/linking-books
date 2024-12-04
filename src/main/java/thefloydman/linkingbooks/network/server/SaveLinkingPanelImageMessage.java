@@ -47,7 +47,7 @@ public record SaveLinkingPanelImageMessage(CompoundTag image, UUID uuid) impleme
     public static void handle(final SaveLinkingPanelImageMessage data, final IPayloadContext context) {
 
         try {
-            LinkingBooksSavedData worldData = context.player().getServer().getLevel(Level.OVERWORLD).getDataStorage()
+            LinkingBooksSavedData worldData = context.player().getServer().overworld().getDataStorage()
                     .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
             worldData.addLinkingPanelImage(data.uuid(), data.image());
         } catch (NullPointerException exception) {

@@ -1,11 +1,11 @@
 {
-    "type": "linkingbooks:link_effect",
-    "additional_ingredients": [
-        {
-            "item": "minecraft:lead"
-        }
-    ],
-    "link_effects": [
-        "linkingbooks:tethered"
-    ]
+  "type": "linkingbooks:link_effect",
+  "additional_ingredients": [
+    {
+      "item": "minecraft:lead"
+    }
+  ],
+  "link_effects": [
+    "linkingbooks:tethered"
+  ]
 }
