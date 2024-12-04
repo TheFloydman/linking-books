@@ -26,8 +26,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 

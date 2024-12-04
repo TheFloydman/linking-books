@@ -25,17 +25,16 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.core.component.ModDataComponents;
+import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.linking.LinkEffectTypes;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.world.entity.ModEntityTypes;
-import thefloydman.linkingbooks.world.inventory.ModMenuTypes;
-import thefloydman.linkingbooks.world.item.ModCreativeModeTabs;
-import thefloydman.linkingbooks.world.item.ModItems;
-import thefloydman.linkingbooks.world.item.crafting.ModRecipeSerializers;
-import thefloydman.linkingbooks.world.item.crafting.ModRecipeTypes;
-import thefloydman.linkingbooks.world.level.block.ModBlocks;
-import thefloydman.linkingbooks.world.level.block.entity.ModBlockEntityTypes;
+import thefloydman.linkingbooks.entity.ModEntityTypes;
+import thefloydman.linkingbooks.menutype.ModMenuTypes;
+import thefloydman.linkingbooks.item.ModCreativeModeTabs;
+import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.crafting.ModRecipeSerializers;
+import thefloydman.linkingbooks.crafting.ModRecipeTypes;
+import thefloydman.linkingbooks.block.ModBlocks;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 
 @Mod(Reference.MODID)
 public class LinkingBooks {

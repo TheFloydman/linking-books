@@ -21,7 +21,7 @@ package thefloydman.linkingbooks.linking;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 

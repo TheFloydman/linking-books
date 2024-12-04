@@ -50,13 +50,13 @@ import qouteall.imm_ptl.core.render.GuiPortalRendering;
 import qouteall.imm_ptl.core.render.PortalEntityRenderer;
 import qouteall.imm_ptl.core.render.context_management.WorldRenderInfo;
 import thefloydman.linkingbooks.LinkingBooksConfig;
-import thefloydman.linkingbooks.core.component.ModDataComponents;
-import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.util.ImageUtils;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.world.entity.LinkingPortalEntity;
-import thefloydman.linkingbooks.world.item.ModItems;
-import thefloydman.linkingbooks.world.level.block.entity.LinkTranslatorBlockEntity;
+import thefloydman.linkingbooks.component.ModDataComponents;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.client.ImageUtils;
+import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.entity.LinkingPortalEntity;
+import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
 
 import java.util.*;
 

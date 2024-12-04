@@ -29,10 +29,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import thefloydman.linkingbooks.LinkingBooksConfig;
-import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.network.server.LinkMessage;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import java.awt.*;

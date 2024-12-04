@@ -34,7 +34,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;

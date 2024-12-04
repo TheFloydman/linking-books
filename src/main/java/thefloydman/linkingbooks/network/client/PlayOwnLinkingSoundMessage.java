@@ -24,7 +24,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 

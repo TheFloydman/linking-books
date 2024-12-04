@@ -28,10 +28,10 @@ import net.minecraft.world.item.ItemStack;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
-import thefloydman.linkingbooks.util.LinkingUtils;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.world.level.block.LinkingLecternBlock;
-import thefloydman.linkingbooks.world.level.block.entity.LinkingLecternBlockEntity;
+import thefloydman.linkingbooks.linking.LinkingUtils;
+import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.block.LinkingLecternBlock;
+import thefloydman.linkingbooks.blockentity.LinkingLecternBlockEntity;
 
 import javax.annotation.Nonnull;
 import java.awt.*;

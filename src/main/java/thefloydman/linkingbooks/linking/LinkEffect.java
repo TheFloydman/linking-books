@@ -26,8 +26,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

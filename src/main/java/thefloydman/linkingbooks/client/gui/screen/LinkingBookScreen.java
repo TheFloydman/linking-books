@@ -28,8 +28,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.util.ImageUtils;
-import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
+import thefloydman.linkingbooks.client.ImageUtils;
+import thefloydman.linkingbooks.menutype.LinkingBookMenuType;
 
 import javax.annotation.Nonnull;
 

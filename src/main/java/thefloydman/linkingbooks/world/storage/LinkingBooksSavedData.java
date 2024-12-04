@@ -26,8 +26,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.saveddata.SavedData;
-import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.world.level.AgeInfo;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.world.generation.AgeInfo;
 
 import javax.annotation.Nonnull;
 import java.util.*;

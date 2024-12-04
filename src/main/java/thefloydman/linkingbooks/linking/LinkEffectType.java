@@ -21,7 +21,7 @@ package thefloydman.linkingbooks.linking;
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.component.LinkData;
 
 import javax.annotation.Nonnull;
 

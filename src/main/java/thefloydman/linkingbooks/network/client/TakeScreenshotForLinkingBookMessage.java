@@ -35,8 +35,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import thefloydman.linkingbooks.network.server.SaveLinkingPanelImageMessage;
-import thefloydman.linkingbooks.util.ImageUtils;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.client.ImageUtils;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;

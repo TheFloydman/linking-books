@@ -28,8 +28,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import java.awt.*;

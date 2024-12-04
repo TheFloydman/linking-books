@@ -23,7 +23,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
-import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.entity.LinkingBookEntity;
 
 import javax.annotation.Nonnull;
 

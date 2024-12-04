@@ -29,7 +29,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
-import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.entity.LinkingBookEntity;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

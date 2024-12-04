@@ -24,7 +24,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegistryBuilder;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 public class LinkEffectTypes {
 

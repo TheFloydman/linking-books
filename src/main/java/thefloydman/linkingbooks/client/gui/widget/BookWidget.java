@@ -28,7 +28,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.Lists;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import java.awt.*;

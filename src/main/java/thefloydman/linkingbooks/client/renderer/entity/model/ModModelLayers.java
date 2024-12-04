@@ -20,7 +20,7 @@ package thefloydman.linkingbooks.client.renderer.entity.model;
 
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 public class ModModelLayers {
 

@@ -23,9 +23,9 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import thefloydman.linkingbooks.data.LinkData;
-import thefloydman.linkingbooks.util.LinkingUtils;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.linking.LinkingUtils;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 

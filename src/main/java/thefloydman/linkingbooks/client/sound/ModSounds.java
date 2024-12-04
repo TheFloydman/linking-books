@@ -21,7 +21,7 @@ package thefloydman.linkingbooks.client.sound;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import java.util.function.Supplier;
 

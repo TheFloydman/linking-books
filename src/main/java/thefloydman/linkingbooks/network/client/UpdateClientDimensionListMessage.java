@@ -34,7 +34,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;

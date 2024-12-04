@@ -34,8 +34,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.joml.Quaternionf;
-import thefloydman.linkingbooks.world.level.block.MarkerSwitchBlock;
-import thefloydman.linkingbooks.world.level.block.entity.MarkerSwitchBlockEntity;
+import thefloydman.linkingbooks.block.MarkerSwitchBlock;
+import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
 
 import javax.annotation.Nonnull;
 

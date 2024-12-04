@@ -23,9 +23,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import thefloydman.linkingbooks.data.LinkData;
+import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
-import thefloydman.linkingbooks.util.Reference;
+import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 

@@ -51,12 +51,12 @@ import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.LinkMessage;
 import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.SaveLinkingPanelImageMessage;
-import thefloydman.linkingbooks.util.LinkingUtils;
-import thefloydman.linkingbooks.util.Reference;
-import thefloydman.linkingbooks.world.entity.ModEntityTypes;
-import thefloydman.linkingbooks.world.inventory.ModMenuTypes;
-import thefloydman.linkingbooks.world.item.ModItems;
-import thefloydman.linkingbooks.world.level.block.entity.ModBlockEntityTypes;
+import thefloydman.linkingbooks.linking.LinkingUtils;
+import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.entity.ModEntityTypes;
+import thefloydman.linkingbooks.menutype.ModMenuTypes;
+import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 
 @EventBusSubscriber(modid = Reference.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ModEventHandler {

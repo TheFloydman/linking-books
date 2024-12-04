@@ -29,7 +29,7 @@ import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.gui.widget.BookWidget;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.world.inventory.GuidebookMenuType;
+import thefloydman.linkingbooks.menutype.GuidebookMenuType;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
