@@ -37,7 +37,7 @@ public interface LinkEffectType {
      * for any LinkEffect.
      *
      * @param entity   The Entity that is linking.
-     * @param linkData The LinkDataComponent for the link.
+     * @param linkData The LinkData for the link.
      * @return Whether the link should proceed. If false, entity will not link.
      */
     default boolean canStartLink(Entity entity, LinkData linkData) {
@@ -49,7 +49,7 @@ public interface LinkEffectType {
      * every LinkEffect but before onLinkEnd has been called for any LinkEffect.
      *
      * @param entity   The Entity that is linking.
-     * @param linkData The LinkDataComponent for the link.
+     * @param linkData The LinkData for the link.
      * @return Whether the link should proceed successfully. If false, entity will
      * be returned to origin.
      */
@@ -61,7 +61,7 @@ public interface LinkEffectType {
      * Fires before entity changes dimensions.
      *
      * @param entity   The Entity that is linking.
-     * @param linkData The LinkDataComponent for the link.
+     * @param linkData The LinkData for the link.
      */
     default void onLinkStart(Entity entity, LinkData linkData) {
     }
@@ -70,10 +70,9 @@ public interface LinkEffectType {
      * Fires after entity changes dimensions.
      *
      * @param entity   The Entity that is linking.
-     * @param linkData The LinkDataComponent for the link.
+     * @param linkData The LinkData for the link.
      */
     default void onLinkEnd(Entity entity, LinkData linkData) {
-        System.out.println("link ended");
     }
 
 }

@@ -18,7 +18,6 @@
 
 package thefloydman.linkingbooks.util;
 
-import com.mojang.serialization.JsonOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -46,6 +45,7 @@ import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.core.component.ModDataComponents;
 import thefloydman.linkingbooks.data.LinkData;
 import thefloydman.linkingbooks.linking.LinkEffect;
+import thefloydman.linkingbooks.network.client.PlayOwnLinkingSoundMessage;
 import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.world.entity.LinkingBookEntity;
 import thefloydman.linkingbooks.world.inventory.LinkingBookMenuType;
@@ -171,8 +171,9 @@ public class LinkingUtils {
                 }
                 player.doCloseContainer();
                 player.closeContainer();
-                serverWorld.playSound(null, player.blockPosition(), ModSounds.LINK.get(), SoundSource.PLAYERS, 0.25F, 1.0F);
+                serverWorld.playSound(player, player.blockPosition(), ModSounds.LINK.get(), SoundSource.PLAYERS, 0.25F, 1.0F);
                 player.teleportTo(serverWorld, x, y, z, rotation, player.getXRot());
+                PacketDistributor.sendToPlayer(player, new PlayOwnLinkingSoundMessage());
             } else {
                 CompoundTag nbt = new CompoundTag();
                 entity.saveAsPassenger(nbt);
