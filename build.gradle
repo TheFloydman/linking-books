@@ -21,7 +21,7 @@ group = mod_group_id
 repositories {
     mavenLocal()
     maven { url "https://maven.shedaniel.me/" }
-    //maven { url 'https://jitpack.io' }
+    maven { url "https://cursemaven.com" }
 }
 
 base {
@@ -115,11 +115,11 @@ dependencies {
 
     // Example mod dependency using a file as dependency
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-    compileOnly files("libs/immersive_portals-6.0.3.jar")
+    compileOnly "curse.maven:immersive-portals-for-forge-355440:5828143"
     compileOnly "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
 
     // Uncomment these lines to use these mods during testing.
-    //localRuntime files("libs/immersive_portals-6.0.3.jar")
+    //localRuntime "curse.maven:immersive-portals-for-forge-355440:5828143"
     //api "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
 
     // Example project dependency using a sister or child project:
