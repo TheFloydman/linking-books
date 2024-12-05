@@ -24,17 +24,17 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.component.ModDataComponents;
-import thefloydman.linkingbooks.linking.LinkEffectTypes;
-import thefloydman.linkingbooks.entity.ModEntityTypes;
-import thefloydman.linkingbooks.menutype.ModMenuTypes;
-import thefloydman.linkingbooks.item.ModCreativeModeTabs;
-import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.crafting.ModRecipeSerializers;
-import thefloydman.linkingbooks.crafting.ModRecipeTypes;
 import thefloydman.linkingbooks.block.ModBlocks;
 import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
+import thefloydman.linkingbooks.client.sound.ModSounds;
+import thefloydman.linkingbooks.component.ModDataComponents;
+import thefloydman.linkingbooks.crafting.ModRecipeSerializers;
+import thefloydman.linkingbooks.crafting.ModRecipeTypes;
+import thefloydman.linkingbooks.entity.ModEntityTypes;
+import thefloydman.linkingbooks.item.ModCreativeModeTabs;
+import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.linking.LinkEffectTypes;
+import thefloydman.linkingbooks.menutype.ModMenuTypes;
 
 @Mod(Reference.MODID)
 public class LinkingBooks {
@@ -50,7 +50,7 @@ public class LinkingBooks {
         ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
         ModEntityTypes.ENTITIES.register(modEventBus);
-        ModBlockEntityTypes.TILE_ENTITIES.register(modEventBus);
+        ModBlockEntityTypes.BLOCK_ENTITIES.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, LinkingBooksConfig.CONFIG);

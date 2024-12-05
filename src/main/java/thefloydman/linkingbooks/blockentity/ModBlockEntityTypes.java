@@ -33,13 +33,13 @@ import java.util.stream.Collectors;
 
 public class ModBlockEntityTypes {
 
-    public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister
             .create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Reference.MODID);
 
     public static <T extends BlockEntity> Supplier<BlockEntityType<T>> make(
             BlockEntityType.BlockEntitySupplier<T> create, Supplier<? extends Block> valid) {
         return makeMultipleBlocks(create, ImmutableSet.of(valid));
-    }    public static final Supplier<BlockEntityType<LinkingLecternBlockEntity>> LINKING_LECTERN = TILE_ENTITIES
+    }    public static final Supplier<BlockEntityType<LinkingLecternBlockEntity>> LINKING_LECTERN = BLOCK_ENTITIES
             .register(Reference.TileEntityNames.LINKING_LECTERN,
                     make(LinkingLecternBlockEntity::new, ModBlocks.LINKING_LECTERN));
 
@@ -47,11 +47,11 @@ public class ModBlockEntityTypes {
             BlockEntityType.BlockEntitySupplier<T> create, Collection<? extends Supplier<? extends Block>> valid) {
         return () -> new BlockEntityType<>(create,
                 ImmutableSet.copyOf(valid.stream().map(Supplier::get).collect(Collectors.toList())), null);
-    }    public static final Supplier<BlockEntityType<LinkTranslatorBlockEntity>> LINK_TRANSLATOR = TILE_ENTITIES
+    }    public static final Supplier<BlockEntityType<LinkTranslatorBlockEntity>> LINK_TRANSLATOR = BLOCK_ENTITIES
             .register(Reference.TileEntityNames.LINK_TRANSLATOR,
                     make(LinkTranslatorBlockEntity::new, ModBlocks.LINK_TRANSLATOR));
 
-    public static final Supplier<BlockEntityType<MarkerSwitchBlockEntity>> MARKER_SWITCH = TILE_ENTITIES
+    public static final Supplier<BlockEntityType<MarkerSwitchBlockEntity>> MARKER_SWITCH = BLOCK_ENTITIES
             .register(Reference.TileEntityNames.MARKER_SWITCH, make(MarkerSwitchBlockEntity::new, ModBlocks.MARKER_SWITCH));
 
 
