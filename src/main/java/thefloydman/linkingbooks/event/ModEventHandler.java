@@ -31,6 +31,8 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.gui.screen.GuidebookScreen;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
@@ -41,9 +43,13 @@ import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
+import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
+import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.linking.LinkEffect;
 import thefloydman.linkingbooks.linking.LinkEffectTypes;
+import thefloydman.linkingbooks.linking.LinkingUtils;
+import thefloydman.linkingbooks.menutype.ModMenuTypes;
 import thefloydman.linkingbooks.network.client.PlayOwnLinkingSoundMessage;
 import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.network.client.UpdateClientDimensionListMessage;
@@ -51,12 +57,6 @@ import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.LinkMessage;
 import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.SaveLinkingPanelImageMessage;
-import thefloydman.linkingbooks.linking.LinkingUtils;
-import thefloydman.linkingbooks.Reference;
-import thefloydman.linkingbooks.entity.ModEntityTypes;
-import thefloydman.linkingbooks.menutype.ModMenuTypes;
-import thefloydman.linkingbooks.item.ModItems;
-import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 
 @EventBusSubscriber(modid = Reference.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ModEventHandler {
@@ -68,7 +68,7 @@ public class ModEventHandler {
     }
 
     @SubscribeEvent
-    public static void register(final RegisterPayloadHandlersEvent event) {
+    public static void registerPayloads(final RegisterPayloadHandlersEvent event) {
         // Sets the current network version
         final PayloadRegistrar registrar = event.registrar("1");
         registrar.playToClient(
@@ -126,6 +126,7 @@ public class ModEventHandler {
     }
 
     @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
 
         if (Reference.isImmersivePortalsLoaded()) {
@@ -143,7 +144,7 @@ public class ModEventHandler {
     }
 
     @SubscribeEvent
-    public static void registerScreens(RegisterMenuScreensEvent event) {
+    public static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
         event.register(ModMenuTypes.GUIDEBOOK.get(), GuidebookScreen::new);
     }
