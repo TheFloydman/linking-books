@@ -14,5 +14,4 @@ Need help or just want to chat? Join us on Discord at https://discord.gg/eMSubn6
 
 **Planned Features:**
 
-- More sound effects, including linking sounds.
 - A fleshed-out ink system that will make creating Linking Panels a bit more involved.

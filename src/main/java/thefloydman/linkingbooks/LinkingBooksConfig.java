@@ -39,6 +39,11 @@ public class LinkingBooksConfig {
             .translation("linkingbooks.config.give_guidebook_on_first_join")
             .define("giveGuidebookOnFirstJoin", true);
 
+    public static final ModConfigSpec.BooleanValue GIVE_RELTO_BOOK_ON_FIRST_JOIN = BUILDER
+            .comment("Whether to give a Relto book to every player when they first join.")
+            .translation("linkingbooks.config.give_relto_book_on_first_join")
+            .define("giveReltoBookOnFirstJoin", true);
+
     public static final ModConfigSpec.IntValue LINKING_PANEL_CHUNK_LOAD_RADIUS = BUILDER
             .comment("The maximum render distance (in chunks) of a linking panel.")
             .translation("linkingbooks.config.linking_panel_chunk_load_radius")

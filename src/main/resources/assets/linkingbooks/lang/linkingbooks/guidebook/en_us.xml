@@ -4,19 +4,19 @@
     <page title="Introduction">
         <p><style bold="true" underline="true">Introduction</style></p>
         <p>Welcome to <style italic="true">Linking Books</style>! This guide contains everything you need to know to get started.</p>
-        <p><style italic="true">Linking Books</style> is about creating one-way links between places that allow you to teleport. This is done through the <style italic="true">Art</style>, an ancient craft developed by the proud — and now largely extinct — D'ni civilization.</p>
-        <p>When you touch the panel within a linking book, you will be instantly transported to the coordinates the book was tied to when it was written. But be careful: regular linking books only transport the user, not themselves.</p>
+        <p><style italic="true">Linking Books</style> is about creating one-way teleportation Links between places. This is done through the <style italic="true">Art</style>, an ancient craft developed by the proud — and now largely extinct — D'ni civilization.</p>
+        <p>When you touch the Panel within a Linking Book, you will be instantly transported to the coordinates the Book was tied to when it was written. But be careful: regular Linking Books only transport the user, not themselves.</p>
         <p>Please be safe while you venture through the Ages. History has been unkind to those who abuse the power of the Art.</p>
     </page>
     <page title="Linking Panels">
         <p><style bold="true" underline="true">Linking Panels</style></p>
-        <p>Linking panels are the images you see near the front of every linking book, and they're the first thing you'll need to craft if you want to make blank linking books.</p>
-        <p>The default recipe for linking panels is shaped and requires any kind of black dye surrounded by 8 pieces of paper in a standard 3x3 crafting grid:</p>
+        <p>Linking Panels are the images you see near the front of every Linking Book, and they're the first thing you'll need to craft if you want to make blank Linking Books.</p>
+        <p>The default recipe for Linking Panels is shaped and requires any kind of black dye surrounded by 8 pieces of paper in a standard 3x3 crafting grid:</p>
         <recipe src="linkingbooks:linking_panel"/>
     </page>
     <page title="Blank Linking Books">
         <p><style bold="true" underline="true">Blank Linking Books</style></p>
-        <p>Once you have a linking panel, you're ready to craft your first linking book. You can do so in any 2x2 or 3x3 standard crafting grid. Placement doesn't matter:</p>
+        <p>Once you have a Linking Panel, you're ready to craft your first Linking Book. You can do so in any 2x2 or 3x3 standard crafting grid. Placement doesn't matter:</p>
         <recipes>
             <rec src="linkingbooks:black_blank_linking_book"/>
             <rec src="linkingbooks:blue_blank_linking_book"/>
@@ -35,42 +35,52 @@
             <rec src="linkingbooks:white_blank_linking_book"/>
             <rec src="linkingbooks:yellow_blank_linking_book"/>
         </recipes>
-        <p>The color dye you use will determine the color of the resulting linking book.</p>
-        <p>When you use a blank linking book, you turn it into a written linking book that is permanently tied to the coordinates it was written at. So be careful not to use it unlesss you're certain you want to form a link.</p>
+        <p>The color dye you use will determine the color of the resulting Book.</p>
+        <p>When you use a blank Linking Book, you turn it into a written Linking Book that is permanently tied to the coordinates at which it was written. So be careful not to use it unless you're certain you want to form a Link.</p>
     </page>
     <page title="Written Linking Books">
         <p><style bold="true" underline="true">Written Linking Books</style></p>
-        <p>Once a linking book has been written, you can use it anywhere to link to the place shown in the linking panel. When you do, in most cases the book will not be transported with you.</p>
-        <p>Linking books do not drop like most other items. Instead of a spinning book item, you'll see a physical book in the world. These books can be damaged and should be kept in your inventory or an appropriate display for safe-keeping.</p>
-        <p>Regular linking books also have a peculiar restriction: They cannot be used within the same <style italic="true">Age</style>, or dimension. You will encounter a grayed-out linking panel if it cannot be used in that moment.</p>
+        <p>Once a Linking Book has been written, you can use it anywhere to link to the place shown in the Linking Panel. When you do, in most cases the Book will not be transported with you.</p>
+        <p>Linking Books do not drop like most other items. Instead of a spinning book item, you'll see a physical book in the world. These books can be damaged and should be kept in your inventory or an appropriate display for safe-keeping.</p>
+        <p>Regular Linking Books also have a peculiar restriction: They cannot be used within the same <style italic="true">Age</style>, or dimension. You will encounter a grayed-out Linking Panel if it cannot be used at that moment.</p>
+    </page>
+    <page title="Relto">
+        <p><style bold="true" underline="true">Relto</style></p>
+        <p>Yeesha, daughter of Atrus, was a skilled Writer with no equal. Such were her powers that the D'ni survivors feared what she could do with the Art.</p>
+        <p>One of Yeesha's more peculiar achievements was Relto, a personal Age. The Relto Books she wrote were able to transport their owners to their own unique instances of the same Age. The Relto Books also traveled with their owners.</p>
+        <p>You may have been provided with a Relto Book when you first started your journey. If not, you can craft one with this unshaped recipe:</p>
+        <recipes>
+            <rec src="linkingbooks:relto_book_from_scratch"/>
+            <rec src="linkingbooks:relto_book_from_unassigned"/>
+        </recipes>
     </page>
     <page title="Link Effects">
         <p><style bold="true" underline="true">Link Effects</style></p>
-        <p>There are also ways to alter a linking panel in such a way that it changes the normal behavior. Add a written linking book and the required ingredients to a crafting grid to apply these effects.</p>
+        <p>There are also ways to alter a Linking Panel in such a way that it changes the normal behavior. Add a written Linking Book and the required ingredients to a crafting grid to apply these effects.</p>
         <p><style underline="true">IntraAge Linking:</style> Allows you to link within the same Age. Requires an <style bold="true">ender pearl</style>.</p>
-        <p><style underline="true">Tethered:</style> When you are holding it, the linking book travels with you. Requires a <style bold="true">lead</style>.</p>
+        <p><style underline="true">Tethered:</style> When you are holding it, the Linking Book travels with you. Requires a <style bold="true">lead</style>.</p>
         <p><style underline="true">Poison 200:</style> Applies poison to the linking entity for 200 ticks (about 10 seconds). Requires <style bold="true">nether wart</style> and a <style bold="true">spider eye</style>.</p>
     </page>
     <page title="Linking Lecterns">
         <p><style bold="true" underline="true">Linking Lecterns</style></p>
-        <p>When you want to keep your linking book safe and make it easy to use, you need a linking lectern. They look similar to their vanilla counterparts but only work with linking books.</p>
+        <p>When you want to keep your Linking Book safe and make it easy to use, you need a Linking Lectern. They look similar to their vanilla counterparts but only work with Linking Books.</p>
         <img src="linkingbooks:textures/gui/guidebook/linking_lectern.png" scale="1.0" width="1920" height="720"/>
-        <p><style bold="true">Sneak-right-click</style> to insert or remove a written linking book.</p>
+        <p><style bold="true">Sneak-right-click</style> to insert or remove a written Linking Book.</p>
         <recipe src="linkingbooks:linking_lectern"/>
     </page>
     <page title="Linking Portals - Part One">
         <p><style bold="true" underline="true">Linking Portals</style></p>
-        <p>Linking books can also be used as portals! There are several parts to get right, though.</p>
+        <p>Linking Books can also be used as portals! There are several parts to get right, though.</p>
         <p>First, you will need to craft <style bold="true">nara</style>, a super-dense material, with cobblestone and lava:</p>
         <recipe src="linkingbooks:nara"/>
-        <p>Then use nara and redstone to craft a <style bold="true">link translator</style>:</p>
+        <p>Then use nara and redstone to craft a <style bold="true">Link Translator</style>:</p>
         <recipe src="linkingbooks:link_translator"/>
     </page>
     <page title="Linking Portals - Part Two">
         <img src="linkingbooks:textures/gui/guidebook/linking_portal.png" scale="1.0" width="3840" height="1440"/>
         <p>When it comes time to build your portal, it can be any enclosed shape on a single plane. Just as with Nether portals, outside corners are optional.</p>
-        <p>Linking portals are made out of nara and must include one link translator. Make sure it's touching the portal; otherwise, the portal won't form.</p>
-        <p>Linking portals <style bold="true">do not</style> form new portals on the other side. Make sure you have a way back before stepping through one!</p>
+        <p>Linking Portals are made out of nara and must include one Link Translator. Make sure it's touching the portal; otherwise, the portal won't form.</p>
+        <p>Linking Portals <style bold="true">do not</style> form new portals on the other side. Make sure you have a way back before stepping through one!</p>
         <p>All link effects besides Tethering still apply when using a portal.</p>
     </page>
     <page title="Marker Switches">

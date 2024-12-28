@@ -28,13 +28,14 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
-import thefloydman.linkingbooks.linking.LinkingUtils;
-import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.item.ReltoBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
+import thefloydman.linkingbooks.linking.LinkingUtils;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -60,7 +61,7 @@ public class LinkingBookRenderer extends EntityRenderer<LinkingBookEntity> {
         ItemStack bookStack = entity.getItem();
         if (bookStack != null && !bookStack.isEmpty()) {
             Item item = bookStack.getItem();
-            if (item instanceof WrittenLinkingBookItem) {
+            if (item instanceof WrittenLinkingBookItem || item instanceof ReltoBookItem) {
                 this.color = LinkingUtils.getLinkingBookColor(bookStack, 0);
             }
         }

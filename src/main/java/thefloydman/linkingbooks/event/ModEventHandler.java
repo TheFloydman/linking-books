@@ -36,6 +36,7 @@ import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.client.gui.book.GuiBookManager;
 import thefloydman.linkingbooks.client.gui.screen.GuidebookScreen;
 import thefloydman.linkingbooks.client.gui.screen.LinkingBookScreen;
+import thefloydman.linkingbooks.client.gui.screen.ReltoBookScreen;
 import thefloydman.linkingbooks.client.renderer.blockentity.LinkTranslatorRenderer;
 import thefloydman.linkingbooks.client.renderer.blockentity.LinkingLecternRenderer;
 import thefloydman.linkingbooks.client.renderer.blockentity.MarkerSwitchRenderer;
@@ -53,6 +54,7 @@ import thefloydman.linkingbooks.menutype.ModMenuTypes;
 import thefloydman.linkingbooks.network.client.PlayOwnLinkingSoundMessage;
 import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.network.client.UpdateClientDimensionListMessage;
+import thefloydman.linkingbooks.network.client.UpdatePlayerDisplayNames;
 import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.LinkMessage;
 import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
@@ -85,6 +87,11 @@ public class ModEventHandler {
                 PlayOwnLinkingSoundMessage.TYPE,
                 PlayOwnLinkingSoundMessage.STREAM_CODEC,
                 PlayOwnLinkingSoundMessage::handle
+        );
+        registrar.playToClient(
+                UpdatePlayerDisplayNames.TYPE,
+                UpdatePlayerDisplayNames.STREAM_CODEC,
+                UpdatePlayerDisplayNames::handle
         );
         registrar.playToServer(
                 SaveLinkingPanelImageMessage.TYPE,
@@ -146,6 +153,7 @@ public class ModEventHandler {
     @SubscribeEvent
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.LINKING_BOOK.get(), LinkingBookScreen::new);
+        event.register(ModMenuTypes.RELTO_BOOK.get(), ReltoBookScreen::new);
         event.register(ModMenuTypes.GUIDEBOOK.get(), GuidebookScreen::new);
     }
 

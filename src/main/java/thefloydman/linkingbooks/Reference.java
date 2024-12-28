@@ -18,20 +18,31 @@
 
 package thefloydman.linkingbooks;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class Reference {
 
     public static final String MODID = "linkingbooks";
     public static MinecraftServer server = null;
+    public static final Map<UUID, String> PLAYER_DISPLAY_NAMES = new HashMap<>();
 
     /**
      * Convenience method to make a ResourceLocation under this mod's domain.
@@ -67,6 +78,7 @@ public class Reference {
         public static final String GUIDEBOOK = "guidebook";
         public static final String BLANK_LINKING_BOOK = "blank_linking_book";
         public static final String WRITTEN_LINKING_BOOK = "written_linking_book";
+        public static final String RELTO_BOOK = "relto_book";
         public static final String LINKING_PANEL = "linking_panel";
     }
 
@@ -92,6 +104,7 @@ public class Reference {
 
     public static class ContainerNames {
         public static final String LINKING_BOOK = "linking_book";
+        public static final String RELTO_BOOK = "relto_book";
         public static final String GUIDEBOOK = "guidebook";
     }
 
@@ -130,7 +143,7 @@ public class Reference {
     }
 
     public static class CreativeModeTabNames {
-        public static final ResourceLocation LINKING_BOOKS = getAsResourceLocation("main");
+        public static final String MAIN = "main";
     }
 
     public static class Resources {

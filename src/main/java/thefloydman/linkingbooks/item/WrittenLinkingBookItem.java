@@ -29,10 +29,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.component.LinkData;
-import thefloydman.linkingbooks.linking.LinkingUtils;
+import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.linking.LinkingUtils;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -77,7 +77,7 @@ public class WrittenLinkingBookItem extends Item {
         super.appendHoverText(stack, tooltipContext, tooltip, flag);
         LinkData linkData = stack.get(ModDataComponents.LINK_DATA);
         if (linkData != null) {
-            tooltip.add(Component.literal("§eAge: §9§o" + linkData.dimension()));
+            tooltip.add(Component.translatable("§eAge: §9§o%s", linkData.dimensionName()));
             tooltip.add(Component.literal("§eCoordinates: §9§o(" + linkData.blockPos().getX() + ", "
                     + linkData.blockPos().getY() + ", " + linkData.blockPos().getZ() + ")"));
             Set<ResourceLocation> linkEffects = new HashSet<>(linkData.linkEffects());

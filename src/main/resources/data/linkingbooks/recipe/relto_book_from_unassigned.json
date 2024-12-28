@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "linkingbooks:relto_book"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "linkingbooks:relto_book"
+  }
+}

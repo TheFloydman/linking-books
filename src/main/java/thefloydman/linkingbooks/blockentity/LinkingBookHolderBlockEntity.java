@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
+import thefloydman.linkingbooks.item.ReltoBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 
 import javax.annotation.Nonnull;
@@ -140,6 +141,6 @@ public class LinkingBookHolderBlockEntity extends BlockEntity implements IItemHa
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack itemStack) {
-        return itemStack.getItem() instanceof WrittenLinkingBookItem;
+        return itemStack.getItem() instanceof WrittenLinkingBookItem || itemStack.getItem() instanceof ReltoBookItem;
     }
 }

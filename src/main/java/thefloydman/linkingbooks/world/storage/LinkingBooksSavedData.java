@@ -21,7 +21,9 @@ package thefloydman.linkingbooks.world.storage;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
@@ -37,6 +39,14 @@ public class LinkingBooksSavedData extends SavedData {
     public final Map<UUID, CompoundTag> linkingPanelImages = new HashMap<>();
     public final Map<BlockPos, LinkData> linkingPortals = new HashMap<>();
     public final Set<AgeInfo> ages = Sets.newHashSet();
+    public final Map<UUID, String> playerDisplayNames = new HashMap<>();
+
+    private LinkingBooksSavedData() {
+    }
+
+    public LinkingBooksSavedData(Map<UUID, CompoundTag> linkingPanelImages, Map<BlockPos, LinkData> linkingPortals) {
+
+    }
 
     public static SavedData.Factory<LinkingBooksSavedData> factory() {
         return new SavedData.Factory<>(
@@ -89,22 +99,77 @@ public class LinkingBooksSavedData extends SavedData {
         return this.linkingPortals.get(pos);
     }
 
+    public boolean addPlayerDisplayName(UUID uuid, String displayName) {
+        this.playerDisplayNames.put(uuid, displayName);
+        this.setDirty();
+        return true;
+    }
+
+    public String getPlayerDisplayName(UUID uuid) {
+        return this.playerDisplayNames.get(uuid);
+    }
+
+    // TODO: Finish codec.
+    public static final Codec<LinkingBooksSavedData> CODEC = RecordCodecBuilder.create(
+            codecBuilderInstance -> codecBuilderInstance.group(
+                            Codec.list(CompoundTag.CODEC).fieldOf("linkingPanelImages").forGetter(
+                                    linkingBooksSavedData -> linkingBooksSavedData.linkingPanelImages.entrySet().stream().map(entry -> {
+                                        CompoundTag compoundTag = entry.getValue();
+                                        compoundTag.putUUID("uuid", entry.getKey());
+                                        return compoundTag;
+                                    }).toList()
+                            ),
+                            Codec.list(CompoundTag.CODEC).fieldOf("linking_portals").forGetter(
+                                    linkingBooksSavedData -> linkingBooksSavedData.linkingPortals.entrySet().stream().map(
+                                            entry -> {
+                                                CompoundTag compoundTag = new CompoundTag();
+                                                compoundTag.put("portal_pos", NbtUtils.writeBlockPos(entry.getKey()));
+                                                LinkData.CODEC.encodeStart(NbtOps.INSTANCE, entry.getValue()).ifSuccess(tag -> compoundTag.put("link_data", tag));
+                                                return compoundTag;
+                                            }
+                                    ).toList()
+                            )
+                    )
+                    .apply(codecBuilderInstance, (linkingPanelImagesList, linkingPortalsList) -> {
+                        Map<UUID, CompoundTag> linkingPanelImages = new HashMap<>();
+                        for (CompoundTag compoundTag : linkingPanelImagesList) {
+                            UUID uuid = compoundTag.getUUID("uuid");
+                            compoundTag.remove("uuid");
+                            linkingPanelImages.put(uuid, compoundTag);
+                        }
+                        Map<BlockPos, LinkData> linkingPortals = new HashMap<>();
+                        for (CompoundTag compound : linkingPortalsList) {
+                            BlockPos pos = NbtUtils.readBlockPos(compound, "portal_pos").orElseGet(() -> BlockPos.ZERO);
+                            try {
+                                LinkData linkData = LinkData.CODEC.parse(NbtOps.INSTANCE, compound.getCompound("link_data")).getOrThrow();
+                                linkingPortals.put(pos, linkData);
+                            } catch (IllegalStateException e) {
+                                LogUtils.getLogger().warn(e.getMessage());
+                            }
+                        }
+                        return new LinkingBooksSavedData(linkingPanelImages, linkingPortals);
+                    })
+    );
+
     @Override
     public @Nonnull CompoundTag save(CompoundTag nbt, @Nonnull HolderLookup.Provider provider) {
+
         ListTag imageList = new ListTag();
-        linkingPanelImages.forEach((uuid, image) -> {
+        this.linkingPanelImages.forEach((uuid, image) -> {
             image.putUUID("uuid", uuid);
             imageList.add(image);
         });
         nbt.put("linkingPanelImages", imageList);
+
         ListTag portalList = new ListTag();
         this.linkingPortals.forEach((pos, linkData) -> {
-            CompoundTag compound = new CompoundTag();
-            compound.put("portal_pos", NbtUtils.writeBlockPos(pos));
-            LinkData.CODEC.encodeStart(NbtOps.INSTANCE, linkData).ifSuccess(tag -> compound.put("link_data", tag));
-            portalList.add(compound);
+            CompoundTag compoundTag = new CompoundTag();
+            compoundTag.put("portal_pos", NbtUtils.writeBlockPos(pos));
+            LinkData.CODEC.encodeStart(NbtOps.INSTANCE, linkData).ifSuccess(tag -> compoundTag.put("link_data", tag));
+            portalList.add(compoundTag);
         });
         nbt.put("linking_portals", portalList);
+
         ListTag ageList = new ListTag();
         List<Tag> tags = this.ages.stream().map(age -> {
             DataResult<Tag> dataResult = AgeInfo.CODEC.encodeStart(NbtOps.INSTANCE, age);
@@ -115,11 +180,24 @@ public class LinkingBooksSavedData extends SavedData {
         }).filter(Objects::nonNull).toList();
         ageList.addAll(tags);
         nbt.put("ages", ageList);
+
+        ListTag displayNamesList = new ListTag();
+        this.playerDisplayNames.forEach((uuid, displayName) -> {
+            CompoundTag compoundTag = new CompoundTag();
+            compoundTag.putUUID("uuid", uuid);
+            compoundTag.putString("display_name", displayName);
+            displayNamesList.add(compoundTag);
+        });
+        nbt.put("player_display_names", displayNamesList);
+
         return nbt;
+
     }
 
     public static LinkingBooksSavedData load(CompoundTag nbt, HolderLookup.Provider provider) {
+
         LinkingBooksSavedData data = new LinkingBooksSavedData();
+
         if (nbt.contains("linkingPanelImages", Tag.TAG_LIST)) {
             ListTag list = nbt.getList("linkingPanelImages", Tag.TAG_COMPOUND);
             for (Tag item : list) {
@@ -130,6 +208,7 @@ public class LinkingBooksSavedData extends SavedData {
                 }
             }
         }
+
         if (nbt.contains("linking_portals", Tag.TAG_LIST)) {
             ListTag list = nbt.getList("linking_portals", Tag.TAG_COMPOUND);
             for (Tag item : list) {
@@ -143,6 +222,7 @@ public class LinkingBooksSavedData extends SavedData {
                 }
             }
         }
+
         if (nbt.contains("ages", Tag.TAG_LIST)) {
             ListTag list = nbt.getList("ages", Tag.TAG_COMPOUND);
             data.ages.addAll(list.stream().map(tag -> {
@@ -153,7 +233,21 @@ public class LinkingBooksSavedData extends SavedData {
                 return AgeInfo.DUMMY;
             }).toList());
         }
+
+        if (nbt.contains("player_display_names", Tag.TAG_LIST)) {
+            ListTag list = nbt.getList("player_display_names", Tag.TAG_COMPOUND);
+            for (Tag item : list) {
+                CompoundTag compound = (CompoundTag) item;
+                if (compound.contains("uuid", Tag.TAG_INT_ARRAY) && compound.contains("display_name", Tag.TAG_STRING)) {
+                    UUID uuid = compound.getUUID("uuid");
+                    String displayName = compound.getString("display_name");
+                    data.playerDisplayNames.put(uuid, displayName);
+                }
+            }
+        }
+
         return data;
+
     }
 
 }

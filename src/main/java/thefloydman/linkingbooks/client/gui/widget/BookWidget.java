@@ -38,9 +38,9 @@ import java.util.List;
 public class BookWidget extends NestedWidget {
 
     private static final ResourceLocation COVER_TEXTURE = Reference
-            .getAsResourceLocation("textures/gui/linkingbook/linking_book_cover.png");
+            .getAsResourceLocation("textures/gui/book/book_cover_regular.png");
     private static final ResourceLocation PAPER_TEXTURE = Reference
-            .getAsResourceLocation("textures/gui/linkingbook/linking_book_paper.png");
+            .getAsResourceLocation("textures/gui/book/book_paper_regular.png");
     private final List<GuiBookPageWidget> pages = Lists.newArrayList();
     private final PageChangeWidget previousArrow;
     private final PageChangeWidget nextArrow;

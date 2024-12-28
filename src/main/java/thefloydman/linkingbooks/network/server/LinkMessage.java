@@ -22,26 +22,40 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.linking.LinkingUtils;
-import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public record LinkMessage(LinkData linkData, boolean holdingBook) implements CustomPacketPayload {
+public record LinkMessage(LinkData linkData, boolean holdingBook, boolean isReltoBook) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<LinkMessage> TYPE = new CustomPacketPayload.Type<>(Reference.getAsResourceLocation("link_entity"));
 
     public static final StreamCodec<ByteBuf, LinkMessage> STREAM_CODEC = StreamCodec.composite(
             LinkData.STREAM_CODEC, LinkMessage::linkData,
             ByteBufCodecs.BOOL, LinkMessage::holdingBook,
+            ByteBufCodecs.BOOL, LinkMessage::isReltoBook,
             LinkMessage::new
     );
 
     public static void handle(final LinkMessage data, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            LinkingUtils.linkEntity(context.player(), data.linkData(), data.holdingBook());
+            if (data.isReltoBook()) {
+                Pattern regExPattern = Pattern.compile("^relto_(.*)$");
+                Matcher regExMatcher = regExPattern.matcher(data.linkData().dimension().getPath());
+                if (regExMatcher.find()) {
+                    String uuidString = regExMatcher.group(1);
+                    LinkingUtils.linkToRelto((ServerPlayer) context.player(), UUID.fromString(uuidString));
+                }
+            } else {
+                LinkingUtils.linkEntity(context.player(), data.linkData(), data.holdingBook());
+            }
         });
     }
 

@@ -18,17 +18,22 @@
 
 package thefloydman.linkingbooks.entity;
 
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.component.LinkData;
-import thefloydman.linkingbooks.linking.LinkingUtils;
+import thefloydman.linkingbooks.component.ModDataComponents;
+import thefloydman.linkingbooks.item.ReltoBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
+import thefloydman.linkingbooks.linking.LinkingUtils;
 
 public class LinkingBookEntity extends ObjectEntity {
 
@@ -72,6 +77,14 @@ public class LinkingBookEntity extends ObjectEntity {
                             LinkingUtils.openLinkingBookGui(serverPlayer, false, LinkingUtils.getLinkingBookColor(bookStack, 0),
                                     linkData, serverPlayer.getCommandSenderWorld().dimension().location());
                             return InteractionResult.CONSUME;
+                        } else if (bookStack.getItem() instanceof ReltoBookItem) {
+                            CustomData customData = bookStack.get(DataComponents.CUSTOM_DATA);
+                            if (customData != null) {
+                                Tag ownerTag = customData.copyTag().get("owner");
+                                if (ownerTag != null && ownerTag.getType() == TagTypes.getType(Tag.TAG_INT_ARRAY)) {
+                                    LinkingUtils.openReltoBookGui(serverPlayer, customData.copyTag().getUUID("owner"));
+                                }
+                            }
                         }
                     }
                 }

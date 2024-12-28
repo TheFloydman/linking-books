@@ -29,10 +29,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import thefloydman.linkingbooks.LinkingBooksConfig;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.network.server.LinkMessage;
-import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -43,22 +43,26 @@ public class LinkingPanelWidget extends NestedWidget {
     public boolean holdingBook = false;
     public LinkData linkData = LinkData.EMPTY;
     public boolean canLink = false;
+    public boolean isReltoBook = false;
     DynamicTexture linkingPanelImage = null;
-    private ResourceLocation guiLinkingPanelImageResourceLocation;
+    private ResourceLocation linkingPanelImageResourceLocation;
     private final TextureTarget linkingPanelFramebuffer = new TextureTarget(2, 2, true, false);
+    private static final ResourceLocation RELTO_TEXTURE = Reference
+            .getAsResourceLocation("textures/gui/reltobook/relto_linking_panel.png");
 
     public LinkingPanelWidget(String id, int x, int y, float z, int width, int height, Component narration,
-                              Screen parentScreen, float scale, boolean holdingBook, LinkData linkData, boolean canLink,
+                              Screen parentScreen, float scale, boolean holdingBook, boolean isReltoBook, LinkData linkData, boolean canLink,
                               NativeImage linkingPanelImage) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.holdingBook = holdingBook;
         this.linkData = linkData;
-        this.canLink = canLink;
+        this.isReltoBook = isReltoBook;
+        this.canLink = canLink || this.isReltoBook;
         if (linkingPanelImage != null) {
             NativeImage image256 = new NativeImage(256, 256, false);
             linkingPanelImage.copyRect(image256, 0, 0, 0, 0, linkingPanelImage.getWidth(), linkingPanelImage.getHeight(), false, false);
             this.linkingPanelImage = new DynamicTexture(image256);
-            this.guiLinkingPanelImageResourceLocation = Minecraft.getInstance().getTextureManager().register("gui_linking_panel_image", this.linkingPanelImage);
+            this.linkingPanelImageResourceLocation = Minecraft.getInstance().getTextureManager().register("gui_linking_panel_image", this.linkingPanelImage);
         }
     }
 
@@ -81,11 +85,19 @@ public class LinkingPanelWidget extends NestedWidget {
                     this.linkingPanelFramebuffer.clear(true);
                 } else if (this.linkingPanelImage != null && this.linkingPanelImage.getPixels() != null) {
                     guiGraphics.blit(
-                            this.guiLinkingPanelImageResourceLocation,
+                            this.linkingPanelImageResourceLocation,
                             this.getX(), this.getY(),
                             (int) this.zLevel + 1, 0, 0,
                             this.getWidth(), this.getHeight(),
                             this.linkingPanelImage.getPixels().getWidth(), this.linkingPanelImage.getPixels().getHeight()
+                    );
+                } else if (this.isReltoBook) {
+                    guiGraphics.blit(
+                            RELTO_TEXTURE,
+                            this.getX(), this.getY(),
+                            (int) this.zLevel + 1, 0, 0,
+                            this.getWidth(), this.getHeight(),
+                            64, 42
                     );
                 }
             }
@@ -96,7 +108,7 @@ public class LinkingPanelWidget extends NestedWidget {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.isInside(mouseX, mouseY)) {
-            PacketDistributor.sendToServer(new LinkMessage(this.linkData, this.holdingBook));
+            PacketDistributor.sendToServer(new LinkMessage(this.linkData, this.holdingBook, this.isReltoBook));
             return true;
         }
         return this.onMouseClickChildren(mouseX, mouseY, button);

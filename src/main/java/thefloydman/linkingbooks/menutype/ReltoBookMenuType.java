@@ -18,12 +18,11 @@
 
 package thefloydman.linkingbooks.menutype;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import thefloydman.linkingbooks.Reference;
@@ -32,28 +31,23 @@ import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.UUID;
 
-public class LinkingBookMenuType extends AbstractContainerMenu {
+public class ReltoBookMenuType extends AbstractContainerMenu {
 
-    public boolean holdingBook = false;
-    public int bookColor = DyeColor.GREEN.getFireworkColor();
-    public LinkData linkData = LinkData.EMPTY;
-    public boolean canLink = false;
-    public CompoundTag linkingPanelImage = new CompoundTag();
+    public UUID owner = UUID.randomUUID();
 
-    public LinkingBookMenuType(int containerId, Inventory playerInventory) {
-        super(ModMenuTypes.LINKING_BOOK.get(), containerId);
+    public ReltoBookMenuType(int containerId, Inventory playerInventory) {
+        super(ModMenuTypes.RELTO_BOOK.get(), containerId);
     }
 
-    public LinkingBookMenuType(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf extraData) {
+    public ReltoBookMenuType(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf extraData) {
         super(ModMenuTypes.LINKING_BOOK.get(), containerId);
-        this.holdingBook = extraData.readBoolean();
-        this.bookColor = extraData.readInt();
-        this.linkData = extraData.readJsonWithCodec(LinkData.CODEC);
-        this.canLink = extraData.readBoolean();
-        this.linkingPanelImage = extraData.readNbt();
-        if (Reference.isImmersivePortalsLoaded() && this.canLink) {
-            PacketDistributor.sendToServer(new AddChunkLoaderMessage(this.linkData));
+        this.owner = extraData.readUUID();
+        LinkData linkData = new LinkData(Reference.getAsResourceLocation(String.format("relto_%s", this.owner)), new BlockPos(-11, 200, 23), -90.0F, UUID.randomUUID(), List.of(Reference.getAsResourceLocation("intraage_linking")));
+        if (Reference.isImmersivePortalsLoaded()) {
+            PacketDistributor.sendToServer(new AddChunkLoaderMessage(linkData));
         }
     }
 
@@ -64,7 +58,7 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
 
     @Override
     public void removed(@Nonnull Player player) {
-        if (Reference.isImmersivePortalsLoaded() && this.canLink) {
+        if (Reference.isImmersivePortalsLoaded()) {
             PacketDistributor.sendToServer(new RemoveChunkLoaderMessage());
         }
         super.removed(player);

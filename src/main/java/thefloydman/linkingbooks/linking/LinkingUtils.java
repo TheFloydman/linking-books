@@ -18,6 +18,9 @@
 
 package thefloydman.linkingbooks.linking;
 
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.FileUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -36,25 +39,38 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import thefloydman.linkingbooks.LinkingBooksConfig;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.component.ModDataComponents;
+import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.item.ReltoBookItem;
+import thefloydman.linkingbooks.menutype.LinkingBookMenuType;
+import thefloydman.linkingbooks.menutype.ReltoBookMenuType;
 import thefloydman.linkingbooks.network.client.PlayOwnLinkingSoundMessage;
 import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
-import thefloydman.linkingbooks.entity.LinkingBookEntity;
-import thefloydman.linkingbooks.Reference;
-import thefloydman.linkingbooks.menutype.LinkingBookMenuType;
-import thefloydman.linkingbooks.item.ModItems;
+import thefloydman.linkingbooks.world.generation.AgeUtils;
+import thefloydman.linkingbooks.world.generation.LinkingBooksDimensionFactory;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 public class LinkingUtils {
 
@@ -173,6 +189,7 @@ public class LinkingUtils {
                 player.closeContainer();
                 serverWorld.playSound(player, player.blockPosition(), ModSounds.LINK.get(), SoundSource.PLAYERS, 0.25F, 1.0F);
                 player.teleportTo(serverWorld, x, y, z, rotation, player.getXRot());
+                player.resetFallDistance();
                 PacketDistributor.sendToPlayer(player, new PlayOwnLinkingSoundMessage());
             } else {
                 CompoundTag nbt = new CompoundTag();
@@ -239,6 +256,24 @@ public class LinkingUtils {
         return linked;
     }
 
+    public static int linkToRelto(ServerPlayer player, UUID reltoOwner) {
+        ResourceLocation ageResourceLocation = Reference.getAsResourceLocation(String.format("relto_%s", reltoOwner));
+        ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, ageResourceLocation);
+        Component name = Component.translatable("age.linkingbooks.name.relto");
+        Pair<ServerLevel, Boolean> levelPair = AgeUtils.getOrCreateLevel(player.server, levelKey, name, reltoOwner, LinkingBooksDimensionFactory::createRelto);
+        if (levelPair.getSecond()) {
+            copyRegionFiles(ageResourceLocation);
+        }
+        LinkData linkData = new LinkData(
+                ageResourceLocation,
+                new BlockPos(-11, 200, 23),
+                -180.0F,
+                UUID.randomUUID(),
+                List.of(Reference.getAsResourceLocation("intraage_linking"))
+        );
+        return LinkingUtils.linkEntities(Lists.newArrayList(player), linkData, false);
+    }
+
     public static void openLinkingBookGui(ServerPlayer serverPlayer, boolean holdingBook, int color, LinkData linkData,
                                           ResourceLocation currentDimension) {
         serverPlayer.openMenu(
@@ -263,14 +298,38 @@ public class LinkingUtils {
                 });
     }
 
+    public static void openReltoBookGui(ServerPlayer serverPlayer, UUID owner) {
+        serverPlayer.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) -> new ReltoBookMenuType(id, playerInventory), Component.literal("")), extraData -> extraData.writeUUID(owner));
+    }
+
     public static int getLinkingBookColor(ItemStack stack, int tintIndex) {
         if (tintIndex != 0) {
             return -1;
+        }
+        if (stack.getItem() instanceof ReltoBookItem) {
+            return new Color(77, 196, 109).getRGB();
         }
         DyedItemColor dyedColor = stack.getOrDefault(
                 DataComponents.DYED_COLOR,
                 new DyedItemColor(new Color(181, 134, 83).getRGB(), false)
         );
         return dyedColor.rgb();
+    }
+
+    private static void copyRegionFiles(ResourceLocation ageResourceLocation) {
+        Path reltoRegionPath = Reference.server.getWorldPath(new LevelResource("dimensions/linkingbooks/" + ageResourceLocation.getPath() + "/region"));
+        try {
+            FileUtil.createDirectoriesSafe(reltoRegionPath);
+            IModFile modFile = ModList.get().getModFileById(Reference.MODID).getFile();
+            Path examples = modFile.findResource("data/linkingbooks/linkingbooks/agetemplate/relto");
+            Stream<Path> paths = Files.list(examples);
+            List<Path> pathList = paths.filter(fromPath -> fromPath.toString().endsWith(".mca")).toList();
+            for (Path fromPath : pathList) {
+                Path toPath = reltoRegionPath.resolve(fromPath.getFileName().toString());
+                Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not prefill dimension {}", ageResourceLocation.getPath());
+        }
     }
 }

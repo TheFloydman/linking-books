@@ -35,6 +35,9 @@ public class ModMenuTypes {
     public static final Supplier<MenuType<LinkingBookMenuType>> LINKING_BOOK = MENU_TYPES
             .register(Reference.ContainerNames.LINKING_BOOK, () -> IMenuTypeExtension.create(LinkingBookMenuType::new));
 
+    public static final Supplier<MenuType<ReltoBookMenuType>> RELTO_BOOK = MENU_TYPES
+            .register(Reference.ContainerNames.RELTO_BOOK, () -> IMenuTypeExtension.create(ReltoBookMenuType::new));
+
     public static final Supplier<MenuType<GuidebookMenuType>> GUIDEBOOK = MENU_TYPES
             .register(Reference.ContainerNames.GUIDEBOOK, () -> new MenuType<>(GuidebookMenuType::new, FeatureFlags.DEFAULT_FLAGS));
 

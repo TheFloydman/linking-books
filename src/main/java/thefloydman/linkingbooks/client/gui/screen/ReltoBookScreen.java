@@ -17,40 +17,51 @@
  */
 package thefloydman.linkingbooks.client.gui.screen;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import thefloydman.linkingbooks.client.ImageUtils;
-import thefloydman.linkingbooks.client.gui.widget.LinkingBookWidget;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.client.gui.widget.NestedWidget;
+import thefloydman.linkingbooks.client.gui.widget.ReltoBookWidget;
 import thefloydman.linkingbooks.client.sound.ModSounds;
-import thefloydman.linkingbooks.menutype.LinkingBookMenuType;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.menutype.ReltoBookMenuType;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
+import java.util.List;
+import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
-public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookMenuType> {
+public class ReltoBookScreen extends AbstractContainerScreen<ReltoBookMenuType> {
 
-    public LinkingBookScreen(LinkingBookMenuType container, Inventory inventory, Component narration) {
+    public ReltoBookScreen(ReltoBookMenuType container, Inventory inventory, Component narration) {
         super(container, inventory, narration);
-        this.imageWidth = 256;
+        this.imageWidth = 192;
         this.imageHeight = 180;
     }
 
     @Override
     protected void init() {
         super.init();
-        NativeImage linkingPanelImage = ImageUtils.NATIVE_IMAGE_CODEC.parse(NbtOps.INSTANCE, this.getMenu().linkingPanelImage).result().orElse(null);
-        NestedWidget linkingBook = this.addRenderableWidget(new LinkingBookWidget("linking book", this.leftPos,
-                this.topPos, 100.0F, this.imageWidth, this.imageHeight, Component.literal("Linking Book"), this, 1.0F,
-                this.getMenu().holdingBook, this.getMenu().bookColor, this.getMenu().linkData, this.getMenu().canLink,
-                linkingPanelImage));
+        LinkData linkData = new LinkData(Reference.getAsResourceLocation(String.format("relto_%s", this.getMenu().owner)), new BlockPos(-11, 200, 23), -180.0F, UUID.randomUUID(), List.of(Reference.getAsResourceLocation("intraage_linking")));
+        String ownerUsername = Reference.PLAYER_DISPLAY_NAMES.get(this.getMenu().owner);
+        Component ageName = ownerUsername == null ? Component.translatable("age.linkingbooks.name.relto") : Component.translatable("age.linkingbooks.name.relto", ownerUsername);
+        NestedWidget linkingBook = this.addRenderableWidget(
+                new ReltoBookWidget(
+                        "relto book",
+                        this.leftPos, this.topPos, 100.0F,
+                        this.imageWidth, this.imageHeight,
+                        Component.literal("Relto Book"),
+                        this,
+                        1.0F,
+                        linkData,
+                        ageName
+                )
+        );
         linkingBook.addListener(this);
         if (this.minecraft != null && this.minecraft.player != null) {
             this.minecraft.player.playSound(ModSounds.BOOK_OPEN.get(), 0.5F, 1.0F);

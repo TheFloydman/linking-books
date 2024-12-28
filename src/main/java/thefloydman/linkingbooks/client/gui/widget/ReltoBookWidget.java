@@ -17,7 +17,6 @@
  */
 package thefloydman.linkingbooks.client.gui.widget;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -25,7 +24,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.DyeColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import thefloydman.linkingbooks.Reference;
@@ -35,25 +33,23 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 
 @OnlyIn(Dist.CLIENT)
-public class LinkingBookWidget extends NestedWidget {
+public class ReltoBookWidget extends NestedWidget {
 
     private static final ResourceLocation COVER_TEXTURE = Reference
-            .getAsResourceLocation("textures/gui/book/book_cover_regular.png");
+            .getAsResourceLocation("textures/gui/book/book_cover_narrow.png");
     private static final ResourceLocation PAPER_TEXTURE = Reference
-            .getAsResourceLocation("textures/gui/book/book_paper_regular.png");
+            .getAsResourceLocation("textures/gui/book/book_paper_narrow.png");
     private final Component ageName;
 
-    public int color = DyeColor.GREEN.getFireworkColor();
+    public int color = new Color(77, 196, 109).getRGB();
 
-    public LinkingBookWidget(String id, int x, int y, float z, int width, int height, Component narration,
-                             Screen parentScreen, float scale, boolean holdingBook, int color, LinkData linkData, boolean canLink,
-                             NativeImage linkingPanelImage) {
+    public ReltoBookWidget(String id, int x, int y, float z, int width, int height, Component narration,
+                           Screen parentScreen, float scale, LinkData linkData, Component ageName) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
-        this.color = color;
-        this.ageName = linkData.dimensionName();
-        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.getX() + 155,
+        this.ageName = ageName;
+        NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.getX() + 107,
                 this.getY() + 41, z + 1.0F, 64, 42, Component.literal("Linking Panel"), parentScreen, this.scale,
-                holdingBook, false, linkData, canLink, linkingPanelImage));
+                false, true, linkData, true, null));
         for (GuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }
@@ -75,7 +71,7 @@ public class LinkingBookWidget extends NestedWidget {
             float fontScale = 0.5F;
             guiGraphics.pose().scale(fontScale, fontScale, 1.0F);
             float textWidth = this.minecraft.font.width(this.ageName.getVisualOrderText());
-            float textX = (((this.getX() / this.scale) + 187) / fontScale) - (textWidth / 2);
+            float textX = (((this.getX() / this.scale) + 139) / fontScale) - (textWidth / 2);
             float textY = ((this.getY() / this.scale) + 12) / fontScale;
             guiGraphics.drawString(this.minecraft.font, this.ageName.getVisualOrderText(), textX, textY, 0, false);
             guiGraphics.pose().popPose();

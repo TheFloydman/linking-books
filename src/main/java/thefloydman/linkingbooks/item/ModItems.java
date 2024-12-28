@@ -18,22 +18,21 @@
 
 package thefloydman.linkingbooks.item;
 
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import thefloydman.linkingbooks.component.ModDataComponents;
-import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.block.ModBlocks;
+import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.component.ModDataComponents;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class ModItems {
 
@@ -62,12 +61,14 @@ public class ModItems {
                                     new DyedItemColor(
                                             new Color(181, 134, 83).getRGB(),
                                             false))
-                            .component(ModDataComponents.LINK_DATA,
-                                    new LinkData(ResourceLocation.parse("minecraft:overworld"),
-                                            Reference.server == null ? BlockPos.ZERO : Reference.server.overworld().getSharedSpawnPos(),
-                                            0.0F,
-                                            UUID.randomUUID(),
-                                            new ArrayList<>()))));
+                            .component(ModDataComponents.LINK_DATA, LinkData.EMPTY)));
+
+    public static final DeferredItem<Item> RELTO_BOOK = ITEMS.register(
+            Reference.ItemNames.RELTO_BOOK,
+            () -> new ReltoBookItem(
+                    new Item.Properties()
+                            .stacksTo(1)
+                            .component(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag()))));
 
     // Block items
 

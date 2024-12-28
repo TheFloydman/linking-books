@@ -19,6 +19,7 @@ package thefloydman.linkingbooks.world.generation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -58,16 +59,16 @@ public class AgeUtils {
     public static final Function<MinecraftServer, LevelStorageSource.LevelStorageAccess> LEVEL_STORAGE
             = Reference.getField(MinecraftServer.class, "storageSource");
 
-    public static ServerLevel getOrCreateLevel(MinecraftServer server, ResourceKey<Level> levelKey, Component name, UUID owner,
-                                               TriFunction<MinecraftServer, ResourceKey<LevelStem>, ResourceKey<DimensionType>, LevelStem> levelStemFactory) {
+    public static Pair<ServerLevel, Boolean> getOrCreateLevel(MinecraftServer server, ResourceKey<Level> levelKey, Component name, UUID owner,
+                                                    TriFunction<MinecraftServer, ResourceKey<LevelStem>, ResourceKey<DimensionType>, LevelStem> levelStemFactory) {
 
         @SuppressWarnings("deprecation")
         Map<ResourceKey<Level>, ServerLevel> map = server.forgeGetWorldMap();
 
         if (map.containsKey(levelKey)) {
-            return map.get(levelKey);
+            return Pair.of(map.get(levelKey), false);
         } else {
-            return createAndRegisterLevel(server, levelKey, name, owner, levelStemFactory);
+            return Pair.of(createAndRegisterLevel(server, levelKey, name, owner, levelStemFactory), true);
         }
     }
 

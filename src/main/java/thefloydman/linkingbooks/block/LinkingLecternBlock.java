@@ -21,11 +21,15 @@ package thefloydman.linkingbooks.block;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -45,6 +49,7 @@ import thefloydman.linkingbooks.blockentity.ModBlockEntityTypes;
 import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.item.ReltoBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.linking.LinkingUtils;
 
@@ -163,12 +168,20 @@ public class LinkingLecternBlock extends BaseEntityBlock {
             if (!world.isClientSide() && blockEntity.hasBook() && !player.isShiftKeyDown()) {
                 ItemStack stack = blockEntity.getBook();
                 Item item = stack.getItem();
-                if (item instanceof WrittenLinkingBookItem) {
+                if (item instanceof WrittenLinkingBookItem || item instanceof ReltoBookItem) {
                     LinkData linkData = stack.get(ModDataComponents.LINK_DATA);
                     if (linkData != null) {
                         LinkingUtils.openLinkingBookGui((ServerPlayer) player, false,
                                 LinkingUtils.getLinkingBookColor(stack, 0), linkData, world.dimension().location());
 
+                    } else if (stack.getItem() instanceof ReltoBookItem) {
+                        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                        if (customData != null) {
+                            Tag ownerTag = customData.copyTag().get("owner");
+                            if (ownerTag != null && ownerTag.getType() == TagTypes.getType(Tag.TAG_INT_ARRAY)) {
+                                LinkingUtils.openReltoBookGui((ServerPlayer) player, customData.copyTag().getUUID("owner"));
+                            }
+                        }
                     }
                 }
             }
@@ -184,7 +197,7 @@ public class LinkingLecternBlock extends BaseEntityBlock {
             if (tileEntity instanceof LinkingLecternBlockEntity lecternTE) {
                 if (lecternTE.hasBook()) {
                     ItemStack stack = lecternTE.getBook();
-                    if (stack.getItem() instanceof WrittenLinkingBookItem) {
+                    if (stack.getItem() instanceof WrittenLinkingBookItem || stack.getItem() instanceof ReltoBookItem) {
                         LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
                         entity.setPos(pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D);
                         entity.setYRot(state.getValue(FACING).toYRot() + 180.0F);

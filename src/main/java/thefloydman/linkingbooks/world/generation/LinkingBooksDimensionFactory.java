@@ -21,6 +21,7 @@ package thefloydman.linkingbooks.world.generation;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -34,6 +35,7 @@ import thefloydman.linkingbooks.Reference;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class LinkingBooksDimensionFactory {
@@ -56,16 +58,18 @@ public class LinkingBooksDimensionFactory {
                         );
                     }
                 });
-        MultiNoiseBiomeSourceParameterList foobar = new MultiNoiseBiomeSourceParameterList(preset, server.registryAccess().lookupOrThrow(Registries.BIOME));
-        MultiNoiseBiomeSource multiNoiseBiomeSource = MultiNoiseBiomeSource.createFromPreset(Holder.direct(foobar));
+        HolderLookup.RegistryLookup<Biome> biomeRegistryLookup = server.registryAccess().lookupOrThrow(Registries.BIOME);
+        MultiNoiseBiomeSourceParameterList parameterList = new MultiNoiseBiomeSourceParameterList(preset, biomeRegistryLookup);
+        MultiNoiseBiomeSource multiNoiseBiomeSource = MultiNoiseBiomeSource.createFromPreset(Holder.direct(parameterList));
         ChunkGenerator chunkGenerator = new NoiseBasedChunkGenerator(multiNoiseBiomeSource, noiseGeneratorSettings);
         return new LevelStem(getDimensionTypeHolder(server, dimensionType), chunkGenerator);
     }
 
     public static LevelStem createRelto(MinecraftServer server, ResourceKey<LevelStem> levelStemKey,
                                         ResourceKey<DimensionType> dimensionType) {
-        ChunkGenerator chunkGenerator = new PrefabChunkGenerator(
-                server.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.THE_VOID));
+        Optional<Holder.Reference<Biome>> biomeReference = server.registryAccess().lookupOrThrow(Registries.BIOME).get(ModBiomes.RELTO);
+        Holder<Biome> biomeHolder = biomeReference.orElseGet(() -> server.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.THE_VOID));
+        ChunkGenerator chunkGenerator = new PrefabChunkGenerator(biomeHolder);
         return new LevelStem(getDimensionTypeHolder(server, dimensionType), chunkGenerator);
     }
 

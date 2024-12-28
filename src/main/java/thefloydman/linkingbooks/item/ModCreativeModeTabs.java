@@ -29,43 +29,51 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import thefloydman.linkingbooks.Reference;
 
+import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ModCreativeModeTabs {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Reference.MODID);
 
     private static final int[] BOOK_COLORS = {
-            -16777216, // black
-            -15704088, // blue
-            -10275065, // brown
-            -10564885, // cyan
-            -9211021, // gray
-            -16741881, // green
-            -5843457, // light blue
-            -4342339, // light gray
-            -8329083, // lime
-            -3197338, // magenta
-            -1203700, // orange
-            -546604, // pink
-            -7989784, // purple
-            -3076337, // red
-            -328966, // white
-            -623 // yellow
+            /* black */      new Color(0, 0, 0, 255).getRGB(),
+            /* blue */       new Color(16, 95, 232, 255).getRGB(),
+            /* brown */      new Color(16, 95, 232, 255).getRGB(),
+            /* cyan */       new Color(94, 202, 235, 255).getRGB(),
+            /* gray */       new Color(115, 115, 115, 255).getRGB(),
+            /* green */      new Color(0, 138, 7, 255).getRGB(),
+            /* light blue */ new Color(166, 213, 255, 255).getRGB(),
+            /* light gray */ new Color(189, 189, 189, 255).getRGB(),
+            /* lime */       new Color(128, 232, 133, 255).getRGB(),
+            /* magenta */    new Color(207, 54, 102, 255).getRGB(),
+            /* orange */     new Color(237, 162, 12, 255).getRGB(),
+            /* pink */       new Color(247, 168, 212, 255).getRGB(),
+            /* purple */     new Color(134, 21, 232, 255).getRGB(),
+            /* red */        new Color(209, 15, 15, 255).getRGB(),
+            /* white */      new Color(250, 250, 250, 255).getRGB(),
+            /* yellow */     new Color(255, 253, 145, 255).getRGB()
     };
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("main", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.linkingbooks")).withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> ModItems.BOOKSHELF_STAIRS.get().getDefaultInstance()).displayItems((parameters, output) -> {
-        output.accept(ModItems.GUIDEBOOK.get());
-        output.accept(ModItems.LINKING_LECTERN.get());
-        output.accept(ModItems.NARA.get());
-        output.accept(ModItems.LINK_TRANSLATOR.get());
-        output.accept(ModItems.MARKER_SWITCH.get());
-        output.accept(ModItems.LINKING_PANEL.get());
-        output.accept(ModItems.BOOKSHELF_STAIRS.get());
-        output.accept(ModItems.BLANK_LINKING_BOOK.get());
-        for (int color : BOOK_COLORS) {
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = CREATIVE_MODE_TABS.register(Reference.CreativeModeTabNames.MAIN, () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.linkingbooks")).withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> ModItems.BOOKSHELF_STAIRS.get().getDefaultInstance()).displayItems((parameters, output) -> {
+        output.acceptAll(List.of(
+                ModItems.GUIDEBOOK.toStack(),
+                ModItems.RELTO_BOOK.toStack(),
+                ModItems.LINKING_LECTERN.toStack(),
+                ModItems.NARA.toStack(),
+                ModItems.LINK_TRANSLATOR.toStack(),
+                ModItems.MARKER_SWITCH.toStack(),
+                ModItems.LINKING_PANEL.toStack(),
+                ModItems.BOOKSHELF_STAIRS.toStack(),
+                ModItems.BLANK_LINKING_BOOK.toStack()
+        ));
+        output.acceptAll(Arrays.stream(BOOK_COLORS).mapToObj(color -> {
             ItemStack linkingBook = ModItems.BLANK_LINKING_BOOK.get().getDefaultInstance();
             linkingBook.set(DataComponents.DYED_COLOR, new DyedItemColor(color, false));
-            output.accept(linkingBook);
-        }
+            return linkingBook;
+        }).collect(Collectors.toSet()));
     }).build());
 
 }

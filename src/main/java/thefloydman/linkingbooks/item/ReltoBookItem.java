@@ -17,8 +17,10 @@
  */
 package thefloydman.linkingbooks.item;
 
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -26,17 +28,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import thefloydman.linkingbooks.component.ModDataComponents;
-import thefloydman.linkingbooks.component.LinkData;
-import thefloydman.linkingbooks.linking.LinkingUtils;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.linking.LinkingUtils;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 public class ReltoBookItem extends Item {
 
@@ -45,13 +44,28 @@ public class ReltoBookItem extends Item {
     }
 
     @Override
-    public @Nonnull InteractionResultHolder<ItemStack> use(Level world, Player player, @Nonnull InteractionHand hand) {
+    public @Nonnull Component getName(@Nonnull ItemStack itemStack) {
+        CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+        if (customData != null && customData.contains("owner")) {
+            UUID ownerUUID = customData.copyTag().getUUID("owner");
+            String username = Reference.PLAYER_DISPLAY_NAMES.get(ownerUUID);
+            if (username != null) {
+                return Component.translatable(this.getDescriptionId(itemStack), username);
+            }
+        }
+        return Component.translatable("item.linkingbooks.relto_book_generic");
+    }
+
+    @Override
+    public @Nonnull InteractionResultHolder<ItemStack> use(Level level, Player player, @Nonnull InteractionHand hand) {
         ItemStack heldStack = player.getItemInHand(hand);
-        if (!world.isClientSide() && !player.isShiftKeyDown()) {
-            LinkData linkData = heldStack.get(ModDataComponents.LINK_DATA);
-            if (linkData != null) {
-                LinkingUtils.openLinkingBookGui((ServerPlayer) player, true, LinkingUtils.getLinkingBookColor(heldStack, 0),
-                        linkData, world.dimension().location());
+        if (!level.isClientSide() && !player.isShiftKeyDown()) {
+            CustomData customData = heldStack.get(DataComponents.CUSTOM_DATA);
+            if (customData != null) {
+                Tag ownerTag = customData.copyTag().get("owner");
+                if (ownerTag != null && ownerTag.getType() == TagTypes.getType(Tag.TAG_INT_ARRAY)) {
+                    LinkingUtils.openReltoBookGui((ServerPlayer) player, customData.copyTag().getUUID("owner"));
+                }
             }
         }
         return InteractionResultHolder.pass(heldStack);
@@ -69,25 +83,6 @@ public class ReltoBookItem extends Item {
     @Override
     public boolean hasCustomEntity(@Nonnull ItemStack stack) {
         return true;
-    }
-
-    @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull Item.TooltipContext tooltipContext, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
-        super.appendHoverText(stack, tooltipContext, tooltip, flag);
-        LinkData linkData = stack.get(ModDataComponents.LINK_DATA);
-        if (linkData != null) {
-            tooltip.add(Component.literal("§eAge: §9§o" + linkData.dimension().toString()));
-            tooltip.add(Component.literal("§ePosition: §9§o(" + linkData.blockPos().getX() + ", "
-                    + linkData.blockPos().getY() + ", " + linkData.blockPos().getZ() + ")"));
-            Set<ResourceLocation> linkEffects = new HashSet<ResourceLocation>(linkData.linkEffects());
-            if (!linkEffects.isEmpty()) {
-                tooltip.add(Component.literal("§eLink Effects:"));
-                for (ResourceLocation effect : linkEffects) {
-                    tooltip.add(Component.literal("    §9§o" + Component
-                            .translatable("linkEffect." + effect.getNamespace() + "." + effect.getPath()).getString()));
-                }
-            }
-        }
     }
 
 }

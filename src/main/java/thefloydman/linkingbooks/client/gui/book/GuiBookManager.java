@@ -109,7 +109,7 @@ public class GuiBookManager implements ResourceManagerReloadListener {
                 DocumentBuilder builder = builderFactory.newDocumentBuilder();
                 document = builder.parse(resourceManager.open(resourceLocation));
             } catch (ParserConfigurationException | SAXException | IOException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
             }
             if (document != null) {
                 NodeList pageNodes = document.getDocumentElement().getChildNodes();
@@ -123,7 +123,6 @@ public class GuiBookManager implements ResourceManagerReloadListener {
                             if (elementNode.getNodeType() == Node.ELEMENT_NODE) {
                                 switch (elementNode.getNodeName()) {
                                     case "p" -> {
-                                        List<String> brokenLines = Lists.newArrayList();
                                         NodeList paragraphChildNodes = elementNode.getChildNodes();
                                         for (int k = 0; k < paragraphChildNodes.getLength(); k++) {
                                             Node paragraphChildNode = paragraphChildNodes.item(k);
@@ -153,7 +152,7 @@ public class GuiBookManager implements ResourceManagerReloadListener {
                                                 paragraphChildNode.setTextContent("/u000a");
                                             }
                                         }
-                                        brokenLines = Stream.of(elementNode.getTextContent().split("/u000a")).toList();
+                                        List<String> brokenLines = Stream.of(elementNode.getTextContent().split("/u000a")).toList();
                                         GuiBookParagraph paragraph = new GuiBookParagraph(brokenLines);
                                         elementList.add(paragraph);
                                     }

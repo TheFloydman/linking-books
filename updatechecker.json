@@ -1,12 +1,13 @@
 {
   "homepage": "https://github.com/TheFloydman/linking-books",
   "1.21.1": {
+    "1.21.1-0.8.1.0-neoforge": "Fleshed out basic Relto book system.",
     "1.21.1-0.8.0.0-neoforge": "Added basic structure for personal Relto ages.",
     "1.21.1-0.7.2.1-neoforge": "Fixes a bug that caused a crash when attempting to serialize a Link Effect.",
     "1.21.1-0.7.2.0-neoforge": "An extensive update to port to NeoForge for Minecraft 1.21.1."
   },
   "promos": {
-    "1.21.1-latest": "1.21.1-0.8.0.0-neoforge",
-    "1.21.1-recommended": "1.21.1-0.8.0.0-neoforge"
+    "1.21.1-latest": "1.21.1-0.8.1.0-neoforge",
+    "1.21.1-recommended": "1.21.1-0.8.1.0-neoforge"
   }
 }

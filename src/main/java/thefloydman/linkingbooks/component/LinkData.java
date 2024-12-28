@@ -18,22 +18,28 @@
 
 package thefloydman.linkingbooks.component;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.linking.LinkEffect;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos, float rotation,
@@ -73,6 +79,23 @@ public record LinkData(@Nonnull ResourceLocation dimension, @Nonnull BlockPos bl
     @OnlyIn(Dist.CLIENT)
     public Set<LinkEffect> linkEffectsAsLE(Minecraft minecraft) {
         return this.linkEffects.stream().map(minecraft.getConnection().registryAccess().registry(LinkEffect.REGISTRY_KEY).get()::get).collect(Collectors.toSet());
+    }
+
+    public @Nonnull Component dimensionName() {
+        if (this.dimension().getPath().startsWith("relto")) {
+            try {
+                Pattern regExPattern = Pattern.compile("^relto_(.*)$");
+                Matcher regExMatcher = regExPattern.matcher(this.dimension().getPath());
+                if (regExMatcher.find()) {
+                    String uuidString = regExMatcher.group(1);
+                    String ownerUsername = Reference.PLAYER_DISPLAY_NAMES.get(UUID.fromString(uuidString));
+                    return ownerUsername == null ? Component.translatable("age.linkingbooks.name.relto") : Component.translatable("age.linkingbooks.name.relto", ownerUsername);
+                }
+            } catch (PatternSyntaxException | IllegalStateException | IndexOutOfBoundsException e) {
+                LogUtils.getLogger().error(e.getMessage());
+            }
+        }
+        return Component.translatable("age." + this.dimension().getNamespace() + ".name." + this.dimension().getPath());
     }
 
 }
