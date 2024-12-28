@@ -20,24 +20,11 @@ package thefloydman.linkingbooks.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
-import net.minecraft.FileUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforgespi.locating.IModFile;
 import org.slf4j.Logger;
-import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.linking.LinkingUtils;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.stream.Stream;
 
 public class ReltoCommand {
 

@@ -32,7 +32,6 @@ import thefloydman.linkingbooks.client.sound.ModSounds;
 import thefloydman.linkingbooks.menutype.LinkingBookMenuType;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookMenuType> {
