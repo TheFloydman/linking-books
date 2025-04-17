@@ -2,7 +2,35 @@ Welcome to **_Linking Books_**, where _Myst_ meets _Minecraft_! Write linking bo
 
 (Includes an in-game guidebook, crafted on a 3x3 grid by surrounding a vanilla book with any kind of dye.)
 
-_As of Minecraft 1.21, this project is built only for  [NeoForge](https://neoforged.net/). Builds are hosted at [CurseForge](https://www.curseforge.com/minecraft/mc-mods/linkingbooks) and [Modrinth](https://modrinth.com/mod/linkingbooks)._
+**_As of Minecraft 1.21, this project is built only for  [NeoForge](https://neoforged.net/). Builds are hosted at [CurseForge](https://www.curseforge.com/minecraft/mc-mods/linkingbooks) and [Modrinth](https://modrinth.com/mod/linkingbooks)._**
+
+For your own mod project, _Linking Books_ is available through both the CurseForge and Modrinth Maven repos: 
+
+<details>
+<summary>Maven Details <em>(click to toggle)</em></summary>
+
+```groovy
+maven {
+    name = "curseforge"
+    url = "https://minecraft.curseforge.com/api/maven/"
+}
+
+dependencies {
+    compile "linkingbooks:linkingbooks-1.21.1:0.8.1.0:neoforge"
+}
+```
+```groovy
+maven {
+    name = "modrinth"
+    url = "https://api.modrinth.com/maven"
+}
+
+dependencies {
+    compile "maven.modrinth:linkingbooks-1.21.1:0.8.1.0:neoforge"
+}
+```
+
+</details>
 
 --------------------
 
@@ -15,3 +43,4 @@ Need help or just want to chat? Join us on Discord at https://discord.gg/eMSubn6
 **Planned Features:**
 
 - A fleshed-out ink system that will make creating Linking Panels a bit more involved.
+- Custom Age generation.
