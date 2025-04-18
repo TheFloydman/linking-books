@@ -37,13 +37,13 @@ public class ModItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Reference.MODID);
 
-    public static final DeferredItem<Item> GUIDEBOOK = ITEMS.register(Reference.ItemNames.GUIDEBOOK,
+    public static final DeferredItem<GuidebookItem> GUIDEBOOK = ITEMS.register(Reference.ItemNames.GUIDEBOOK,
             () -> new GuidebookItem(new Item.Properties().stacksTo(16)));
 
-    public static final DeferredItem<Item> LINKING_PANEL = ITEMS.register(Reference.ItemNames.LINKING_PANEL,
+    public static final DeferredItem<LinkingPanelItem> LINKING_PANEL = ITEMS.register(Reference.ItemNames.LINKING_PANEL,
             () -> new LinkingPanelItem(new Item.Properties()));
 
-    public static final DeferredItem<Item> BLANK_LINKING_BOOK = ITEMS.register(
+    public static final DeferredItem<BlankLinkingBookItem> BLANK_LINKING_BOOK = ITEMS.register(
             Reference.ItemNames.BLANK_LINKING_BOOK,
             () -> new BlankLinkingBookItem(
                     new Item.Properties()
@@ -51,7 +51,7 @@ public class ModItems {
                             .component(DataComponents.DYED_COLOR, new DyedItemColor(
                                     new Color(181, 134, 83).getRGB(), false))));
 
-    public static final DeferredItem<Item> WRITTEN_LINKING_BOOK = ITEMS.register(
+    public static final DeferredItem<WrittenLinkingBookItem> WRITTEN_LINKING_BOOK = ITEMS.register(
             Reference.ItemNames.WRITTEN_LINKING_BOOK,
             () -> new WrittenLinkingBookItem(
                     new Item.Properties()
@@ -62,7 +62,7 @@ public class ModItems {
                                             false))
                             .component(ModDataComponents.LINK_DATA, LinkData.EMPTY)));
 
-    public static final DeferredItem<Item> RELTO_BOOK = ITEMS.register(
+    public static final DeferredItem<ReltoBookItem> RELTO_BOOK = ITEMS.register(
             Reference.ItemNames.RELTO_BOOK,
             () -> new ReltoBookItem(
                     new Item.Properties()
@@ -71,19 +71,19 @@ public class ModItems {
 
     // Block items
 
-    public static final DeferredItem<Item> BOOKSHELF_STAIRS = ITEMS.register(Reference.BlockNames.BOOKSHELF_STAIRS,
+    public static final DeferredItem<BlockItem> BOOKSHELF_STAIRS = ITEMS.register(Reference.BlockNames.BOOKSHELF_STAIRS,
             () -> new BlockItem(ModBlocks.BOOKSHELF_STAIRS.get(), new Item.Properties()));
 
-    public static final DeferredItem<Item> LINKING_LECTERN = ITEMS.register(Reference.BlockNames.LINKING_LECTERN,
+    public static final DeferredItem<BlockItem> LINKING_LECTERN = ITEMS.register(Reference.BlockNames.LINKING_LECTERN,
             () -> new BlockItem(ModBlocks.LINKING_LECTERN.get(), new Item.Properties()));
 
-    public static final DeferredItem<Item> NARA = ITEMS.register(Reference.BlockNames.NARA,
+    public static final DeferredItem<BlockItem> NARA = ITEMS.register(Reference.BlockNames.NARA,
             () -> new BlockItem(ModBlocks.NARA.get(), new Item.Properties()));
 
-    public static final DeferredItem<Item> LINK_TRANSLATOR = ITEMS.register(Reference.BlockNames.LINK_TRANSLATOR,
+    public static final DeferredItem<BlockItem> LINK_TRANSLATOR = ITEMS.register(Reference.BlockNames.LINK_TRANSLATOR,
             () -> new BlockItem(ModBlocks.LINK_TRANSLATOR.get(), new Item.Properties()));
 
-    public static final DeferredItem<Item> MARKER_SWITCH = ITEMS.register(Reference.BlockNames.MARKER_SWITCH,
+    public static final DeferredItem<BlockItem> MARKER_SWITCH = ITEMS.register(Reference.BlockNames.MARKER_SWITCH,
             () -> new BlockItem(ModBlocks.MARKER_SWITCH.get(), new Item.Properties()));
 
 }

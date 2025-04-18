@@ -28,11 +28,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.neoforged.neoforge.network.PacketDistributor;
+import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.component.LinkData;
+import thefloydman.linkingbooks.network.client.UpdateClientAgeInfoMapMessage;
 import thefloydman.linkingbooks.world.generation.AgeInfo;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LinkingBooksSavedData extends SavedData {
 
@@ -74,10 +79,12 @@ public class LinkingBooksSavedData extends SavedData {
     }
 
     public void addAge(AgeInfo age) {
-        if (this.ages.stream().map(AgeInfo::id).noneMatch(resourceLocation -> resourceLocation.equals(age.id()))) {
-            this.ages.add(age);
-            this.setDirty();
-        }
+        Set<AgeInfo> matchingAgeInfos = this.ages.stream().filter(ageInfo -> ageInfo.id().equals(age.id())).collect(Collectors.toSet());
+        this.ages.removeAll(matchingAgeInfos);
+        this.ages.add(age);
+        Reference.AGE_INFO_MAP.putAll(this.ages.stream().collect(Collectors.toMap(AgeInfo::id, ageInfo -> ageInfo)));
+        PacketDistributor.sendToAllPlayers(new UpdateClientAgeInfoMapMessage(Stream.of(age).collect(Collectors.toMap(AgeInfo::id, ageInfo -> ageInfo))));
+        this.setDirty();
     }
 
     public boolean addLinkingPortalData(BlockPos pos, LinkData linkData) {
@@ -171,9 +178,9 @@ public class LinkingBooksSavedData extends SavedData {
         nbt.put("linking_portals", portalList);
 
         ListTag ageList = new ListTag();
-        List<Tag> tags = this.ages.stream().map(age -> {
-            DataResult<Tag> dataResult = AgeInfo.CODEC.encodeStart(NbtOps.INSTANCE, age);
-            if (dataResult.isSuccess() && dataResult.result().isPresent()) {
+        List<Tag> tags = this.ages.stream().map(ageInfo -> {
+            DataResult<Tag> dataResult = AgeInfo.CODEC.encodeStart(NbtOps.INSTANCE, ageInfo);
+            if (dataResult.result().isPresent()) {
                 return dataResult.result().get();
             }
             return null;
@@ -245,6 +252,8 @@ public class LinkingBooksSavedData extends SavedData {
                 }
             }
         }
+
+        Reference.AGE_INFO_MAP.putAll(data.ages.stream().collect(Collectors.toMap(AgeInfo::id, ageInfo -> ageInfo)));
 
         return data;
 

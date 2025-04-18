@@ -1,6 +1,6 @@
 /*
  * This file is part of Linking Books, a mod for Minecraft.
- * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ * Copyright (c) 2019-2025 Dan Floyd ("TheFloydman").
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,31 +26,32 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.world.generation.AgeInfo;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public record UpdatePlayerDisplayNames(Map<UUID, String> displayNames) implements CustomPacketPayload {
+public record UpdateClientAgeInfoMapMessage(Map<ResourceLocation, AgeInfo> ageInfos) implements CustomPacketPayload {
 
-    public static final Type<UpdatePlayerDisplayNames> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "update_player_display_names"));
+    public static final Type<UpdateClientAgeInfoMapMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "update_client_age_info_map"));
 
-    public static final StreamCodec<ByteBuf, UpdatePlayerDisplayNames> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.map(HashMap::new, UUIDUtil.STREAM_CODEC, ByteBufCodecs.STRING_UTF8), UpdatePlayerDisplayNames::displayNames,
-            UpdatePlayerDisplayNames::new
+    public static final StreamCodec<ByteBuf, UpdateClientAgeInfoMapMessage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, AgeInfo.STREAM_CODEC), UpdateClientAgeInfoMapMessage::ageInfos,
+            UpdateClientAgeInfoMapMessage::new
     );
 
-    public static void handle(final UpdatePlayerDisplayNames data, final IPayloadContext context) {
+    public static void handle(final UpdateClientAgeInfoMapMessage data, final IPayloadContext context) {
 
         context.enqueueWork(() -> {
-            Reference.PLAYER_DISPLAY_NAMES.putAll(data.displayNames());
+            Reference.AGE_INFO_MAP.putAll(data.ageInfos());
         });
 
     }
 
     @Override
-    public @Nonnull Type<UpdatePlayerDisplayNames> type() {
+    public @Nonnull Type<UpdateClientAgeInfoMapMessage> type() {
         return TYPE;
     }
 

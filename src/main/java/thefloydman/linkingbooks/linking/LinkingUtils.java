@@ -32,6 +32,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -59,7 +60,9 @@ import thefloydman.linkingbooks.menutype.ReltoBookMenuType;
 import thefloydman.linkingbooks.network.client.PlayOwnLinkingSoundMessage;
 import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
 import thefloydman.linkingbooks.world.generation.AgeUtils;
+import thefloydman.linkingbooks.world.generation.CloudInfo;
 import thefloydman.linkingbooks.world.generation.LinkingBooksDimensionFactory;
+import thefloydman.linkingbooks.world.sky.SkyObject;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 import java.awt.*;
@@ -158,8 +161,7 @@ public class LinkingUtils {
             boolean tookExperience = false;
 
             /*
-             * TODO: Find a way to teleport without client moving entity model through
-             * world.
+             * TODO: Find a way to teleport without client moving entity model through world.
              */
 
             if (entity instanceof ServerPlayer player) {
@@ -258,9 +260,25 @@ public class LinkingUtils {
 
     public static int linkToRelto(ServerPlayer player, UUID reltoOwner) {
         ResourceLocation ageResourceLocation = Reference.getAsResourceLocation(String.format("relto_%s", reltoOwner));
-        ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, ageResourceLocation);
-        Component name = Component.translatable("age.linkingbooks.name.relto");
-        Pair<ServerLevel, Boolean> levelPair = AgeUtils.getOrCreateLevel(player.server, levelKey, name, reltoOwner, LinkingBooksDimensionFactory::createRelto);
+        SkyObject self = SkyObject.self(0, 12000L, Mth.PI / 4.0F, 12000L * 256L, 0.0F, 1.0F, List.of());
+        SkyObject innerPlanet = new SkyObject(Reference.getAsResourceLocation("inner_planet"), 0, Reference.getAsResourceLocation("textures/environment/sun"), 0L, 0.0F, 24000L, 0.0F, 0.25F, 5.0F, true, new Color(182, 182, 182).getRGB(), List.of());
+        SkyObject sun = new SkyObject(Reference.getAsResourceLocation("sun"), 15, Reference.getAsResourceLocation("textures/environment/sun"), 0L, 0.0F, 0L, 0.0F, 0.0F, 30.0F, true, new Color(255, 245, 138).getRGB(), List.of(self, innerPlanet));
+        Pair<ServerLevel, Boolean> levelPair = AgeUtils.getOrCreateLevel(
+                player.server,
+                ResourceKey.create(Registries.DIMENSION, ageResourceLocation),
+                Component.translatable("age.linkingbooks.name.relto"),
+                reltoOwner,
+                true,
+                new Color(69, 7, 94).getRGB(),
+                new Color(54, 42, 133).getRGB(),
+                sun,
+                List.of(
+                        new CloudInfo(193.0F, new Color(191, 48, 0).getRGB()),
+                        new CloudInfo(188.0F, new Color(107, 29, 3).getRGB()),
+                        new CloudInfo(183.0F, new Color(84, 0, 0).getRGB())
+                ),
+                LinkingBooksDimensionFactory::createRelto
+        );
         if (levelPair.getSecond()) {
             copyRegionFiles(ageResourceLocation);
         }

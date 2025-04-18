@@ -26,12 +26,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
-import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.world.level.CustomSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.border.BorderChangeListener;
-import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.DerivedLevelData;
@@ -40,27 +38,19 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.function.TriFunction;
-import thefloydman.linkingbooks.network.client.UpdateClientDimensionListMessage;
 import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.ReflectionHelper;
+import thefloydman.linkingbooks.network.client.UpdateClientDimensionListMessage;
+import thefloydman.linkingbooks.world.sky.SkyObject;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
 
 public class AgeUtils {
 
-    public static final Function<MinecraftServer, ChunkProgressListenerFactory> CHUNK_PROGRESS
-            = Reference.getField(MinecraftServer.class, "progressListenerFactory");
-    public static final Function<MinecraftServer, Executor> EXECUTOR
-            = Reference.getField(MinecraftServer.class, "executor");
-    public static final Function<MinecraftServer, LevelStorageSource.LevelStorageAccess> LEVEL_STORAGE
-            = Reference.getField(MinecraftServer.class, "storageSource");
-
-    public static Pair<ServerLevel, Boolean> getOrCreateLevel(MinecraftServer server, ResourceKey<Level> levelKey, Component name, UUID owner,
-                                                    TriFunction<MinecraftServer, ResourceKey<LevelStem>, ResourceKey<DimensionType>, LevelStem> levelStemFactory) {
+    public static Pair<ServerLevel, Boolean> getOrCreateLevel(MinecraftServer server, ResourceKey<Level> levelKey, Component name, UUID owner, boolean overwriteBiomeSkyColor, int skyColor, int fogColor, SkyObject skyObject, List<CloudInfo> cloudInfos,
+                                                              TriFunction<MinecraftServer, ResourceKey<LevelStem>, ResourceKey<DimensionType>, LevelStem> levelStemFactory) {
 
         @SuppressWarnings("deprecation")
         Map<ResourceKey<Level>, ServerLevel> map = server.forgeGetWorldMap();
@@ -68,21 +58,21 @@ public class AgeUtils {
         if (map.containsKey(levelKey)) {
             return Pair.of(map.get(levelKey), false);
         } else {
-            return Pair.of(createAndRegisterLevel(server, levelKey, name, owner, levelStemFactory), true);
+            return Pair.of(createAndRegisterLevel(server, levelKey, name, owner, overwriteBiomeSkyColor, skyColor, fogColor, skyObject, cloudInfos, levelStemFactory), true);
         }
     }
 
     private static ServerLevel createAndRegisterLevel(MinecraftServer server, ResourceKey<Level> levelKey,
-                                                      Component name, UUID owner,
+                                                      Component name, UUID owner, boolean overwriteBiomeSkyColor, int skyColor, int fogColor, SkyObject skyObject, List<CloudInfo> cloudInfos,
                                                       TriFunction<MinecraftServer, ResourceKey<LevelStem>, ResourceKey<DimensionType>, LevelStem> levelStemFactory) {
 
-        ChunkProgressListener chunkListener = CHUNK_PROGRESS.apply(server).create(11);
-        Executor executor = EXECUTOR.apply(server);
-        LevelStorageSource.LevelStorageAccess levelStorage = LEVEL_STORAGE.apply(server);
+        ChunkProgressListener chunkListener = ReflectionHelper.CHUNK_PROGRESS.apply(server).create(11);
+        Executor executor = ReflectionHelper.EXECUTOR.apply(server);
+        LevelStorageSource.LevelStorageAccess levelStorage = ReflectionHelper.LEVEL_STORAGE.apply(server);
         DerivedLevelData derivedLevelData = new DerivedLevelData(server.getWorldData(),
                 server.getWorldData().overworldData());
         LevelStem levelStem = levelStemFactory.apply(server,
-                ResourceKey.create(Registries.LEVEL_STEM, levelKey.location()), BuiltinDimensionTypes.OVERWORLD);
+                ResourceKey.create(Registries.LEVEL_STEM, levelKey.location()), ModDimensionTypes.AGE);
         boolean isDebugWorld = server.getWorldData().isDebugWorld();
         long seed = BiomeManager.obfuscateSeed(server.getWorldData().worldGenOptions().seed());
         List<CustomSpawner> customSpawners = ImmutableList.of(); // Handle special spawns via other means
@@ -94,7 +84,8 @@ public class AgeUtils {
         server.overworld().getWorldBorder()
                 .addListener(new BorderChangeListener.DelegateBorderChangeListener(newLevel.getWorldBorder()));
 
-        registerAge(levelKey, name, owner, newLevel);
+        AgeInfo ageInfo = new AgeInfo(AgeInfo.SCHEMA_VERSION, levelKey.location(), name, owner, overwriteBiomeSkyColor, skyColor, fogColor, skyObject, cloudInfos);
+        registerAge(levelKey, ageInfo, newLevel);
 
         NeoForge.EVENT_BUS.post(new LevelEvent.Load(newLevel));
 
@@ -102,16 +93,16 @@ public class AgeUtils {
     }
 
     @SuppressWarnings("deprecation")
-    private static void registerAge(ResourceKey<Level> levelKey, Component name, UUID owner, ServerLevel world) {
-        MinecraftServer server = world.getServer();
+    private static void registerAge(ResourceKey<Level> levelKey, AgeInfo ageInfo, ServerLevel serverLevel) {
+        MinecraftServer server = serverLevel.getServer();
 
         // Update Minecraft's level map
-        server.forgeGetWorldMap().put(levelKey, world);
+        server.forgeGetWorldMap().put(levelKey, serverLevel);
 
         // Save dimension to main SavedData so it can be recognized when game restarts.
         LinkingBooksSavedData savedData = server.overworld().getDataStorage()
                 .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
-        savedData.addAge(new AgeInfo(levelKey.location(), name, owner));
+        savedData.addAge(ageInfo);
 
         // Send dimension changes to all clients so that command suggestions display
         // correctly.
@@ -121,12 +112,25 @@ public class AgeUtils {
         server.markWorldsDirty();
     }
 
+    public static void updateAgeInfosOnStartup(MinecraftServer server) {
+        LinkingBooksSavedData savedData = server.overworld().getDataStorage()
+                .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
+        Set<AgeInfo> updatedAges = new HashSet<>();
+        for (AgeInfo ageInfo : savedData.ages) {
+            AgeInfo updated = ageInfo.updateVersion();
+            updatedAges.add(updated);
+        }
+        savedData.ages.clear();
+        savedData.ages.addAll(updatedAges);
+        savedData.setDirty();
+    }
+
     public static void mapLevelsOnStartup(MinecraftServer server) {
         LinkingBooksSavedData savedData = server.overworld().getDataStorage()
                 .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
         for (AgeInfo ageInfo : savedData.ages) {
             createAndRegisterLevel(server, ResourceKey.create(Registries.DIMENSION, ageInfo.id()), ageInfo.name(),
-                    ageInfo.owner(), LinkingBooksDimensionFactory::createDimension);
+                    ageInfo.owner(), ageInfo.overrideBiomeSkyColor(), ageInfo.skyColor(), ageInfo.fogColor(), ageInfo.skyObject(), ageInfo.cloudInfos(), ageInfo.id().getPath().startsWith("relto") ? LinkingBooksDimensionFactory::createRelto : LinkingBooksDimensionFactory::createDimension);
         }
     }
 

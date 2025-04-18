@@ -23,28 +23,69 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Mth;
 import thefloydman.linkingbooks.Reference;
+import thefloydman.linkingbooks.world.sky.SkyObject;
 
+import javax.annotation.Nonnull;
+import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public record AgeInfo(ResourceLocation id, Component name, UUID owner) {
+public record AgeInfo(
+        int version,
+        ResourceLocation id,
+        Component name,
+        UUID owner,
+        boolean overrideBiomeSkyColor,
+        int skyColor,
+        int fogColor,
+        @Nonnull SkyObject skyObject,
+        List<CloudInfo> cloudInfos
+) {
 
-    public static final AgeInfo DUMMY = new AgeInfo(Reference.getAsResourceLocation("dummy"), Component.translatable("age.linkingbooks.name.unnamed"), UUID.randomUUID());
+    /**
+     * Make sure to update {@link AgeInfo#updateVersion()} if you change this!
+     */
+    public static final int SCHEMA_VERSION = 1;
+
+    public static final AgeInfo DUMMY = new AgeInfo(
+            SCHEMA_VERSION,
+            Reference.getAsResourceLocation("dummy"),
+            Component.translatable("age.linkingbooks.name.unnamed"),
+            UUID.randomUUID(),
+            false,
+            8103167,
+            8103167,
+            SkyObject.DUMMY,
+            List.of()
+    );
 
     public static final Codec<AgeInfo> CODEC = RecordCodecBuilder.create(
-            codecBuilderInstance -> codecBuilderInstance.group(
-                            ResourceLocation.CODEC.fieldOf("id").forGetter(AgeInfo::id),
-                            Codec.of(AgeInfo::encodeComponent, AgeInfo::decodeComponent).fieldOf("name").forGetter(AgeInfo::name),
-                            UUIDUtil.CODEC.fieldOf("owner").forGetter(AgeInfo::owner)
+            instance -> instance.group(
+                            Codec.INT.optionalFieldOf("version", 0).forGetter(AgeInfo::version),
+                            ResourceLocation.CODEC.optionalFieldOf("id", Reference.getAsResourceLocation("dummy")).forGetter(AgeInfo::id),
+                            Codec.of(AgeInfo::encodeComponent, AgeInfo::decodeComponent).optionalFieldOf("name", Component.translatable("age.linkingbooks.name.unnamed")).forGetter(AgeInfo::name),
+                            UUIDUtil.CODEC.optionalFieldOf("owner", UUID.randomUUID()).forGetter(AgeInfo::owner),
+                            Codec.BOOL.optionalFieldOf("override_biome_sky_color", false).forGetter(AgeInfo::overrideBiomeSkyColor),
+                            Codec.INT.optionalFieldOf("sky_color", 8103167).forGetter(AgeInfo::skyColor),
+                            Codec.INT.optionalFieldOf("fog_color", 8103167).forGetter(AgeInfo::fogColor),
+                            SkyObject.CODEC.optionalFieldOf("sky_object", SkyObject.DUMMY).forGetter(AgeInfo::skyObject),
+                            Codec.list(CloudInfo.CODEC).optionalFieldOf("cloud_infos", List.of()).forGetter(AgeInfo::cloudInfos)
                     )
-                    .apply(codecBuilderInstance, AgeInfo::new)
+                    .apply(instance, AgeInfo::new)
     );
+
+    public static final StreamCodec<ByteBuf, AgeInfo> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
     private static <T> DataResult<T> encodeComponent(Component component, DynamicOps<T> ops, T input) {
         JsonObject topLevelJsonObject = new JsonObject();
@@ -73,6 +114,58 @@ public record AgeInfo(ResourceLocation id, Component name, UUID owner) {
             }
         }
         return new DataResult.Error<>(() -> "Could not parse Component.", Optional.empty(), Lifecycle.stable());
+    }
+
+    public AgeInfo(int version,
+                   ResourceLocation id,
+                   Component name,
+                   UUID owner,
+                   boolean overrideBiomeSkyColor,
+                   int skyColor,
+                   int fogColor,
+                   @Nonnull SkyObject skyObject,
+                   List<CloudInfo> cloudInfos
+    ) {
+        this.version = version;
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+        this.overrideBiomeSkyColor = overrideBiomeSkyColor;
+        this.skyColor = skyColor;
+        this.fogColor = fogColor;
+        this.skyObject = skyObject;
+        this.cloudInfos = cloudInfos.stream().sorted((a, b) -> Float.compare(a.height(), b.height())).toList();
+    }
+
+    public AgeInfo updateVersion() {
+        int version = this.version();
+        ResourceLocation id = this.id();
+        Component name = this.name();
+        UUID owner = this.owner();
+        boolean overrideBiomeSkyColor = this.overrideBiomeSkyColor();
+        int skyColor = this.skyColor();
+        int fogColor = this.fogColor();
+        SkyObject skyObject = this.skyObject();
+        List<CloudInfo> cloudInfos = this.cloudInfos();
+
+        if (version == 0) {
+            version = 1;
+            if (id.getNamespace().equals(Reference.MODID) && id.getPath().startsWith("relto_")) {
+                overrideBiomeSkyColor = false;
+                skyColor = new Color(69, 7, 94).getRGB();
+                fogColor = new Color(54, 42, 133).getRGB();
+                SkyObject self = SkyObject.self(0, 12000L, Mth.PI / 4.0F, 12000L * 256L, 0.0F, 1.0F, List.of());
+                SkyObject innerPlanet = new SkyObject(Reference.getAsResourceLocation("inner_planet"), 0, Reference.getAsResourceLocation("textures/environment/sun"), 0L, 0.0F, 24000L, 0.0F, 0.25F, 5.0F, true, new Color(182, 182, 182).getRGB(), List.of());
+                skyObject = new SkyObject(Reference.getAsResourceLocation("sun"), 15, Reference.getAsResourceLocation("textures/environment/sun"), 0L, 0.0F, 0L, 0.0F, 0.0F, 30.0F, true, new Color(255, 245, 138).getRGB(), List.of(self, innerPlanet));
+                cloudInfos = List.of(new CloudInfo(193.0F, new Color(191, 48, 0).getRGB()), new CloudInfo(188.0F, new Color(107, 29, 3).getRGB()), new CloudInfo(183.0F, new Color(84, 0, 0).getRGB()));
+            }
+        }
+
+        if (version == 1) {
+            /* Fill in when AgeInfo schema advances to 2. */
+        }
+
+        return new AgeInfo(version, id, name, owner, overrideBiomeSkyColor, skyColor, fogColor, skyObject, cloudInfos);
     }
 
 }

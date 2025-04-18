@@ -40,8 +40,7 @@ import java.util.function.Function;
 
 public class LinkingBooksDimensionFactory {
 
-    public static LevelStem createDimension(MinecraftServer server, ResourceKey<LevelStem> levelStemKey,
-                                            ResourceKey<DimensionType> dimensionType) {
+    public static LevelStem createDimension(MinecraftServer server, ResourceKey<LevelStem> levelStemKey, ResourceKey<DimensionType> dimensionType) {
         List<ResourceKey<Biome>> biomes = Lists.newArrayList(Biomes.JUNGLE, Biomes.DESERT);
         Holder<NoiseGeneratorSettings> noiseGeneratorSettings = server.registryAccess()
                 .registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(NoiseGeneratorSettings.OVERWORLD);
@@ -65,16 +64,14 @@ public class LinkingBooksDimensionFactory {
         return new LevelStem(getDimensionTypeHolder(server, dimensionType), chunkGenerator);
     }
 
-    public static LevelStem createRelto(MinecraftServer server, ResourceKey<LevelStem> levelStemKey,
-                                        ResourceKey<DimensionType> dimensionType) {
+    public static LevelStem createRelto(MinecraftServer server, ResourceKey<LevelStem> levelStemKey, ResourceKey<DimensionType> dimensionType) {
         Optional<Holder.Reference<Biome>> biomeReference = server.registryAccess().lookupOrThrow(Registries.BIOME).get(ModBiomes.RELTO);
         Holder<Biome> biomeHolder = biomeReference.orElseGet(() -> server.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.THE_VOID));
         ChunkGenerator chunkGenerator = new PrefabChunkGenerator(biomeHolder);
         return new LevelStem(getDimensionTypeHolder(server, dimensionType), chunkGenerator);
     }
 
-    public static Holder<DimensionType> getDimensionTypeHolder(MinecraftServer server,
-                                                               ResourceKey<DimensionType> dimensionType) {
+    public static Holder<DimensionType> getDimensionTypeHolder(MinecraftServer server, ResourceKey<DimensionType> dimensionType) {
         return server.registryAccess().registryOrThrow(Registries.DIMENSION_TYPE).getHolderOrThrow(dimensionType);
     }
 

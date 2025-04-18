@@ -22,10 +22,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
@@ -44,6 +41,7 @@ import thefloydman.linkingbooks.client.renderer.entity.LinkingBookRenderer;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookCoverModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.LinkingBookPagesModel;
 import thefloydman.linkingbooks.client.renderer.entity.model.ModModelLayers;
+import thefloydman.linkingbooks.client.renderer.world.ModDimensionSpecialEffects;
 import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.item.ModItems;
@@ -51,14 +49,12 @@ import thefloydman.linkingbooks.linking.LinkEffect;
 import thefloydman.linkingbooks.linking.LinkEffectTypes;
 import thefloydman.linkingbooks.linking.LinkingUtils;
 import thefloydman.linkingbooks.menutype.ModMenuTypes;
-import thefloydman.linkingbooks.network.client.PlayOwnLinkingSoundMessage;
-import thefloydman.linkingbooks.network.client.TakeScreenshotForLinkingBookMessage;
-import thefloydman.linkingbooks.network.client.UpdateClientDimensionListMessage;
-import thefloydman.linkingbooks.network.client.UpdatePlayerDisplayNames;
+import thefloydman.linkingbooks.network.client.*;
 import thefloydman.linkingbooks.network.server.AddChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.LinkMessage;
 import thefloydman.linkingbooks.network.server.RemoveChunkLoaderMessage;
 import thefloydman.linkingbooks.network.server.SaveLinkingPanelImageMessage;
+import thefloydman.linkingbooks.world.sky.SkyObject;
 
 @EventBusSubscriber(modid = Reference.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ModEventHandler {
@@ -89,9 +85,14 @@ public class ModEventHandler {
                 PlayOwnLinkingSoundMessage::handle
         );
         registrar.playToClient(
-                UpdatePlayerDisplayNames.TYPE,
-                UpdatePlayerDisplayNames.STREAM_CODEC,
-                UpdatePlayerDisplayNames::handle
+                UpdatePlayerDisplayNamesMessage.TYPE,
+                UpdatePlayerDisplayNamesMessage.STREAM_CODEC,
+                UpdatePlayerDisplayNamesMessage::handle
+        );
+        registrar.playToClient(
+                UpdateClientAgeInfoMapMessage.TYPE,
+                UpdateClientAgeInfoMapMessage.STREAM_CODEC,
+                UpdateClientAgeInfoMapMessage::handle
         );
         registrar.playToServer(
                 SaveLinkingPanelImageMessage.TYPE,
@@ -170,6 +171,12 @@ public class ModEventHandler {
     @OnlyIn(Dist.CLIENT)
     public static void addReloadListener(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(new GuiBookManager());
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void registerDimensionSpecialEffects(RegisterDimensionSpecialEffectsEvent event) {
+        event.register(Reference.getAsResourceLocation("age"), new ModDimensionSpecialEffects.AgeEffects());
     }
 
 }

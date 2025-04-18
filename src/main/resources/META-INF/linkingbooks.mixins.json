@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "thefloydman.linkingbooks.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LevelMixin"
+  ],
+  "client": [
+    "ClientLevelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

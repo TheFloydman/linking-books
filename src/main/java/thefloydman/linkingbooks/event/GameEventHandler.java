@@ -18,11 +18,15 @@
 
 package thefloydman.linkingbooks.event;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -31,10 +35,13 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -58,14 +65,19 @@ import thefloydman.linkingbooks.commands.ReltoCommand;
 import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
+import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.ReltoBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 import thefloydman.linkingbooks.linking.LinkingPortalArea;
 import thefloydman.linkingbooks.linking.LinkingUtils;
-import thefloydman.linkingbooks.network.client.UpdatePlayerDisplayNames;
+import thefloydman.linkingbooks.network.client.UpdateClientAgeInfoMapMessage;
+import thefloydman.linkingbooks.network.client.UpdatePlayerDisplayNamesMessage;
+import thefloydman.linkingbooks.world.generation.AgeInfo;
 import thefloydman.linkingbooks.world.generation.AgeUtils;
+import thefloydman.linkingbooks.world.sky.HorizonInfo;
+import thefloydman.linkingbooks.world.sky.SkyUtils;
 import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 
 import java.awt.*;
@@ -79,9 +91,12 @@ public class GameEventHandler {
 
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
-        Reference.server = event.getServer();
+        MinecraftServer server = event.getServer();
+        Reference.server = server;
+        // Update AgeInfos to current schema.
+        AgeUtils.updateAgeInfosOnStartup(server);
         // Add existing Ages to level map so the game knows they exist!
-        AgeUtils.mapLevelsOnStartup(event.getServer());
+        AgeUtils.mapLevelsOnStartup(server);
     }
 
     @SubscribeEvent
@@ -99,8 +114,7 @@ public class GameEventHandler {
             Level world = event.getEntity().getCommandSenderWorld();
             LinkingBookEntity entity = new LinkingBookEntity(world, stack.copy());
             Vec3 lookVec = player.getLookAngle();
-            entity.setPos(player.getX() + lookVec.x(), player.getY() + 1.75D + lookVec.y(),
-                    player.getZ() + lookVec.z());
+            entity.setPos(player.getX() + lookVec.x(), player.getY() + 1.75D + lookVec.y(), player.getZ() + lookVec.z());
             entity.setYRot(player.yHeadRot);
             entity.push(lookVec.x / 4, lookVec.y / 4, lookVec.z / 4);
             world.addFreshEntity(entity);
@@ -148,10 +162,7 @@ public class GameEventHandler {
             if (blockState.getValue(MarkerSwitchBlock.OPEN)) {
                 BlockEntity genericOriginalBlockEntity = level.getBlockEntity(blockPos);
                 if (genericOriginalBlockEntity instanceof MarkerSwitchBlockEntity originalBlockEntity) {
-                    BlockEntity genericTwinBlockEntity = blockState
-                            .getValue(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER
-                            ? level.getBlockEntity(blockPos.above())
-                            : level.getBlockEntity(blockPos.below());
+                    BlockEntity genericTwinBlockEntity = blockState.getValue(MarkerSwitchBlock.HALF) == DoubleBlockHalf.LOWER ? level.getBlockEntity(blockPos.above()) : level.getBlockEntity(blockPos.below());
                     ItemStack itemStack = player.getItemInHand(hand);
                     if (!originalBlockEntity.hasItem()) {
                         if (!itemStack.isEmpty()) {
@@ -244,16 +255,22 @@ public class GameEventHandler {
         Player player = event.getEntity();
         Level level = player.level();
         if (!level.isClientSide()) {
-            // Update SavedData
-            LinkingBooksSavedData linkingBooksSavedData = player.getServer().overworld().getDataStorage()
-                    .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
-            linkingBooksSavedData.addPlayerDisplayName(player.getUUID(), player.getDisplayName().getString());
+            MinecraftServer server = player.getServer();
+            if (server != null) {
 
-            // Updated server-side map
-            Reference.PLAYER_DISPLAY_NAMES.putAll(linkingBooksSavedData.playerDisplayNames);
+                // Update SavedData
+                LinkingBooksSavedData linkingBooksSavedData = server.overworld().getDataStorage().computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
+                linkingBooksSavedData.addPlayerDisplayName(player.getUUID(), player.getDisplayName().getString());
 
-            // Update client-side map
-            PacketDistributor.sendToAllPlayers(new UpdatePlayerDisplayNames(linkingBooksSavedData.playerDisplayNames));
+                // Updated server-side maps
+                Reference.PLAYER_DISPLAY_NAMES.putAll(linkingBooksSavedData.playerDisplayNames);
+
+                // Update client-side maps
+                PacketDistributor.sendToAllPlayers(new UpdatePlayerDisplayNamesMessage(Reference.PLAYER_DISPLAY_NAMES));
+                System.out.println(Reference.AGE_INFO_MAP);
+                PacketDistributor.sendToPlayer((ServerPlayer) player, new UpdateClientAgeInfoMapMessage(Reference.AGE_INFO_MAP));
+
+            }
         }
     }
 
@@ -265,6 +282,48 @@ public class GameEventHandler {
             ownerTag.putUUID("owner", event.getEntity().getUUID());
             itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(ownerTag));
         }
+    }
+
+    @SubscribeEvent
+    public static void onLevelUpdateBrightness(LevelUpdateSkyBrightnessEvent event) {
+        Level level = event.getLevel();
+        if (!level.isClientSide()) {
+            ResourceLocation location = level.dimension().location();
+            if (level.dimension().location().getNamespace().equals(Reference.MODID)) {
+                AgeInfo ageInfo = Reference.AGE_INFO_MAP.get(location);
+                if (ageInfo != null) {
+                    float lowestValue = calculateSkyDarken(level, ageInfo, 1.0F);
+                    event.setSkyDarken(Math.round(lowestValue * 15.0F));
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void onClientLevelGetSkyDarken(ClientLevelGetSkyDarkenEvent event) {
+        ClientLevel level = event.getClientLevel();
+        ResourceLocation location = level.dimension().location();
+        if (location.getNamespace().equals(Reference.MODID)) {
+            AgeInfo ageInfo = Reference.AGE_INFO_MAP.get(location);
+            if (ageInfo != null) {
+                float lowestValue = calculateSkyDarken(level, ageInfo, 0.8F);
+                event.setSkyDarken(lowestValue);
+            }
+        }
+    }
+
+    private static float calculateSkyDarken(Level level, AgeInfo ageInfo, float lowestValue) {
+        List<HorizonInfo> horizonInfos = SkyUtils.generateHorizonInfos(ageInfo.skyObject(), level.getDayTime());
+        for (HorizonInfo horizonInfo : horizonInfos) {
+            float verticalAngle = horizonInfo.getVerticalAngle();
+            float transitionAngle = Mth.PI / 8.0F;
+            float lightPercentage = (Mth.clamp(verticalAngle / transitionAngle, -1.0F, 1.0F) + 1.0F) / 2.0F;
+            float existingValue = Math.min(1.0F, lowestValue);
+            float newValue = 1.0F - ((float) horizonInfo.getSkyObject().providedLight() * lightPercentage) / 15.0F;
+            lowestValue = Math.min(existingValue, newValue);
+        }
+        return lowestValue;
     }
 
 }

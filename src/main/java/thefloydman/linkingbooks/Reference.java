@@ -21,21 +21,18 @@ package thefloydman.linkingbooks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.util.ObfuscationReflectionHelper;
+import thefloydman.linkingbooks.world.generation.AgeInfo;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 
 public class Reference {
 
     public static final String MODID = "linkingbooks";
     public static MinecraftServer server = null;
     public static final Map<UUID, String> PLAYER_DISPLAY_NAMES = new HashMap<>();
+    public static final Map<ResourceLocation, AgeInfo> AGE_INFO_MAP = new HashMap<>();
 
     /**
      * Convenience method to make a ResourceLocation under this mod's domain.
@@ -57,7 +54,6 @@ public class Reference {
     }
 
     public static class BlockNames {
-        public static final String INK = "ink";
         public static final String LINKING_LECTERN = "linking_lectern";
         public static final String MARKER_SWITCH = "marker_switch";
         public static final String NARA = "nara";
@@ -67,7 +63,6 @@ public class Reference {
     }
 
     public static class ItemNames {
-        public static final String INK_BUCKET = "ink_bucket";
         public static final String GUIDEBOOK = "guidebook";
         public static final String BLANK_LINKING_BOOK = "blank_linking_book";
         public static final String WRITTEN_LINKING_BOOK = "written_linking_book";
@@ -84,15 +79,6 @@ public class Reference {
         public static final String LINKING_LECTERN = "linking_lectern";
         public static final String LINK_TRANSLATOR = "link_translator";
         public static final String MARKER_SWITCH = "marker_switch";
-    }
-
-    public static class FluidNames {
-        public static final String INK = "ink";
-        public static final String FLOWING_INK = "flowing_ink";
-    }
-
-    public static class FluidTypeNames {
-        public static final String INK = "ink";
     }
 
     public static class ContainerNames {
@@ -129,10 +115,11 @@ public class Reference {
     public static class RegistryKeyNames {
         public static final String LINK_EFFECT_TYPE = "linkeffecttype";
         public static final String LINK_EFFECT = "linkeffect";
+        public static final String SKY_OBJECT_TYPE = "skyobjecttype";
     }
 
-    public static class RegistryNames {
-        public static final ResourceLocation LINK_EFFECT_TYPE = getAsResourceLocation("link_effect_type");
+    public static class CelestialObjectNames {
+        public static final String SUN = "sun";
     }
 
     public static class CreativeModeTabNames {
@@ -144,30 +131,6 @@ public class Reference {
         public static final ResourceLocation FLOWING_INK_TEXTURE = getAsResourceLocation("block/ink_flow");
         public static final ResourceLocation LINKING_BOOK_TEXTURE = getAsResourceLocation(
                 "textures/entity/linking_book.png");
-    }
-
-    // Helper for making the private field getters via reflection
-    // Also throws ClassCastException if the types are wrong
-    @SuppressWarnings("unchecked")
-    public static <FIELDHOLDER, FIELDTYPE> Function<FIELDHOLDER, FIELDTYPE> getField(
-            Class<FIELDHOLDER> fieldHolderClass, String fieldName) {
-        // Forge's ORH is needed to reflect into vanilla Minecraft Java
-        Field field = ObfuscationReflectionHelper.findField(fieldHolderClass, fieldName);
-        return instance -> {
-            try {
-                return (FIELDTYPE) (field.get(instance));
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        };
-    }
-
-    public static Method getMethod(Class<?> methodHolderClass, String methodName, Class<?>... parameterTypes) {
-        return ObfuscationReflectionHelper.findMethod(methodHolderClass, methodName, parameterTypes);
-    }
-
-    public static <T> Constructor<T> getConstructor(final Class<T> classOne, final Class<?>... parameters) {
-        return ObfuscationReflectionHelper.findConstructor(classOne, parameters);
     }
 
 }
