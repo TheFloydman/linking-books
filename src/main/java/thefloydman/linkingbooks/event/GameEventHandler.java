@@ -19,6 +19,7 @@
 package thefloydman.linkingbooks.event;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -50,10 +51,8 @@ import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.block.LinkTranslatorBlock;
 import thefloydman.linkingbooks.block.LinkingLecternBlock;
 import thefloydman.linkingbooks.block.MarkerSwitchBlock;
-import thefloydman.linkingbooks.blockentity.LinkTranslatorBlockEntity;
-import thefloydman.linkingbooks.blockentity.LinkingBookHolderBlockEntity;
-import thefloydman.linkingbooks.blockentity.LinkingLecternBlockEntity;
-import thefloydman.linkingbooks.blockentity.MarkerSwitchBlockEntity;
+import thefloydman.linkingbooks.block.ModBlocks;
+import thefloydman.linkingbooks.blockentity.*;
 import thefloydman.linkingbooks.commands.LinkCommand;
 import thefloydman.linkingbooks.commands.ReltoCommand;
 import thefloydman.linkingbooks.component.LinkData;
@@ -72,6 +71,8 @@ import thefloydman.linkingbooks.world.storage.LinkingBooksSavedData;
 import java.awt.*;
 import java.util.List;
 import java.util.UUID;
+
+import static thefloydman.linkingbooks.block.LinkingLecternBlock.FACING;
 
 @EventBusSubscriber(modid = Reference.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class GameEventHandler {
@@ -206,8 +207,11 @@ public class GameEventHandler {
                 final String reltoOverworldBookSet = Reference.MODID + ":relto_overworld_book_set";
                 if (!level.isClientSide() && !player.getTags().contains(reltoOverworldBookSet)) {
                     BlockPos lecternPos = new BlockPos(-11, 201, 6);
-                    BlockEntity genericBlockEntity = level.getBlockEntity(lecternPos);
-                    if (genericBlockEntity instanceof LinkingLecternBlockEntity linkingLecternBlockEntity) {
+                    BlockState lecternState = ModBlocks.LINKING_LECTERN.get().defaultBlockState().setValue(FACING, Direction.SOUTH);
+                    level.setBlock(lecternPos, lecternState, 2|16|32);
+                    LinkingLecternBlockEntity linkingLecternBlockEntity = ModBlockEntityTypes.LINKING_LECTERN.get().create(lecternPos, lecternState);
+                    if (linkingLecternBlockEntity != null) {
+                        level.setBlockEntity(linkingLecternBlockEntity);
                         LinkData linkData = new LinkData(Reference.server.overworld().dimension().location(), Reference.server.overworld().getSharedSpawnPos(), Reference.server.overworld().getSharedSpawnAngle(), UUID.randomUUID(), List.of());
                         ItemStack bookItemStack = ModItems.WRITTEN_LINKING_BOOK.toStack();
                         bookItemStack.set(DataComponents.DYED_COLOR, new DyedItemColor(new Color(77, 196, 109).getRGB(), false));
