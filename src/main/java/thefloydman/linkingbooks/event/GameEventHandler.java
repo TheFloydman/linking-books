@@ -1,6 +1,6 @@
 /*
  * This file is part of Linking Books, a mod for Minecraft.
- * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ * Copyright (c) 2019-2025 Dan Floyd ("TheFloydman").
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,6 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -65,7 +64,6 @@ import thefloydman.linkingbooks.commands.ReltoCommand;
 import thefloydman.linkingbooks.component.LinkData;
 import thefloydman.linkingbooks.component.ModDataComponents;
 import thefloydman.linkingbooks.entity.LinkingBookEntity;
-import thefloydman.linkingbooks.entity.ModEntityTypes;
 import thefloydman.linkingbooks.integration.ImmersivePortalsIntegration;
 import thefloydman.linkingbooks.item.ModItems;
 import thefloydman.linkingbooks.item.ReltoBookItem;

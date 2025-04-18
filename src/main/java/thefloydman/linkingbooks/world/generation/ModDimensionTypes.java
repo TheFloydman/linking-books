@@ -20,15 +20,8 @@ package thefloydman.linkingbooks.world.generation;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.dimension.DimensionType;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import thefloydman.linkingbooks.Reference;
-
-import java.util.OptionalLong;
 
 public class ModDimensionTypes {
 

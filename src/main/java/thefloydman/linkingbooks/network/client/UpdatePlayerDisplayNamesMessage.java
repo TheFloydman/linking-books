@@ -1,6 +1,6 @@
 /*
  * This file is part of Linking Books, a mod for Minecraft.
- * Copyright (c) 2019-2024 Dan Floyd ("TheFloydman").
+ * Copyright (c) 2019-2025 Dan Floyd ("TheFloydman").
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,9 +43,7 @@ public record UpdatePlayerDisplayNamesMessage(Map<UUID, String> displayNames) im
 
     public static void handle(final UpdatePlayerDisplayNamesMessage data, final IPayloadContext context) {
 
-        context.enqueueWork(() -> {
-            Reference.PLAYER_DISPLAY_NAMES.putAll(data.displayNames());
-        });
+        context.enqueueWork(() -> Reference.PLAYER_DISPLAY_NAMES.putAll(data.displayNames()));
 
     }
 

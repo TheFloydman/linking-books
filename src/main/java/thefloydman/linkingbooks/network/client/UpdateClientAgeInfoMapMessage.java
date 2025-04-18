@@ -19,7 +19,6 @@
 package thefloydman.linkingbooks.network.client;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -31,7 +30,6 @@ import thefloydman.linkingbooks.world.generation.AgeInfo;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public record UpdateClientAgeInfoMapMessage(Map<ResourceLocation, AgeInfo> ageInfos) implements CustomPacketPayload {
 
@@ -44,9 +42,7 @@ public record UpdateClientAgeInfoMapMessage(Map<ResourceLocation, AgeInfo> ageIn
 
     public static void handle(final UpdateClientAgeInfoMapMessage data, final IPayloadContext context) {
 
-        context.enqueueWork(() -> {
-            Reference.AGE_INFO_MAP.putAll(data.ageInfos());
-        });
+        context.enqueueWork(() -> Reference.AGE_INFO_MAP.putAll(data.ageInfos()));
 
     }
 
