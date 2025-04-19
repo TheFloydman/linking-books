@@ -90,11 +90,6 @@ public class MarkerSwitchBlockEntity extends BlockEntity implements IItemHandler
         this.loadAdditional(packet.getTag(), registryAccess);
     }
 
-    public void clearContent() {
-        this.item = ItemStack.EMPTY;
-        this.setChanged();
-    }
-
     @Override
     public int getSlots() {
         return 1;
@@ -124,7 +119,7 @@ public class MarkerSwitchBlockEntity extends BlockEntity implements IItemHandler
 
     @Override
     public int getSlotLimit(int slot) {
-        return 1;
+        return Integer.MAX_VALUE;
     }
 
     @Override

@@ -217,7 +217,7 @@ public class GameEventHandler {
                 if (!level.isClientSide() && !player.getTags().contains(reltoOverworldBookSet)) {
                     BlockPos lecternPos = new BlockPos(-11, 201, 6);
                     BlockState lecternState = ModBlocks.LINKING_LECTERN.get().defaultBlockState().setValue(FACING, Direction.SOUTH);
-                    level.setBlock(lecternPos, lecternState, 2|16|32);
+                    level.setBlock(lecternPos, lecternState, 2 | 16 | 32);
                     LinkingLecternBlockEntity linkingLecternBlockEntity = ModBlockEntityTypes.LINKING_LECTERN.get().create(lecternPos, lecternState);
                     if (linkingLecternBlockEntity != null) {
                         level.setBlockEntity(linkingLecternBlockEntity);

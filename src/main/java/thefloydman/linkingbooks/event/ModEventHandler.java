@@ -22,6 +22,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -176,6 +178,20 @@ public class ModEventHandler {
     @OnlyIn(Dist.CLIENT)
     public static void registerDimensionSpecialEffects(RegisterDimensionSpecialEffectsEvent event) {
         event.register(Reference.getAsResourceLocation("age"), new ModDimensionSpecialEffects.AgeEffects());
+    }
+
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ModBlockEntityTypes.LINKING_LECTERN.get(),
+                (linkingLecternBlockEntity, side) -> linkingLecternBlockEntity.getItemHandler(linkingLecternBlockEntity, side)
+        );
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ModBlockEntityTypes.LINK_TRANSLATOR.get(),
+                (linkTranslatorBlockEntity, side) -> linkTranslatorBlockEntity.getItemHandler(linkTranslatorBlockEntity, side)
+        );
     }
 
 }

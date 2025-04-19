@@ -19,6 +19,7 @@
 package thefloydman.linkingbooks.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -36,6 +37,7 @@ import thefloydman.linkingbooks.item.ReltoBookItem;
 import thefloydman.linkingbooks.item.WrittenLinkingBookItem;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class LinkingBookHolderBlockEntity extends BlockEntity implements IItemHandler {
 
@@ -44,6 +46,10 @@ public class LinkingBookHolderBlockEntity extends BlockEntity implements IItemHa
     public LinkingBookHolderBlockEntity(BlockEntityType<? extends LinkingBookHolderBlockEntity> type, BlockPos pos,
                                         BlockState state) {
         super(type, pos, state);
+    }
+
+    public @Nullable LinkingBookHolderBlockEntity getItemHandler(LinkingBookHolderBlockEntity linkingLecternBlockEntity, @Nullable Direction side) {
+        return side == null ? null : this;
     }
 
     /**
@@ -118,8 +124,10 @@ public class LinkingBookHolderBlockEntity extends BlockEntity implements IItemHa
     public @Nonnull ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean simulate) {
         if (isItemValid(0, itemStack)) {
             int slotLimit = this.getSlotLimit(slot);
-            this.book = itemStack.copyWithCount(slotLimit);
-            this.setChanged();
+            if (!simulate) {
+                this.book = itemStack.copyWithCount(slotLimit);
+                this.setChanged();
+            }
             ItemStack returnStack = itemStack.copy();
             returnStack.shrink(slotLimit);
             return returnStack;
@@ -129,6 +137,9 @@ public class LinkingBookHolderBlockEntity extends BlockEntity implements IItemHa
 
     @Override
     public @Nonnull ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (simulate) {
+            return this.book.copyWithCount(Math.min(amount, this.book.getCount()));
+        }
         ItemStack stack = this.book.split(amount);
         this.setChanged();
         return stack;
