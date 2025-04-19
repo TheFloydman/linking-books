@@ -16,7 +16,7 @@ maven {
 }
 
 dependencies {
-    compile "linkingbooks:linkingbooks-1.21.1:0.8.1.0:neoforge"
+    compile "linkingbooks:linkingbooks-1.21.1:0.8.2.0:neoforge"
 }
 ```
 ```groovy
@@ -26,7 +26,7 @@ maven {
 }
 
 dependencies {
-    compile "maven.modrinth:linkingbooks-1.21.1:0.8.1.0:neoforge"
+    compile "maven.modrinth:linkingbooks-1.21.1:0.8.2.0:neoforge"
 }
 ```
 
