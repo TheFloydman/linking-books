@@ -128,7 +128,7 @@ public class AgeUtils {
     public static void mapLevelsOnStartup(MinecraftServer server) {
         LinkingBooksSavedData savedData = server.overworld().getDataStorage()
                 .computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
-        for (AgeInfo ageInfo : savedData.ages) {
+        for (AgeInfo ageInfo : new HashSet<>(savedData.ages)) {
             createAndRegisterLevel(server, ResourceKey.create(Registries.DIMENSION, ageInfo.id()), ageInfo.name(),
                     ageInfo.owner(), ageInfo.overrideBiomeSkyColor(), ageInfo.skyColor(), ageInfo.fogColor(), ageInfo.skyObject(), ageInfo.cloudInfos(), ageInfo.id().getPath().startsWith("relto") ? LinkingBooksDimensionFactory::createRelto : LinkingBooksDimensionFactory::createDimension);
         }
