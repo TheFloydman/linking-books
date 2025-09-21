@@ -37,6 +37,7 @@ import java.util.UUID;
 public class ReltoBookMenuType extends AbstractContainerMenu {
 
     public UUID owner = UUID.randomUUID();
+    public boolean levelExists = false;
 
     public ReltoBookMenuType(int containerId, Inventory playerInventory) {
         super(ModMenuTypes.RELTO_BOOK.get(), containerId);
@@ -45,8 +46,9 @@ public class ReltoBookMenuType extends AbstractContainerMenu {
     public ReltoBookMenuType(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf extraData) {
         super(ModMenuTypes.LINKING_BOOK.get(), containerId);
         this.owner = extraData.readUUID();
+        this.levelExists = extraData.readBoolean();
         LinkData linkData = new LinkData(Reference.getAsResourceLocation(String.format("relto_%s", this.owner)), new BlockPos(-11, 200, 23), -90.0F, UUID.randomUUID(), List.of(Reference.getAsResourceLocation("intraage_linking")));
-        if (Reference.isImmersivePortalsLoaded()) {
+        if (this.levelExists && Reference.isImmersivePortalsLoaded()) {
             PacketDistributor.sendToServer(new AddChunkLoaderMessage(linkData));
         }
     }
@@ -58,7 +60,7 @@ public class ReltoBookMenuType extends AbstractContainerMenu {
 
     @Override
     public void removed(@Nonnull Player player) {
-        if (Reference.isImmersivePortalsLoaded()) {
+        if (this.levelExists && Reference.isImmersivePortalsLoaded()) {
             PacketDistributor.sendToServer(new RemoveChunkLoaderMessage());
         }
         super.removed(player);

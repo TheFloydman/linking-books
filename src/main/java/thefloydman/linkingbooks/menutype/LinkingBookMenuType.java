@@ -40,6 +40,7 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
     public LinkData linkData = LinkData.EMPTY;
     public boolean canLink = false;
     public CompoundTag linkingPanelImage = new CompoundTag();
+    public boolean levelExists = false;
 
     public LinkingBookMenuType(int containerId, Inventory playerInventory) {
         super(ModMenuTypes.LINKING_BOOK.get(), containerId);
@@ -51,8 +52,9 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
         this.bookColor = extraData.readInt();
         this.linkData = extraData.readJsonWithCodec(LinkData.CODEC);
         this.canLink = extraData.readBoolean();
+        this.levelExists = extraData.readBoolean();
         this.linkingPanelImage = extraData.readNbt();
-        if (Reference.isImmersivePortalsLoaded() && this.canLink) {
+        if (this.levelExists && Reference.isImmersivePortalsLoaded() && this.canLink) {
             PacketDistributor.sendToServer(new AddChunkLoaderMessage(this.linkData));
         }
     }
@@ -64,7 +66,7 @@ public class LinkingBookMenuType extends AbstractContainerMenu {
 
     @Override
     public void removed(@Nonnull Player player) {
-        if (Reference.isImmersivePortalsLoaded() && this.canLink) {
+        if (this.levelExists && Reference.isImmersivePortalsLoaded() && this.canLink) {
             PacketDistributor.sendToServer(new RemoveChunkLoaderMessage());
         }
         super.removed(player);

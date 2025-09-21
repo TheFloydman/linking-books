@@ -38,6 +38,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.function.TriFunction;
+import qouteall.q_misc_util.dimension.DimensionIntId;
 import thefloydman.linkingbooks.Reference;
 import thefloydman.linkingbooks.ReflectionHelper;
 import thefloydman.linkingbooks.network.client.UpdateClientDimensionListMessage;
@@ -48,6 +49,12 @@ import java.util.*;
 import java.util.concurrent.Executor;
 
 public class AgeUtils {
+
+    public static boolean levelExists(MinecraftServer server, ResourceKey<Level> levelKey) {
+        @SuppressWarnings("deprecation")
+        Map<ResourceKey<Level>, ServerLevel> map = server.forgeGetWorldMap();
+        return map.containsKey(levelKey);
+    }
 
     public static Pair<ServerLevel, Boolean> getOrCreateLevel(MinecraftServer server, ResourceKey<Level> levelKey, Component name, UUID owner, boolean overwriteBiomeSkyColor, int skyColor, int fogColor, SkyObject skyObject, List<CloudInfo> cloudInfos,
                                                               TriFunction<MinecraftServer, ResourceKey<LevelStem>, ResourceKey<DimensionType>, LevelStem> levelStemFactory) {
@@ -107,6 +114,10 @@ public class AgeUtils {
         // Send dimension changes to all clients so that command suggestions display
         // correctly.
         PacketDistributor.sendToAllPlayers(new UpdateClientDimensionListMessage(ImmutableSet.of(levelKey), ImmutableSet.of()));
+
+        if (Reference.isImmersivePortalsLoaded()) {
+            DimensionIntId.onServerDimensionChanged(server);
+        }
 
         // Update Forge's level cache (so level ticks)
         server.markWorldsDirty();

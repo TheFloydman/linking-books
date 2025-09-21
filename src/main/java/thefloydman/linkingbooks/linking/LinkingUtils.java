@@ -294,30 +294,44 @@ public class LinkingUtils {
 
     public static void openLinkingBookGui(ServerPlayer serverPlayer, boolean holdingBook, int color, LinkData linkData,
                                           ResourceLocation currentDimension) {
-        serverPlayer.openMenu(
-                new SimpleMenuProvider(
-                        (id, playerInventory, playerEntity) ->
-                                new LinkingBookMenuType(id, playerInventory),
-                        Component.literal("")),
-                extraData -> {
-                    extraData.writeBoolean(holdingBook);
-                    extraData.writeInt(color);
-                    extraData.writeJsonWithCodec(LinkData.CODEC, linkData);
-                    boolean canLink = LinkingBooksConfig.ALWAYS_ALLOW_INTRAAGE_LINKING.get()
-                            || !currentDimension.equals(linkData.dimension())
-                            || linkData.linkEffects().contains(Reference.getAsResourceLocation("intraage_linking"));
-                    extraData.writeBoolean(canLink);
-                    MinecraftServer server = serverPlayer.getServer();
-                    if (server != null) {
+        MinecraftServer server = serverPlayer.getServer();
+        if (server != null) {
+            serverPlayer.openMenu(
+                    new SimpleMenuProvider(
+                            (id, playerInventory, playerEntity) ->
+                                    new LinkingBookMenuType(id, playerInventory),
+                            Component.literal("")),
+                    extraData -> {
+                        extraData.writeBoolean(holdingBook);
+                        extraData.writeInt(color);
+                        extraData.writeJsonWithCodec(LinkData.CODEC, linkData);
+                        boolean canLink = LinkingBooksConfig.ALWAYS_ALLOW_INTRAAGE_LINKING.get()
+                                || !currentDimension.equals(linkData.dimension())
+                                || linkData.linkEffects().contains(Reference.getAsResourceLocation("intraage_linking"));
+                        extraData.writeBoolean(canLink);
+                        extraData.writeBoolean(AgeUtils.levelExists(server, ResourceKey.create(Registries.DIMENSION, linkData.dimension())));
                         ServerLevel overworld = server.overworld();
                         LinkingBooksSavedData savedData = overworld.getDataStorage().computeIfAbsent(LinkingBooksSavedData.factory(), Reference.MODID);
                         extraData.writeNbt(savedData.getLinkingPanelImage(linkData.uuid()));
-                    }
-                });
+                    });
+        }
     }
 
     public static void openReltoBookGui(ServerPlayer serverPlayer, UUID owner) {
-        serverPlayer.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) -> new ReltoBookMenuType(id, playerInventory), Component.literal("")), extraData -> extraData.writeUUID(owner));
+        MinecraftServer server = serverPlayer.getServer();
+        if (server != null) {
+            serverPlayer.openMenu(
+                    new SimpleMenuProvider(
+                            (id, playerInventory, playerEntity) ->
+                                    new ReltoBookMenuType(id, playerInventory),
+                            Component.literal("")),
+                    extraData ->
+                    {
+                        extraData.writeUUID(owner);
+                        extraData.writeBoolean(AgeUtils.levelExists(server, ResourceKey.create(Registries.DIMENSION, Reference.getAsResourceLocation(String.format("relto_%s", owner)))));
+                    }
+            );
+        }
     }
 
     public static int getLinkingBookColor(ItemStack stack, int tintIndex) {

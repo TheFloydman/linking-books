@@ -47,13 +47,13 @@ public class LinkingBookWidget extends NestedWidget {
 
     public LinkingBookWidget(String id, int x, int y, float z, int width, int height, Component narration,
                              Screen parentScreen, float scale, boolean holdingBook, int color, LinkData linkData, boolean canLink,
-                             NativeImage linkingPanelImage) {
+                             NativeImage linkingPanelImage, boolean levelExists) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.color = color;
         this.ageName = linkData.dimensionName();
         NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.getX() + 155,
                 this.getY() + 41, z + 1.0F, 64, 42, Component.literal("Linking Panel"), parentScreen, this.scale,
-                holdingBook, false, linkData, canLink, linkingPanelImage));
+                holdingBook, false, linkData, canLink, linkingPanelImage, levelExists));
         for (GuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }

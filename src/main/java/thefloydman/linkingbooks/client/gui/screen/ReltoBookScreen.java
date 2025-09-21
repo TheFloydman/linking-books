@@ -59,7 +59,8 @@ public class ReltoBookScreen extends AbstractContainerScreen<ReltoBookMenuType> 
                         this,
                         1.0F,
                         linkData,
-                        ageName
+                        ageName,
+                        this.getMenu().levelExists
                 )
         );
         linkingBook.addListener(this);

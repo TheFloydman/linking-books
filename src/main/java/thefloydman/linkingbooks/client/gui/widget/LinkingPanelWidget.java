@@ -44,6 +44,7 @@ public class LinkingPanelWidget extends NestedWidget {
     public LinkData linkData = LinkData.EMPTY;
     public boolean canLink = false;
     public boolean isReltoBook = false;
+    public boolean levelExists = false;
     DynamicTexture linkingPanelImage = null;
     private ResourceLocation linkingPanelImageResourceLocation;
     private final TextureTarget linkingPanelFramebuffer = new TextureTarget(2, 2, true, false);
@@ -52,12 +53,13 @@ public class LinkingPanelWidget extends NestedWidget {
 
     public LinkingPanelWidget(String id, int x, int y, float z, int width, int height, Component narration,
                               Screen parentScreen, float scale, boolean holdingBook, boolean isReltoBook, LinkData linkData, boolean canLink,
-                              NativeImage linkingPanelImage) {
+                              NativeImage linkingPanelImage, boolean levelExists) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.holdingBook = holdingBook;
         this.linkData = linkData;
         this.isReltoBook = isReltoBook;
         this.canLink = canLink || this.isReltoBook;
+        this.levelExists = levelExists;
         if (linkingPanelImage != null) {
             NativeImage image256 = new NativeImage(256, 256, false);
             linkingPanelImage.copyRect(image256, 0, 0, 0, 0, linkingPanelImage.getWidth(), linkingPanelImage.getHeight(), false, false);
@@ -73,7 +75,7 @@ public class LinkingPanelWidget extends NestedWidget {
             int panelColor = this.canLink ? new Color(32, 192, 255).getRGB() : new Color(192, 192, 192).getRGB();
             guiGraphics.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, (int) this.zLevel, panelColor);
             if (this.canLink) {
-                if (Reference.isImmersivePortalsLoaded() && LinkingBooksConfig.USE_IP_FOR_LINKING_PANELS.get()) {
+                if (Reference.isImmersivePortalsLoaded() && LinkingBooksConfig.USE_IP_FOR_LINKING_PANELS.get() && this.levelExists) {
                     guiGraphics.pose().translate(0.0F, 0.0F, 1.0F);
                     ImmersivePortalsIntegration.renderGuiPortal(
                             this.linkData,
