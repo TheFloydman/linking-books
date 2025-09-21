@@ -51,7 +51,7 @@ public class LinkingBooksConfig {
 
     public static final ModConfigSpec.BooleanValue USE_IP_FOR_LINKING_PANELS = BUILDER
             .comment("If Immersive Portals is present, uses it to render Linking Portals.")
-            .translation("linkingbooks.configgui.use_immersive_portals_for_linking_portals")
+            .translation("linkingbooks.config.use_immersive_portals_for_linking_portals")
             .define("useImmersivePortalsForLinkingPortals", true);
 
     public static final ModConfigSpec CONFIG = BUILDER.build();
