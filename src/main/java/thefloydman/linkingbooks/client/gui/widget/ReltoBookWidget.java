@@ -44,12 +44,12 @@ public class ReltoBookWidget extends NestedWidget {
     public int color = new Color(77, 196, 109).getRGB();
 
     public ReltoBookWidget(String id, int x, int y, float z, int width, int height, Component narration,
-                           Screen parentScreen, float scale, LinkData linkData, Component ageName) {
+                           Screen parentScreen, float scale, LinkData linkData, Component ageName, boolean levelExists) {
         super(id, x, y, z, width, height, narration, parentScreen, scale);
         this.ageName = ageName;
         NestedWidget linkingPanel = this.addChild(new LinkingPanelWidget("linking panel", this.getX() + 107,
                 this.getY() + 41, z + 1.0F, 64, 42, Component.literal("Linking Panel"), parentScreen, this.scale,
-                false, true, linkData, true, null));
+                false, true, linkData, true, null, levelExists));
         for (GuiEventListener listener : this.listeners) {
             linkingPanel.addListener(listener);
         }

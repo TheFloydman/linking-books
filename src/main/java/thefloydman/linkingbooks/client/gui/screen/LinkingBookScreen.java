@@ -49,7 +49,7 @@ public class LinkingBookScreen extends AbstractContainerScreen<LinkingBookMenuTy
         NestedWidget linkingBook = this.addRenderableWidget(new LinkingBookWidget("linking book", this.leftPos,
                 this.topPos, 100.0F, this.imageWidth, this.imageHeight, Component.literal("Linking Book"), this, 1.0F,
                 this.getMenu().holdingBook, this.getMenu().bookColor, this.getMenu().linkData, this.getMenu().canLink,
-                linkingPanelImage));
+                linkingPanelImage, this.getMenu().levelExists));
         linkingBook.addListener(this);
         if (this.minecraft != null && this.minecraft.player != null) {
             this.minecraft.player.playSound(ModSounds.BOOK_OPEN.get(), 0.5F, 1.0F);

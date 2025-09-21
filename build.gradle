@@ -99,7 +99,6 @@ dependencies {
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
-    //implementation ("com.github.iPortalTeam:ImmersivePortalsModForNeo:v6.0.3")
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -119,8 +118,8 @@ dependencies {
     compileOnly "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
 
     // Uncomment these lines to use these mods during testing.
-    //localRuntime "curse.maven:immersive-portals-for-forge-355440:5828143"
-    //api "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
+    // implementation "curse.maven:immersive_portals_for_forge-355440:5828143"
+    // api "me.shedaniel.cloth:cloth-config-neoforge:15.0.140"
 
     // Example project dependency using a sister or child project:
     // implementation project(":myproject")
